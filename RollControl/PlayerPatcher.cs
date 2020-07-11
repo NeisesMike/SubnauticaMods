@@ -10,7 +10,7 @@ using SMLHelper.V2.Options;
 using SMLHelper.V2.Handlers;
 using LitJson;
 
-namespace hosasNew
+namespace RollControl
 {
     [HarmonyPatch(typeof(Player))]
     [HarmonyPatch("Update")]
@@ -19,7 +19,7 @@ namespace hosasNew
     {
         public static void Patch()
         {
-            var harmony = HarmonyInstance.Create("com.garyburke.subnautica.hosasnew.mod");
+            var harmony = HarmonyInstance.Create("com.garyburke.subnautica.rollcontrol.mod");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             Initialise();
         }

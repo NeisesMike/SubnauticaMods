@@ -7,8 +7,8 @@
     <ProjectGuid>{EF47573A-B3F8-4DFC-9DE1-8855CABDF3A6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>hosasNew</RootNamespace>
-    <AssemblyName>hosasNew</AssemblyName>
+    <RootNamespace>RollControl</RootNamespace>
+    <AssemblyName>RollControl</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
