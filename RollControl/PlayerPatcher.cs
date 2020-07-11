@@ -15,7 +15,7 @@ namespace RollControl
     [HarmonyPatch(typeof(Player))]
     [HarmonyPatch("Update")]
 
-    public class BurkePatcher
+    public class RollControlPatcher
     {
         public static void Patch()
         {
