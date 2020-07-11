@@ -1,0 +1,13 @@
+{
+  "Id": "RollControl",
+  "DisplayName": "RollControl",
+  "Author": "GaryBurke",
+  "Version": "0.1",
+  "Enable": true,
+  "AssemblyName": "RollControl.dll",
+  "EntryMethod": "RollControl.BurkePatcher.Patch",
+  "Game": "Subnautica",
+  "VersionDependencies": {
+    "SMLHelper": "2.4.0"
+  }
+}
