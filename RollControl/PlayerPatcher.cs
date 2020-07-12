@@ -86,7 +86,7 @@ namespace RollControl
         public KeyCode rollToStarboardKey = KeyCode.PageUp;
         private string ConfigPath => Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "config.json");
 
-        public Options() : base("BurkePatcher")
+        public Options() : base("Roll Controls")
         {
             InitEvents();
             LoadDefaults();
