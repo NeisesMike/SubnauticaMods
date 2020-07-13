@@ -17,6 +17,7 @@ namespace RollControl
 
     public class RollControlPatcher
     {
+        public static bool isRollOn = true;
         public static void Patch()
         {
             var harmony = HarmonyInstance.Create("com.garyburke.subnautica.rollcontrol.mod");
@@ -49,18 +50,31 @@ namespace RollControl
                 return;
             }
 
-            // disable roll stabilization
+            // optionally disable roll stabilization
+            if(Input.GetKeyDown(Options.rollToggleKey))
+            {
+                isRollOn = !isRollOn;
+            }
+
             var myVehicle = __instance.currentMountedVehicle;
-            myVehicle.stabilizeRoll = false;
+            if ( isRollOn )
+            {
+                myVehicle.stabilizeRoll = false;
+            }
+            else
+            {
+                myVehicle.stabilizeRoll = true;
+                return;
+            }
 
             // add roll handlers
             if (Input.GetKey(Options.rollToPortKey))
             {
-                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * Options.rollSpeed, ForceMode.VelocityChange);
+                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)Options.rollSpeed, ForceMode.VelocityChange);
             }
             if (Input.GetKey(Options.rollToStarboardKey))
             {
-                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * -Options.rollSpeed, ForceMode.VelocityChange);
+                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)-Options.rollSpeed, ForceMode.VelocityChange);
             }
             if (Input.GetKeyDown(KeyCode.PageUp))
             {

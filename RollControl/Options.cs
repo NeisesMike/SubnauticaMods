@@ -16,15 +16,18 @@ namespace RollControl
     {
         public KeyCode RollPortKey { get; set; }
         public KeyCode RollStarboardKey { get; set; }
-        public float RollSpeed { get; set; }
+        public KeyCode RollToggleKey { get; set; }
+        public double RollSpeed { get; set; }
+
     }
 
 
     public class Options : ModOptions
     {
-        public KeyCode rollToPortKey = KeyCode.PageUp;
-        public KeyCode rollToStarboardKey = KeyCode.PageUp;
-        public float rollSpeed = 0.3F;
+        public KeyCode rollToPortKey = KeyCode.Z;
+        public KeyCode rollToStarboardKey = KeyCode.C;
+        public KeyCode rollToggleKey = KeyCode.RightAlt;
+        public double rollSpeed = 0.3F;
 
         private string ConfigPath => Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "config.json");
 
@@ -49,6 +52,9 @@ namespace RollControl
                     break;
                 case "roll_to_starboard":
                     rollToStarboardKey = e.Key;
+                    break;
+                case "roll_toggle":
+                    rollToggleKey = e.Key;
                     break;
             }
             UpdateJSON();
@@ -82,8 +88,9 @@ namespace RollControl
             {
                 RollPortKey = rollToPortKey,
                 RollStarboardKey = rollToStarboardKey,
-                RollSpeed = rollSpeed
-            };
+                RollToggleKey = rollToggleKey,
+                RollSpeed = Math.Truncate(rollSpeed * 1000d) / 1000d
+        };
 
             var stringBuilder = new StringBuilder();
             var jsonWriter = new JsonWriter(stringBuilder)
@@ -108,7 +115,10 @@ namespace RollControl
 
                     rollToPortKey = data.ContainsKey("RollPortKey") ? options.RollPortKey : rollToPortKey;
                     rollToStarboardKey = data.ContainsKey("RollStarboardKey") ? options.RollStarboardKey : rollToStarboardKey;
+                    rollToggleKey = data.ContainsKey("RollToggleKey") ? options.RollToggleKey : rollToggleKey;
                     rollSpeed = data.ContainsKey("RollSpeed") ? options.RollSpeed : rollSpeed;
+
+                    rollSpeed = Math.Truncate(rollSpeed * 1000d) / 1000d;
 
                     //if (!data.ContainsKey("RollPortKey") || !data.ContainsKey("RollStarboardKey") || !data.ContainsKey("RollSpeed"))
                     {
@@ -130,7 +140,8 @@ namespace RollControl
         {
             AddKeybindOption("roll_to_port", "Roll-to-Port Key", GameInput.GetPrimaryDevice(), rollToPortKey);
             AddKeybindOption("roll_to_starboard", "Roll-to-Starboard Key", GameInput.GetPrimaryDevice(), rollToStarboardKey);
-            AddSliderOption("roll_speed", "Roll Speed", 0F, 1F, rollSpeed);
+            AddKeybindOption("roll_toggle", "Roll-Toggle Key", GameInput.GetPrimaryDevice(), rollToggleKey);
+            AddSliderOption("roll_speed", "Roll Speed", 0F, 1F, (float)rollSpeed);
         }
     }
 
