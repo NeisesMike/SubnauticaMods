@@ -37,7 +37,11 @@ namespace FreeLook
             MainCameraControl mainCam = MainCameraControl.main;
             mainCam.rotationX += vector.x;
             mainCam.rotationY += vector.y;
+            mainCam.rotationX = Mathf.Clamp(mainCam.rotationX, -100, 100);
             mainCam.rotationY = Mathf.Clamp(mainCam.rotationY, mainCam.minimumY, mainCam.maximumY);
+
+            //mainCam.cameraUPTransform.localEulerAngles = new Vector3(Mathf.Min(0f, -mainCam.rotationY), 0f, 0f);
+
             mainCam.transform.localEulerAngles = new Vector3(-mainCam.rotationY, mainCam.rotationX, 0f);
         }
 
@@ -52,12 +56,12 @@ namespace FreeLook
         [HarmonyPrefix]
         public static bool Prefix(Vehicle __instance)
         {
-            if( !(Player.main.inSeamoth || Player.main.inExosuit) )
+            var mainCam = MainCameraControl.main;
+
+            if ( !(Player.main.inSeamoth))// || Player.main.inExosuit) )
             {
                 return true;
             }
-
-            var mainCam = MainCameraControl.main;
 
             void cameraRelinquish()
             {
@@ -110,7 +114,7 @@ namespace FreeLook
                 return false;
             }
             // nothing from the key and the camera has been reset, so we don't need control
-            cameraRelinquish();
+            //cameraRelinquish();
             return true;
         }
 
