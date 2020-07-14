@@ -63,6 +63,12 @@ namespace FreeLook
                 return true;
             }
 
+            if(Player.main.motorMode == Player.MotorMode.Seaglide)
+            {
+                // hack the controls
+
+            }
+
             void cameraRelinquish()
             {
                 mainCam.ResetCamera();
