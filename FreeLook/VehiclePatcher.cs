@@ -9,26 +9,15 @@ using Harmony;
 using SMLHelper.V2.Options;
 using SMLHelper.V2.Handlers;
 using LitJson;
+using System.Net.NetworkInformation;
 
 namespace FreeLook
 {
-    public class MyVehicleAccelerationModifier
-    {
-        public void ModifyAcceleration(ref Vector3 accel)
-        {
-            accel *= this.accelerationMultiplier;
-        }
-
-        [Range(0f, 1f)]
-        public float accelerationMultiplier = 0.5f;
-    }
-
     [HarmonyPatch(typeof(Vehicle))]
     [HarmonyPatch("Update")]
 
     public class FreeLookPatcher
     {
-        public static MyVehicleAccelerationModifier[] myVehicleAccelMods;
         public static void Patch()
         {
             var harmony = HarmonyInstance.Create("com.garyburke.subnautica.freelook.mod");
@@ -42,86 +31,86 @@ namespace FreeLook
             OptionsPanelHandler.RegisterModOptions(Options);
         }
 
-        public static void moveSeamoth(Vehicle mySeamoth)
-        {
-            bool flag = mySeamoth.transform.position.y < Ocean.main.GetOceanLevel() && mySeamoth.transform.position.y < mySeamoth.worldForces.waterDepth && !mySeamoth.precursorOutOfWater;
-            if (mySeamoth.moveOnLand || flag)
-            {
-                if (mySeamoth.controlSheme == Vehicle.ControlSheme.Submersible)
-                {
-                    Vector3 vector = AvatarInputHandler.main.IsEnabled() ? GameInput.GetMoveDirection() : Vector3.zero;
-                    vector.Normalize();
-
-                    float leftForce = GameInput.GetAnalogValueForButton(GameInput.Button.MoveLeft);
-                    float rightForce = GameInput.GetAnalogValueForButton(GameInput.Button.MoveRight);
-                    float forwardForce = GameInput.GetAnalogValueForButton(GameInput.Button.MoveForward);
-                    float backwardForce = GameInput.GetAnalogValueForButton(GameInput.Button.MoveBackward);
-                    float verticalForce = GameInput.GetAnalogValueForButton(GameInput.Button.MoveUp) - GameInput.GetAnalogValueForButton(GameInput.Button.MoveDown);
-
-                    leftForce *= 15;
-                    rightForce *= 15;
-                    forwardForce *= 15;
-                    backwardForce *= 15;
-                    verticalForce *= 15;
-
-                    float d = Mathf.Abs(vector.x) * rightForce
-                            + Mathf.Abs(-vector.x) * leftForce
-                            + Mathf.Max(0f, vector.z) * forwardForce
-                            + Mathf.Max(0f, -vector.z) * backwardForce
-                            + Mathf.Abs(vector.y * verticalForce);
-
-                    Vector3 force = mySeamoth.transform.rotation * (d * vector) * Time.deltaTime;
-
-                    for (int i = 0; i < myVehicleAccelMods.Length; i++)
-                    {
-                        myVehicleAccelMods[i].ModifyAcceleration(ref force);
-                    }
-
-                    mySeamoth.useRigidbody.AddForce(force, ForceMode.VelocityChange);
-                    return;
-                }
-            }
-        }
         public static void moveCamera(Vehicle mySeamoth)
         {
-            var mainCam = MainCameraControl.main;
             Vector2 vector = GameInput.GetLookDelta();
-
+            MainCameraControl mainCam = MainCameraControl.main;
             mainCam.rotationX += vector.x;
             mainCam.rotationY += vector.y;
             mainCam.rotationY = Mathf.Clamp(mainCam.rotationY, mainCam.minimumY, mainCam.maximumY);
-            mainCam.cameraUPTransform.localEulerAngles = new Vector3(Mathf.Min(0f, -mainCam.rotationY), 0f, 0f);
-            mainCam.transform.localEulerAngles = new Vector3(Mathf.Max(0f, -mainCam.rotationY), mainCam.rotationX, 0f);
+            mainCam.transform.localEulerAngles = new Vector3(-mainCam.rotationY, mainCam.rotationX, 0f);
         }
+
+        // this controls whether update will be used to "snap back" the cursor to center
+        static bool resetCameraFlag = false;
+        // these are used as ref parameters in a sigmoidal lerp called smooth-damp-angle
+        static float xVelocity      = 0.0f;
+        static float yVelocity      = 0.0f;
+        // this is how long it takes the cursor to snap back to center
+        static float smoothTime     = 0.5f;
 
         [HarmonyPrefix]
         public static bool Prefix(Vehicle __instance)
         {
-            if(!Player.main.inSeamoth)
+            if( !(Player.main.inSeamoth || Player.main.inExosuit) )
             {
                 return true;
             }
-            if (Input.GetKey(Options.freeLookKey))
+
+            var mainCam = MainCameraControl.main;
+
+            void cameraRelinquish()
             {
-                // disable the player controller
-                // hack into seamoth movements
-                // hack into camera controls
-                Player.main.playerController.SetEnabled(true);
-                Player.main.playerController.activeController.rb.isKinematic = true;
-                Player.main.playerController.activeController.GetComponent<Collider>().enabled = false;
-                FPSInputModule.current.lockMovement = false;
+                mainCam.ResetCamera();
+                mainCam.cinematicMode = false;
+                mainCam.lookAroundMode = true;
+            }
 
-                moveCamera(Player.main.currentMountedVehicle);
-                moveSeamoth(Player.main.currentMountedVehicle);
-
-                OxygenManager oxygenMgr = Player.main.oxygenMgr;
-                oxygenMgr.AddOxygen(1);
+            if (Input.GetKeyDown(Options.freeLookKey))
+            {
+                resetCameraFlag = false;
+                // invoke a camera vulnerability
+                mainCam.cinematicMode = true;
+                mainCam.lookAroundMode = false;
                 return false;
             }
-            if(Input.GetKeyUp(Options.freeLookKey))
+            else if (Input.GetKeyUp(Options.freeLookKey))
             {
-                MainCameraControl.main.ResetCamera();
+                resetCameraFlag = true;
             }
+            if ( !resetCameraFlag && Input.GetKey(Options.freeLookKey))
+            {
+                resetCameraFlag = false;
+                moveCamera(Player.main.currentMountedVehicle);
+                // adding oxygen is something vehicle.update would usually do,
+                // so we do it naively here as well.
+                // I'm not sure that Time.deltaTime seconds worth of oxygen per frame is the right amount...
+                OxygenManager oxygenMgr = Player.main.oxygenMgr;
+                oxygenMgr.AddOxygen(Time.deltaTime);
+                return false;
+            }
+
+            if (resetCameraFlag)
+            {
+                mainCam.rotationX = Mathf.SmoothDampAngle(mainCam.rotationX, 0f, ref xVelocity, smoothTime);
+                mainCam.rotationY = Mathf.SmoothDampAngle(mainCam.rotationY, 0f, ref yVelocity, smoothTime);
+
+                mainCam.camRotationX = mainCam.rotationX;
+                mainCam.camRotationY = mainCam.rotationY;
+
+                mainCam.cameraOffsetTransform.localEulerAngles = new Vector3(-mainCam.camRotationY, mainCam.camRotationX, 0);
+
+                double threshold = 0.001;
+                if( Mathf.Abs(mainCam.camRotationX) < threshold && Mathf.Abs(mainCam.camRotationY) < threshold )
+                {
+                    cameraRelinquish();
+                    resetCameraFlag = false;
+                }
+                // need to retain control in order to finish snapping back to center
+                return false;
+            }
+            // nothing from the key and the camera has been reset, so we don't need control
+            cameraRelinquish();
             return true;
         }
 
