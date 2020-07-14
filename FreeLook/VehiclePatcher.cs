@@ -58,7 +58,7 @@ namespace FreeLook
         {
             var mainCam = MainCameraControl.main;
 
-            if ( !(Player.main.inSeamoth))// || Player.main.inExosuit) )
+            if ( !(Player.main.inSeamoth || Player.main.inExosuit ) ) //|| Player.main.motorMode==Player.MotorMode.Seaglide) )
             {
                 return true;
             }
