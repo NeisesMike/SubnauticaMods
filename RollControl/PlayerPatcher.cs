@@ -44,20 +44,43 @@ namespace RollControl
         [HarmonyPostfix]
         public static void Postfix(Player __instance)
         {
-            // be sure to only do this for the seamoth
-            if (!__instance.inSeamoth)
-            {
-                return;
-            }
-
-            // optionally disable roll stabilization
+            // grab current roll toggle-setting
             if(Input.GetKeyDown(Options.rollToggleKey))
             {
                 isRollOn = !isRollOn;
             }
 
-            var myVehicle = __instance.currentMountedVehicle;
-            if ( isRollOn )
+            // seamoth case
+            if (__instance.inSeamoth)
+            {
+                SeamothRoll(__instance, isRollOn);
+                return;
+            }
+
+            // scuba case
+            if( false )
+            {
+                ScubaRoll(__instance, isRollOn);
+                return;
+            }
+
+            /* I don't know why this is here:
+             * it just stops the actor in place
+            if (Input.GetKeyDown(KeyCode.PageUp))
+            {
+                FPSInputModule.current.lockMovement = true;
+            }
+            if (Input.GetKeyUp(KeyCode.PageUp))
+            {
+                FPSInputModule.current.lockMovement = false;
+            }
+            */
+        }
+
+        public static void SeamothRoll(Player myPlayer, bool roll)
+        {
+            var myVehicle = myPlayer.currentMountedVehicle;
+            if (roll)
             {
                 myVehicle.stabilizeRoll = false;
             }
@@ -76,14 +99,11 @@ namespace RollControl
             {
                 myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)-Options.rollSpeed, ForceMode.VelocityChange);
             }
-            if (Input.GetKeyDown(KeyCode.PageUp))
-            {
-                FPSInputModule.current.lockMovement = true;
-            }
-            if (Input.GetKeyUp(KeyCode.PageUp))
-            {
-                FPSInputModule.current.lockMovement = false;
-            }
+        }
+
+        public static void ScubaRoll(Player myPlayer, bool roll)
+        {
+
         }
     }
 }
