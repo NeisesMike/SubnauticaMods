@@ -33,6 +33,7 @@ namespace FreeLook
 
         public static void moveCamera(Vehicle mySeamoth)
         {
+            Debug.Log("FreeLook: moving camera.");
             Vector2 vector = GameInput.GetLookDelta();
             MainCameraControl mainCam = MainCameraControl.main;
             mainCam.rotationX += vector.x;
@@ -51,7 +52,7 @@ namespace FreeLook
         static float xVelocity      = 0.0f;
         static float yVelocity      = 0.0f;
         // this is how long it takes the cursor to snap back to center
-        static float smoothTime     = 0.5f;
+        static float smoothTime     = 0.25f;
 
         [HarmonyPrefix]
         public static bool Prefix(Vehicle __instance)
@@ -78,6 +79,7 @@ namespace FreeLook
 
             if (Input.GetKeyDown(Options.freeLookKey))
             {
+                Debug.Log("FreeLook: button pressed. Taking control of the camera.");
                 resetCameraFlag = false;
                 // invoke a camera vulnerability
                 mainCam.cinematicMode = true;
@@ -86,6 +88,7 @@ namespace FreeLook
             }
             else if (Input.GetKeyUp(Options.freeLookKey))
             {
+                Debug.Log("FreeLook: button released. Relinquishing control of the camera.");
                 resetCameraFlag = true;
             }
             if ( !resetCameraFlag && Input.GetKey(Options.freeLookKey))
@@ -110,7 +113,7 @@ namespace FreeLook
 
                 mainCam.cameraOffsetTransform.localEulerAngles = new Vector3(-mainCam.camRotationY, mainCam.camRotationX, 0);
 
-                double threshold = 0.001;
+                double threshold = 1;
                 if( Mathf.Abs(mainCam.camRotationX) < threshold && Mathf.Abs(mainCam.camRotationY) < threshold )
                 {
                     cameraRelinquish();
