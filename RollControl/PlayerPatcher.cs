@@ -9,6 +9,7 @@ using Harmony;
 using SMLHelper.V2.Options;
 using SMLHelper.V2.Handlers;
 using LitJson;
+using System.Runtime.CompilerServices;
 
 namespace RollControl
 {
@@ -57,8 +58,17 @@ namespace RollControl
                 return;
             }
 
+
+
+            /*
+            bool inWater = __instance.activeController == Player.PlayerMotor.;
+            bool inSeaGlide = __instance.motorMode == Player.MotorMode.Seaglide;
+            bool inPrawn = __instance.motorMode == Player.MotorMode.Mech; // __instance.inExosuit;
+            bool inCyclops = Player.main.GetCurrentSub() != null;
+            */
+
             // scuba case
-            if( false )
+            if (__instance.motorMode == Player.MotorMode.Dive ) //( inWater && !(inSeaGlide || inPrawn || inCyclops) )
             {
                 ScubaRoll(__instance, isRollOn);
                 return;
@@ -103,7 +113,43 @@ namespace RollControl
 
         public static void ScubaRoll(Player myPlayer, bool roll)
         {
+            //get active player motor
+            PlayerMotor thisMotor = myPlayer.playerController.activeController;
+            //bool thisCinematicMode = myPlayer.cinematicModeActive;
+            //thisMotor.transform.up = myPlayer.transform.up;
+            //myPlayer.playerController.forwardReference.rotation = myPlayer.rigidBody.rotation;
 
+            if (roll)
+            {
+                myPlayer.forceCinematicMode = true;
+                thisMotor.rb.freezeRotation = false;
+                myPlayer.rigidBody.angularDrag = 10;
+            }
+            else
+            {
+                myPlayer.forceCinematicMode = false;
+                thisMotor.rb.freezeRotation = true;
+                myPlayer.rigidBody.angularDrag = 0;
+                return;
+            }
+
+            void updateRots()
+            {
+                myPlayer.transform.position = thisMotor.transform.position;
+                myPlayer.transform.rotation = thisMotor.transform.rotation;
+                Camera.main.transform.position = myPlayer.camAnchor.position;
+                Camera.main.transform.rotation = thisMotor.transform.rotation;
+            }
+
+            // add roll handlers
+            if (Input.GetKey(Options.rollToPortKey))
+            {
+                myPlayer.rigidBody.AddTorque(Camera.main.transform.forward * (float)Options.rollSpeed, ForceMode.VelocityChange);
+            }
+            else if (Input.GetKey(Options.rollToStarboardKey))
+            {
+                myPlayer.rigidBody.AddTorque(Camera.main.transform.forward * (float)-Options.rollSpeed, ForceMode.VelocityChange);
+            }
         }
     }
 }
