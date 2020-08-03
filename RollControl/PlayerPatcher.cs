@@ -89,25 +89,26 @@ namespace RollControl
 
         public static void SeamothRoll(Player myPlayer, bool roll)
         {
-            var myVehicle = myPlayer.currentMountedVehicle;
+            Vehicle mySeamoth = myPlayer.currentMountedVehicle;
+            Debug.Log(mySeamoth.useRigidbody.angularDrag);
             if (roll)
             {
-                myVehicle.stabilizeRoll = false;
+                mySeamoth.stabilizeRoll = false;
             }
             else
             {
-                myVehicle.stabilizeRoll = true;
+                mySeamoth.stabilizeRoll = true;
                 return;
             }
 
             // add roll handlers
             if (Input.GetKey(Options.rollToPortKey))
             {
-                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)Options.rollSpeed, ForceMode.VelocityChange);
+                mySeamoth.useRigidbody.AddTorque(mySeamoth.transform.forward * (float)Options.seamothRollSpeed, ForceMode.VelocityChange);
             }
             if (Input.GetKey(Options.rollToStarboardKey))
             {
-                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)-Options.rollSpeed, ForceMode.VelocityChange);
+                mySeamoth.useRigidbody.AddTorque(mySeamoth.transform.forward * (float)-Options.seamothRollSpeed, ForceMode.VelocityChange);
             }
         }
 
@@ -123,7 +124,8 @@ namespace RollControl
             {
                 myPlayer.forceCinematicMode = true;
                 thisMotor.rb.freezeRotation = false;
-                myPlayer.rigidBody.angularDrag = 10;
+                // this is the same angular drag as the Seamoth's
+                myPlayer.rigidBody.angularDrag = 4;
             }
             else
             {
@@ -144,11 +146,11 @@ namespace RollControl
             // add roll handlers
             if (Input.GetKey(Options.rollToPortKey))
             {
-                myPlayer.rigidBody.AddTorque(Camera.main.transform.forward * (float)Options.rollSpeed, ForceMode.VelocityChange);
+                myPlayer.rigidBody.AddTorque(Camera.main.transform.forward * (float)Options.scubaRollSpeed, ForceMode.VelocityChange);
             }
             else if (Input.GetKey(Options.rollToStarboardKey))
             {
-                myPlayer.rigidBody.AddTorque(Camera.main.transform.forward * (float)-Options.rollSpeed, ForceMode.VelocityChange);
+                myPlayer.rigidBody.AddTorque(Camera.main.transform.forward * (float)-Options.scubaRollSpeed, ForceMode.VelocityChange);
             }
         }
     }
