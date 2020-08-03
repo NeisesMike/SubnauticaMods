@@ -16,7 +16,10 @@ namespace RollControl
     {
         public KeyCode RollPortKey { get; set; }
         public KeyCode RollStarboardKey { get; set; }
-        public KeyCode RollToggleKey { get; set; }
+        public KeyCode SeamothRollToggleKey { get; set; }
+        public KeyCode ScubaRollToggleKey { get; set; }
+        public bool ScubaRollUnlimited { get; set; }
+
         public double SeamothRollSpeed { get; set; }
         public double ScubaRollSpeed { get; set; }
 
@@ -27,9 +30,13 @@ namespace RollControl
     {
         public KeyCode rollToPortKey = KeyCode.Z;
         public KeyCode rollToStarboardKey = KeyCode.C;
-        public KeyCode rollToggleKey = KeyCode.RightAlt;
+
+        public KeyCode seamothRollToggleKey = KeyCode.RightAlt;
+        public KeyCode scubaRollToggleKey = KeyCode.RightControl;
+        public bool scubaRollUnlimited = false;
+
         public double seamothRollSpeed = 0.3F;
-        public double scubaRollSpeed = 0.6F;
+        public double scubaRollSpeed = 0.45F;
 
         private string ConfigPath => Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "config.json");
 
@@ -43,6 +50,8 @@ namespace RollControl
         {
             KeybindChanged += Options_KeybindChanged;
             SliderChanged += Options_SliderChanged;
+            ToggleChanged += Options_ToggleChanged;
+
         }
 
         private void Options_KeybindChanged(object sender, KeybindChangedEventArgs e)
@@ -55,8 +64,11 @@ namespace RollControl
                 case "roll_to_starboard":
                     rollToStarboardKey = e.Key;
                     break;
-                case "roll_toggle":
-                    rollToggleKey = e.Key;
+                case "seamoth_roll_toggle":
+                    seamothRollToggleKey = e.Key;
+                    break;
+                case "scuba_roll_toggle":
+                    scubaRollToggleKey = e.Key;
                     break;
             }
             UpdateJSON();
@@ -70,6 +82,16 @@ namespace RollControl
                     break;
                 case "scuba_roll_speed":
                     scubaRollSpeed = e.Value;
+                    break;
+            }
+            UpdateJSON();
+        }
+        private void Options_ToggleChanged(object sender, ToggleChangedEventArgs e)
+        {
+            switch (e.Id)
+            {
+                case "scuba_roll_unlimited":
+                    scubaRollUnlimited = e.Value;
                     break;
             }
             UpdateJSON();
@@ -93,11 +115,12 @@ namespace RollControl
             {
                 RollPortKey = rollToPortKey,
                 RollStarboardKey = rollToStarboardKey,
-                RollToggleKey = rollToggleKey,
+                SeamothRollToggleKey = seamothRollToggleKey,
+                ScubaRollToggleKey = scubaRollToggleKey,
+                ScubaRollUnlimited = scubaRollUnlimited,
                 SeamothRollSpeed = Math.Truncate(seamothRollSpeed * 1000d) / 1000d,
                 ScubaRollSpeed = Math.Truncate(scubaRollSpeed * 1000d) / 1000d
             };
-
 
             var stringBuilder = new StringBuilder();
             var jsonWriter = new JsonWriter(stringBuilder)
@@ -122,11 +145,13 @@ namespace RollControl
 
                     rollToPortKey = data.ContainsKey("RollPortKey") ? options.RollPortKey : rollToPortKey;
                     rollToStarboardKey = data.ContainsKey("RollStarboardKey") ? options.RollStarboardKey : rollToStarboardKey;
-                    rollToggleKey = data.ContainsKey("RollToggleKey") ? options.RollToggleKey : rollToggleKey;
+                    seamothRollToggleKey = data.ContainsKey("SeamothRollToggleKey") ? options.SeamothRollToggleKey : seamothRollToggleKey;
+                    scubaRollToggleKey = data.ContainsKey("ScubaRollToggleKey") ? options.ScubaRollToggleKey : scubaRollToggleKey;
+                   
+                    scubaRollUnlimited = data.ContainsKey("ScubaRollUnlimited") ? options.ScubaRollUnlimited : scubaRollUnlimited;
 
                     seamothRollSpeed = data.ContainsKey("SeamothRollSpeed") ? options.SeamothRollSpeed : seamothRollSpeed;
                     scubaRollSpeed   = data.ContainsKey("ScubaRollSpeed")   ? options.ScubaRollSpeed   : scubaRollSpeed;
-
                     seamothRollSpeed = Math.Truncate(seamothRollSpeed * 1000d) / 1000d;
                     scubaRollSpeed   = Math.Truncate(scubaRollSpeed   * 1000d) / 1000d;
 
@@ -151,11 +176,13 @@ namespace RollControl
         {
             AddKeybindOption("roll_to_port", "Roll-to-Port Key", GameInput.GetPrimaryDevice(), rollToPortKey);
             AddKeybindOption("roll_to_starboard", "Roll-to-Starboard Key", GameInput.GetPrimaryDevice(), rollToStarboardKey);
-            AddKeybindOption("roll_toggle", "Roll-Toggle Key", GameInput.GetPrimaryDevice(), rollToggleKey);
-            AddSliderOption("seamoth_roll_speed", "Seamoth Roll Speed", 0F, 1F, (float)seamothRollSpeed);
-            AddSliderOption("scuba_roll_speed", "Scuba Roll Speed", 0F, 1F, (float)scubaRollSpeed);
+            AddKeybindOption("seamoth_roll_toggle", "Seamoth Roll-Toggle Key", GameInput.GetPrimaryDevice(), seamothRollToggleKey);
+            AddKeybindOption("scuba_roll_toggle",   "Scuba Roll-Toggle Key",   GameInput.GetPrimaryDevice(), scubaRollToggleKey);
 
+            AddToggleOption("scuba_roll_unlimited", "Scuba Roll Unlimited", scubaRollUnlimited);
+
+            AddSliderOption("seamoth_roll_speed", "Seamoth Roll Speed", 0F, 1F, (float)seamothRollSpeed);
+            AddSliderOption("scuba_roll_speed",   "Scuba Roll Speed",   0F, 1F, (float)scubaRollSpeed);
         }
     }
-
 }
