@@ -37,6 +37,10 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>D:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>D:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
     <Reference Include="LitJson">
       <HintPath>D:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\LitJson.dll</HintPath>
     </Reference>
@@ -67,6 +71,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class1.cs" />
+    <Compile Include="Class2.cs" />
+    <Compile Include="PlayerCollisionPatcher.cs" />
+    <Compile Include="PlayerAwakePatcher.cs" />
+    <Compile Include="PlayerFixedPatcher.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="PlayerPatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

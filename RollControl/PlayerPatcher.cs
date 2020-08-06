@@ -10,6 +10,7 @@ using SMLHelper.V2.Options;
 using SMLHelper.V2.Handlers;
 using LitJson;
 using System.Runtime.CompilerServices;
+using System.Collections;
 
 namespace RollControl
 {
@@ -19,7 +20,7 @@ namespace RollControl
     public class RollControlPatcher
     {
         public static bool isSeamothRollOn = false;
-        public static bool isScubaRollOn   = false;
+        public static bool isScubaRollOn = false;
 
         public static void Patch()
         {
@@ -29,28 +30,26 @@ namespace RollControl
         }
 
         public static Options Options = new Options();
+        public static RollManager myRollMan = new RollManager();
+
+
         public static void Initialise()
         {
             OptionsPanelHandler.RegisterModOptions(Options);
-        }
-
-        [HarmonyPrefix]
-        public static bool Prefix(Player __instance)
-        {
-            return true;
         }
 
         [HarmonyPostfix]
         public static void Postfix(Player __instance)
         {
             // grab current roll toggle-setting
-            if(Input.GetKeyDown(Options.seamothRollToggleKey))
+            if (Input.GetKeyDown(Options.seamothRollToggleKey))
             {
                 isSeamothRollOn = !isSeamothRollOn;
             }
             if (Input.GetKeyDown(Options.scubaRollToggleKey))
             {
                 isScubaRollOn = !isScubaRollOn;
+                PlayerAwakePatcher.myRollMan.isRollToggled = !PlayerAwakePatcher.myRollMan.isRollToggled;
             }
 
             if (__instance.inSeamoth)
@@ -58,7 +57,7 @@ namespace RollControl
                 SeamothRoll(__instance, isSeamothRollOn);
                 return;
             }
-            else if (__instance.motorMode == Player.MotorMode.Dive )
+            else if (__instance.motorMode == Player.MotorMode.Dive)
             {
                 ScubaRoll(__instance, isScubaRollOn);
                 return;
@@ -89,6 +88,15 @@ namespace RollControl
             }
         }
 
+
+        public static bool isSlowingDownCW = false;
+        public static bool isSlowingDownCCW = false;
+        public static bool isSpeedingUpCW = false;
+        public static bool isSpeedingUpCCW = false;
+
+        public static float slowFuel = 0;
+        public static float accelFuel = 0;
+
         public static void ScubaRoll(Player myPlayer, bool roll)
         {
             //get active player motor
@@ -96,9 +104,10 @@ namespace RollControl
 
             if (roll)
             {
-                myPlayer.forceCinematicMode = true;
+                
+                //myPlayer.forceCinematicMode = true;
                 thisMotor.rb.freezeRotation = false;
-                if(Options.scubaRollUnlimited)
+                if (Options.scubaRollUnlimited)
                 {
                     MainCameraControl.main.minimumY = -10000f;
                     MainCameraControl.main.maximumY = 10000f;
@@ -108,6 +117,7 @@ namespace RollControl
                     MainCameraControl.main.minimumY = -80f;
                     MainCameraControl.main.maximumY = 80f;
                 }
+                
                 // this is the same angular drag as the Seamoth's
                 myPlayer.rigidBody.angularDrag = 4;
             }
@@ -129,17 +139,33 @@ namespace RollControl
             }
 
             // add roll handlers
-            if (Input.GetKey(Options.rollToPortKey))
+            bool portUp = Input.GetKeyUp(Options.rollToPortKey);
+            bool portHeld = Input.GetKey(Options.rollToPortKey);
+            bool portDown = Input.GetKeyDown(Options.rollToPortKey);
+
+            bool starUp = Input.GetKeyUp(Options.rollToStarboardKey);
+            bool starHeld = Input.GetKey(Options.rollToStarboardKey);
+            bool starDown = Input.GetKeyDown(Options.rollToStarboardKey);
+
+            if (portDown || portHeld)
             {
-                myPlayer.rigidBody.AddTorque(Camera.main.transform.forward * (float)Options.scubaRollSpeed, ForceMode.VelocityChange);
+                Debug.Log("Rolling");
+                PlayerAwakePatcher.myRollMan.startScubaRoll(true);
             }
-            else if (Input.GetKey(Options.rollToStarboardKey))
+            else if (starDown || starHeld)
             {
-                myPlayer.rigidBody.AddTorque(Camera.main.transform.forward * (float)-Options.scubaRollSpeed, ForceMode.VelocityChange);
+                Debug.Log("Rolling");
+                PlayerAwakePatcher.myRollMan.startScubaRoll(false);
             }
+            else if ( (starUp && !portHeld) || (portUp && !starHeld) || (!portHeld && !starHeld) )
+            {
+                Debug.Log("Stop Rolling");
+                PlayerAwakePatcher.myRollMan.stopScubaRoll();
+            }
+
             updateRots();
 
-            if (Input.GetKey(KeyCode.Space))
+            if (GameInput.GetButtonHeld(GameInput.Button.MoveUp) || GameInput.GetButtonHeld(GameInput.Button.MoveDown) )
             {
                 // hijack the desired velocity
 
@@ -202,13 +228,22 @@ namespace RollControl
                 // Now we can make our own movement.
                 // We'll do so by constructing a new vector3
                 // and adding a force again
-               
+
                 // I think this is already normal, but playing it safe
                 Vector3 myDirection = Camera.main.transform.up.normalized;
                 float myMagnitude = origInverse.magnitude;
                 Vector3 myNewVector = myDirection * myMagnitude;
 
-                myPlayer.rigidBody.AddForce(myNewVector, ForceMode.VelocityChange);
+                // if we're in here, we're either going up or down
+                if (GameInput.GetButtonHeld(GameInput.Button.MoveUp))
+                {
+                    myPlayer.rigidBody.AddForce(myNewVector, ForceMode.VelocityChange);
+                }
+                else
+                {
+                    myPlayer.rigidBody.AddForce(-myNewVector, ForceMode.VelocityChange);
+                }
+
             }
         }
     }
