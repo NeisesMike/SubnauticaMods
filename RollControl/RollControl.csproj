@@ -71,9 +71,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
-    <Compile Include="Class2.cs" />
-    <Compile Include="PlayerCollisionPatcher.cs" />
+    <Compile Include="PlayerFixedUpdatePatcher.cs" />
     <Compile Include="PlayerAwakePatcher.cs" />
     <Compile Include="PlayerFixedPatcher.cs" />
     <Compile Include="Options.cs" />

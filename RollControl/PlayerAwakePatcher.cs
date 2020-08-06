@@ -19,7 +19,6 @@ namespace RollControl
         public bool isRollToggled;
         public bool isRollCoasting;
 
-        public bool shouldResetFuel = false;
         public bool isSlowingDown = true;
         public bool isSpeedingUpCW = false;
         public bool isSpeedingUpCCW = false;
@@ -31,8 +30,6 @@ namespace RollControl
 
         public void startScubaRoll(bool isCW)
         {
-
-            Debug.Log("Start Rolling 2");
             if (isCW)
             {
                 isSlowingDown = false;
@@ -45,13 +42,10 @@ namespace RollControl
                 isSpeedingUpCW = false;
                 isSpeedingUpCCW = true;
             }
-            //shouldResetFuel = true;
         }
 
         public void stopScubaRoll()
         {
-
-            Debug.Log("Stop Rolling 2");
             isSlowingDown = true;
             isSpeedingUpCW = false;
             isSpeedingUpCCW = false;

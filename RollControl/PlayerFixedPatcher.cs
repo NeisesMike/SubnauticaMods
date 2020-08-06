@@ -17,7 +17,7 @@ namespace RollControl
     [HarmonyPatch(typeof(Player))]
     [HarmonyPatch("UpdateRotation")]
 
-    public class RollControlPatcher2
+    public class PlayedFixedPatcher
     {
 		
 		/*
@@ -31,7 +31,7 @@ namespace RollControl
         [HarmonyPrefix]
         public static bool Prefix(Player __instance)
         {
-			if(PlayerAwakePatcher.myRollMan.isRollToggled)
+			if(PlayerAwakePatcher.myRollMan.isRollToggled && __instance.IsUnderwater())
             {
 				return false;
             }

@@ -88,15 +88,6 @@ namespace RollControl
             }
         }
 
-
-        public static bool isSlowingDownCW = false;
-        public static bool isSlowingDownCCW = false;
-        public static bool isSpeedingUpCW = false;
-        public static bool isSpeedingUpCCW = false;
-
-        public static float slowFuel = 0;
-        public static float accelFuel = 0;
-
         public static void ScubaRoll(Player myPlayer, bool roll)
         {
             //get active player motor
@@ -104,9 +95,6 @@ namespace RollControl
 
             if (roll)
             {
-                
-                //myPlayer.forceCinematicMode = true;
-                thisMotor.rb.freezeRotation = false;
                 if (Options.scubaRollUnlimited)
                 {
                     MainCameraControl.main.minimumY = -10000f;
@@ -118,13 +106,11 @@ namespace RollControl
                     MainCameraControl.main.maximumY = 80f;
                 }
                 
-                // this is the same angular drag as the Seamoth's
+                // this is the same angular drag as the Seamoth's: 4
                 myPlayer.rigidBody.angularDrag = 4;
             }
             else
             {
-                myPlayer.forceCinematicMode = false;
-                thisMotor.rb.freezeRotation = true;
                 MainCameraControl.main.minimumY = -80f;
                 MainCameraControl.main.maximumY = 80f;
                 myPlayer.rigidBody.angularDrag = 0;
@@ -149,17 +135,14 @@ namespace RollControl
 
             if (portDown || portHeld)
             {
-                Debug.Log("Rolling");
                 PlayerAwakePatcher.myRollMan.startScubaRoll(true);
             }
             else if (starDown || starHeld)
             {
-                Debug.Log("Rolling");
                 PlayerAwakePatcher.myRollMan.startScubaRoll(false);
             }
             else if ( (starUp && !portHeld) || (portUp && !starHeld) || (!portHeld && !starHeld) )
             {
-                Debug.Log("Stop Rolling");
                 PlayerAwakePatcher.myRollMan.stopScubaRoll();
             }
 
