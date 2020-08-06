@@ -13,7 +13,6 @@ using System.Runtime.CompilerServices;
 
 namespace RollControl
 {
-
     [HarmonyPatch(typeof(Player))]
     [HarmonyPatch("FixedUpdate")]
     class PlayerFixedUpdatePatcher
@@ -27,7 +26,6 @@ namespace RollControl
         private static float ACCEL_FUEL_STEP = 25f;
         private static float MULTIPLIER = 1f;
         private static float MAX_VECTOR = (float)RollControlPatcher.Options.scubaRollSpeed * MULTIPLIER;
-
 
         [HarmonyPrefix]
         public static bool Prefix(Player __instance)

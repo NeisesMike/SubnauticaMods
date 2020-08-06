@@ -11,7 +11,6 @@ using SMLHelper.V2.Handlers;
 using LitJson;
 using System.Runtime.CompilerServices;
 
-
 namespace RollControl
 {
     [HarmonyPatch(typeof(Player))]

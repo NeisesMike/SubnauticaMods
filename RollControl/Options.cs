@@ -25,7 +25,6 @@ namespace RollControl
 
     }
 
-
     public class Options : ModOptions
     {
         public KeyCode rollToPortKey = KeyCode.Z;

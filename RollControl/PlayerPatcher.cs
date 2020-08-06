@@ -226,7 +226,6 @@ namespace RollControl
                 {
                     myPlayer.rigidBody.AddForce(-myNewVector, ForceMode.VelocityChange);
                 }
-
             }
         }
     }
