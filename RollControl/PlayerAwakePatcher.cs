@@ -17,8 +17,6 @@ namespace RollControl
     public class RollManager
     {
         public bool isRollToggled;
-        public bool isRollCoasting;
-
         public bool isSlowingDown = true;
         public bool isSpeedingUpCW = false;
         public bool isSpeedingUpCCW = false;

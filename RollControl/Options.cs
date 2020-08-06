@@ -51,7 +51,6 @@ namespace RollControl
             KeybindChanged += Options_KeybindChanged;
             SliderChanged += Options_SliderChanged;
             ToggleChanged += Options_ToggleChanged;
-
         }
 
         private void Options_KeybindChanged(object sender, KeybindChangedEventArgs e)
