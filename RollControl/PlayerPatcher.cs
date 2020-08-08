@@ -57,7 +57,7 @@ namespace RollControl
                 SeamothRoll(__instance, isSeamothRollOn);
                 return;
             }
-            else if (__instance.motorMode == Player.MotorMode.Dive)
+            else if (__instance.motorMode == Player.MotorMode.Dive || __instance.motorMode == Player.MotorMode.Seaglide)
             {
                 ScubaRoll(__instance, isScubaRollOn);
                 return;
@@ -190,6 +190,10 @@ namespace RollControl
                 if (Player.main.GetBiomeString() == "wreck")
                 {
                     num4 *= 0.5f;
+                }
+                else if (Player.main.motorMode == Player.MotorMode.Seaglide)
+                {
+                    num4 *= 1.45f;
                 }
                 float num5 = num * num4 * Time.deltaTime;
                 if (num5 > 0f)
