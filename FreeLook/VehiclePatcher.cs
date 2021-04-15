@@ -65,7 +65,7 @@ namespace FreeLook
             {
                 if(releaseFlag)
                 {
-                    mainCam.ResetCamera();
+                    cameraRelinquish();
                     releaseFlag = false;
                 }
 
