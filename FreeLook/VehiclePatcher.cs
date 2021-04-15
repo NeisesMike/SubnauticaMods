@@ -33,7 +33,6 @@ namespace FreeLook
 
         public static void moveCamera(Vehicle mySeamoth)
         {
-            Debug.Log("FreeLook: moving camera.");
             Vector2 vector = GameInput.GetLookDelta();
             MainCameraControl mainCam = MainCameraControl.main;
             mainCam.rotationX += vector.x;
@@ -54,15 +53,25 @@ namespace FreeLook
         // this is how long it takes the cursor to snap back to center
         static float smoothTime     = 0.25f;
 
+        static bool releaseFlag = false;
+
         [HarmonyPrefix]
         public static bool Prefix(Vehicle __instance)
         {
             var mainCam = MainCameraControl.main;
+            var cameraToPlayerMan = CameraToPlayerManager.main;
 
             if ( !(Player.main.inSeamoth || Player.main.inExosuit ) ) //|| Player.main.motorMode==Player.MotorMode.Seaglide) )
             {
+                if(releaseFlag)
+                {
+                    mainCam.ResetCamera();
+                    releaseFlag = false;
+                }
+
                 return true;
             }
+            releaseFlag = true;
 
             if(Player.main.motorMode == Player.MotorMode.Seaglide)
             {
@@ -75,11 +84,13 @@ namespace FreeLook
                 mainCam.ResetCamera();
                 mainCam.cinematicMode = false;
                 mainCam.lookAroundMode = true;
+
             }
 
             if (Input.GetKeyDown(Options.freeLookKey))
             {
                 Debug.Log("FreeLook: button pressed. Taking control of the camera.");
+
                 resetCameraFlag = false;
                 // invoke a camera vulnerability
                 mainCam.cinematicMode = true;
