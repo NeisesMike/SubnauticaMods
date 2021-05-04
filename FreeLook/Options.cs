@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
-using Harmony;
+using HarmonyLib;
 using SMLHelper.V2.Options;
 using SMLHelper.V2.Handlers;
 using LitJson;
@@ -22,7 +22,7 @@ namespace FreeLook
 
     public class Options : ModOptions
     {
-        public KeyCode freeLookKey = KeyCode.PageUp;
+        public static KeyCode freeLookKey = KeyCode.PageUp;
         private string ConfigPath => Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "config.json");
 
         public Options() : base("Free Look")

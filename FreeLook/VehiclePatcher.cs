@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
-using Harmony;
+using HarmonyLib;
 using SMLHelper.V2.Options;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
@@ -24,17 +24,28 @@ namespace FreeLook
         }
     }
 
+    class FreeLookPatcher
+    {
+        public static void Patch()
+        {
+            var harmony = new Harmony("com.garyburke.subnautica.freelook.mod");
+            harmony.PatchAll();
+        }
+    }
+
     [HarmonyPatch(typeof(Vehicle))]
     [HarmonyPatch("Awake")]
-    public class VehicleAwakePatcher
+    public class VehicleAwakePatch
     {
         public static FreeLookManager myFreeMan;
+        public static Options Options = new Options();
 
         [HarmonyPrefix]
         public static bool Prefix(Vehicle __instance)
         {
             // initialize the roll manager
             myFreeMan = new FreeLookManager();
+            OptionsPanelHandler.RegisterModOptions(Options);
             return true;
         }
     }
@@ -42,22 +53,8 @@ namespace FreeLook
 
     [HarmonyPatch(typeof(Vehicle))]
     [HarmonyPatch("Update")]
-
-    public class FreeLookPatcher
-    {
-        public static void Patch()
-        {
-            var harmony = HarmonyInstance.Create("com.garyburke.subnautica.freelook.mod");
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
-            Initialise();
-        }
-
-        public static Options Options = new Options();
-        public static void Initialise()
-        {
-            OptionsPanelHandler.RegisterModOptions(Options);
-        }
-
+    public class VehicleUpdatePatch
+    { 
         public static void moveCamera(Vehicle mySeamoth)
         {
             Vector2 myLookDelta = GameInput.GetLookDelta();
@@ -81,10 +78,10 @@ namespace FreeLook
         // this controls whether update will be used to "snap back" the cursor to center
         static bool resetCameraFlag = false;
         // these are used as ref parameters in a sigmoidal lerp called smooth-damp-angle
-        static float xVelocity      = 0.0f;
-        static float yVelocity      = 0.0f;
+        static float xVelocity = 0.0f;
+        static float yVelocity = 0.0f;
         // this is how long it takes the cursor to snap back to center
-        static float smoothTime     = 0.25f;
+        static float smoothTime = 0.25f;
 
         static bool releaseFlag = false;
         static Vector3 cameraOffsetTransformPosition = new Vector3(0, 0, 0);
@@ -104,7 +101,7 @@ namespace FreeLook
 
             bool inVehicleNow = (Player.main.inSeamoth || Player.main.inExosuit);
 
-            if(isInVehicle)
+            if (isInVehicle)
             {
                 if (inVehicleNow)
                 {
@@ -128,7 +125,7 @@ namespace FreeLook
                 }
             }
 
-            if(!inVehicleNow)
+            if (!inVehicleNow)
             {
                 if (releaseFlag)
                 {
@@ -139,7 +136,7 @@ namespace FreeLook
             }
             releaseFlag = true;
 
-            if(isNewlyInVehicle)
+            if (isNewlyInVehicle)
             {
                 isNewlyInVehicle = false;
                 //BasicText message = new BasicText();
@@ -154,9 +151,9 @@ namespace FreeLook
             }
 
             bool triggerState = (Input.GetAxisRaw("ControllerAxis3") > 0) || (Input.GetAxisRaw("ControllerAxis3") < 0);
-            if(isTriggerDown)
+            if (isTriggerDown)
             {
-                if(triggerState)
+                if (triggerState)
                 {
                     //do nothing
                 }
@@ -191,8 +188,8 @@ namespace FreeLook
                     (GameInput.GetButtonHeld(GameInput.Button.MoveDown) ? -1 : 0);
 
                 Vector3 myModDir = __instance.transform.forward * myDirection.x +
-                                   __instance.transform.right   * myDirection.z +
-                                   __instance.transform.up      * myDirection.y;
+                                    __instance.transform.right * myDirection.z +
+                                    __instance.transform.up * myDirection.y;
 
                 myModDir = Vector3.Normalize(myModDir);
 
@@ -206,13 +203,13 @@ namespace FreeLook
                 mainCam.ResetCamera();
                 mainCam.cinematicMode = false;
                 mainCam.lookAroundMode = true;
-                VehicleAwakePatcher.myFreeMan.isFreeLooking = false;
+                VehicleAwakePatch.myFreeMan.isFreeLooking = false;
             }
 
             if (Input.GetKeyDown(Options.freeLookKey) || isTriggerNewlyDown)
             {
                 Debug.Log("FreeLook: button pressed. Taking control of the camera.");
-                VehicleAwakePatcher.myFreeMan.isFreeLooking = true;
+                VehicleAwakePatch.myFreeMan.isFreeLooking = true;
                 isTriggerNewlyDown = false;
 
                 resetCameraFlag = false;
@@ -227,7 +224,7 @@ namespace FreeLook
                 Debug.Log("FreeLook: button released. Relinquishing control of the camera.");
                 resetCameraFlag = true;
             }
-            if ( !resetCameraFlag && (Input.GetKey(Options.freeLookKey) || isTriggerDown) )
+            if (!resetCameraFlag && (Input.GetKey(Options.freeLookKey) || isTriggerDown))
             {
                 resetCameraFlag = false;
                 moveCamera(Player.main.currentMountedVehicle);
@@ -250,7 +247,7 @@ namespace FreeLook
                 mainCam.cameraOffsetTransform.localEulerAngles = new Vector3(-mainCam.camRotationY, mainCam.camRotationX, 0);
 
                 double threshold = 1;
-                if( Mathf.Abs(mainCam.camRotationX) < threshold && Mathf.Abs(mainCam.camRotationY) < threshold )
+                if (Mathf.Abs(mainCam.camRotationX) < threshold && Mathf.Abs(mainCam.camRotationY) < threshold)
                 {
                     cameraRelinquish();
                     resetCameraFlag = false;
@@ -261,11 +258,6 @@ namespace FreeLook
             // nothing from the key and the camera has been reset, so we don't need control
             //cameraRelinquish();
             return true;
-        }
-
-        [HarmonyPostfix]
-        public static void Postfix(Player __instance)
-        {
         }
     }
 }
