@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassiveGhostLeviathans", "PassiveGhostLeviathans\PassiveGhostLeviathans.csproj", "{DC4EC5E5-3C7A-41BA-B5DA-2C8A18066927}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DC4EC5E5-3C7A-41BA-B5DA-2C8A18066927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC4EC5E5-3C7A-41BA-B5DA-2C8A18066927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC4EC5E5-3C7A-41BA-B5DA-2C8A18066927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC4EC5E5-3C7A-41BA-B5DA-2C8A18066927}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BB78E189-9B0C-496E-9ACC-AE82F46AB980}
+	EndGlobalSection
+EndGlobal
