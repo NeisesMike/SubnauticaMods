@@ -68,15 +68,20 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine_publicized">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\publicized_assemblies\UnityEngine_publicized.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AggressiveToPilotingVehiclePatcher.cs" />
-    <Compile Include="AggressiveWhenSeeTargetPatcher.cs" />
-    <Compile Include="MoveTowardsTargetPatcher.cs" />
-    <Compile Include="StealthManager.cs" />
+    <Compile Include="Modules\SeamothStealthModule1.cs" />
+    <Compile Include="Modules\SeamothStealthModule2.cs" />
+    <Compile Include="Modules\SeamothStealthModule3.cs" />
+    <Compile Include="SeamothPatcher.cs" />
+    <Compile Include="CreaturePatcher.cs" />
     <Compile Include="StealthModulePatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

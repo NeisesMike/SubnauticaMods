@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using HarmonyLib;
 
 namespace StealthModule
@@ -11,35 +8,49 @@ namespace StealthModule
     [HarmonyPatch("ChooseBestAction")]
     class CreaturePatcher
     {
-		[HarmonyPrefix]
-		public static bool Prefix(Creature __instance)
-		{
-			return false;
-		}
-
 		[HarmonyPostfix]
-		public static void Postfix(Creature __instance, ref CreatureAction __result)
+		public static void Postfix(Creature __instance, ref CreatureAction __result, List<CreatureAction> ___actions, CreatureAction ___prevBestAction,
+			int ___indexLastActionChecked)
 		{
+			float distToPlayer = Vector3.Distance(Player.main.transform.position, __instance.transform.position);
+			
+			/*
+			if (__instance.name.Contains("GhostLeviathan"))
+            {
+				Logger.Output("Dist: " + distToPlayer);
+			}
+			*/
+
+			// Determine the effectiveness of our module
 			float myMaxRange;
-			switch (StealthModulePatcher.Config.stealthQuality)
+			switch (StealthModulePatcher.stealthQuality)
 			{
+				case (StealthQuality.None):
+					myMaxRange = float.MaxValue;
+					break;
 				case (StealthQuality.Low):
-					myMaxRange = 150f;
+					myMaxRange = 80f;
 					break;
 				case (StealthQuality.Medium):
-					myMaxRange = 100f;
+					myMaxRange = 60f;
 					break;
 				case (StealthQuality.High):
-					myMaxRange = 75f;
+					myMaxRange = 40f;
+					break;
+				case (StealthQuality.Debug):
+					myMaxRange = float.MinValue;
 					break;
 				default:
 					myMaxRange = float.MaxValue;
 					break;
 			}
 
+			if(StealthModulePatcher.stealthQuality == StealthQuality.None)
+            {
+				return;
+            }
 
-
-			if (__instance.actions.Count == 0)
+			if (___actions.Count == 0)
 			{
 				__result = null;
 				return;
@@ -56,17 +67,83 @@ namespace StealthModule
 			}
 			float num = 0f;
 			CreatureAction creatureAction = null;
-			if (__instance.prevBestAction != null)
+			if (___prevBestAction != null)
 			{
-				creatureAction = __instance.prevBestAction;
+				creatureAction = ___prevBestAction;
+
+				// check if this action is violent
+				string actionName1 = creatureAction.GetType().Name;
+				// || actionName1 == "MoveTowardsTarget" 
+				if (actionName1 == "AttackLastTarget" || actionName1 == "AttackCyclops" || actionName1 == "EMPAttack" || actionName1 == "MushroomAttack")
+				{
+					// check whether we're in range of the player
+					if(distToPlayer < myMaxRange)
+                    {
+						// continue as usual
+                    }
+					else
+					{
+						// special case for AttackLastTarget... target could be not the player
+						if (actionName1 == "AttackLastTarget")
+						{
+							if (((AttackLastTarget)creatureAction).lastTarget.target)
+							{
+								if (((AttackLastTarget)creatureAction).lastTarget.target.name == "Player")
+								{
+									Logger.Log(__instance.name + " is replacing " + creatureAction.GetType().Name + "(Player) with SwimRandom.");
+									creatureAction = new SwimRandom();
+								}
+							}
+						}
+						else
+						{
+							Logger.Log(__instance.name + " is replacing " + creatureAction.GetType().Name + " with SwimRandom.");
+							creatureAction = new SwimRandom();
+						}
+					}
+				}
+
 				num = creatureAction.Evaluate(__instance);
 			}
-			__instance.indexLastActionChecked++;
-			if (__instance.indexLastActionChecked >= __instance.actions.Count)
+			___indexLastActionChecked++;
+			if (___indexLastActionChecked >= ___actions.Count)
 			{
-				__instance.indexLastActionChecked = 0;
+				___indexLastActionChecked = 0;
 			}
-			CreatureAction creatureAction2 = __instance.actions[__instance.indexLastActionChecked];
+
+			CreatureAction creatureAction2 = ___actions[___indexLastActionChecked];
+
+			// check if this action is violent
+			string actionName2 = creatureAction2.GetType().Name;
+			if (actionName2 == "AttackLastTarget" || actionName2 == "AttackCyclops" || actionName2 == "EMPAttack" || actionName2 == "MushroomAttack")
+			{
+				// check whether we're in range of the player
+				if (distToPlayer < myMaxRange)
+				{
+					// continue as usual
+				}
+				else
+				{
+					// special case for AttackLastTarget... target could be not the player
+					if (actionName2 == "AttackLastTarget")
+					{
+						if (((AttackLastTarget)creatureAction2).lastTarget.target)
+						{
+							if (((AttackLastTarget)creatureAction2).lastTarget.target.name == "Player")
+							{
+								Logger.Log(__instance.name + " is replacing " + creatureAction2.GetType().Name + "(Player) with SwimRandom (2)");
+								creatureAction2 = new SwimRandom();
+							}
+						}
+					}
+					else
+					{
+						Logger.Log(__instance.name + " is replacing " + creatureAction2.GetType().Name + " with SwimRandom (2)");
+						creatureAction2 = new SwimRandom();
+					}
+				}
+			}
+
 			float num2 = creatureAction2.Evaluate(__instance);
 
 			if (num2 > num && !global::Utils.NearlyEqual(num2, 0f, 1E-45f))
