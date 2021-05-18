@@ -115,13 +115,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SeaTruckMotorPatcher.cs" />
-    <Compile Include="ControllerHandler.cs" />
-    <Compile Include="GameInputPatcher.cs" />
-    <Compile Include="MouseLookPatcher.cs" />
-    <Compile Include="Options.cs" />
     <Compile Include="PlayerAwakePatcher.cs" />
     <Compile Include="PlayerFixedPatcher.cs" />
-    <Compile Include="PlayerFixedUpdatePatcher.cs" />
     <Compile Include="PlayerPatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

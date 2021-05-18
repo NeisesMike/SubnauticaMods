@@ -54,6 +54,7 @@ namespace RollControlZero
         [Choice("Roll HUD Placement")]
         public TextAnchor HUDAnchor = TextAnchor.LowerRight;
 
+        /*
         [Slider("roll hud x", -1f, 1f, Step = 0.01f)]
         public float x = 0;
         [Slider("roll hud y", -1f, 1f, Step = 0.01f)]
@@ -63,6 +64,7 @@ namespace RollControlZero
 
         [Slider("roll hud scale", 0f, 10f, Step = 0.1f)]
         public float scale = 0;
+        */
     }
 
 
@@ -117,15 +119,14 @@ namespace RollControlZero
         }
         public static void updateAttitudeIndicator()
         {
-            //AttitudeIndicatorObject.transform.Find("background").transform.eulerAngles = new Vector3(0, 0, 0);
+            /*
             Transform backgroundT = AttitudeIndicatorObject.transform.Find("background").transform;
             Transform cameraT = MainCameraControl.main.transform;
-
             backgroundT.eulerAngles = new Vector3(0, 0, 0);
             backgroundT.forward = MainCameraControl.main.transform.forward;
-            //backgroundT.Rotate(backgroundT.forward, MainCameraControl.main.transform.eulerAngles.z);
             AttitudeIndicatorObject.transform.position = cameraT.position + cameraT.forward * Config.z + cameraT.right * Config.x + cameraT.up * Config.y;
             AttitudeIndicatorObject.transform.localScale = new Vector3(1, 1, 1) * Config.scale;
+            */
         }
         public static void killAttitudeIndicator()
         {
@@ -158,10 +159,11 @@ namespace RollControlZero
             }
             */
 
-            if (__instance.IsPilotingSeatruck() && RollControlPatcher.Config.isSeatruckRollOn)
+            if (__instance.IsPilotingSeatruck())
             {
                 if (RollControlPatcher.Config.isHUD)
                 {
+                    /*
                     if(RollControlPatcher.AttitudeIndicatorObject == null)
                     {
                         Logger.Log("creating ai");
@@ -169,7 +171,7 @@ namespace RollControlZero
                     }
                     Logger.Log("updating ai");
                     RollControlPatcher.updateAttitudeIndicator();
-                    /*
+                    */
                     Hint main = Hint.main;
                     if (main == null)
                     {
@@ -186,14 +188,19 @@ namespace RollControlZero
                     string myMessage = "Pitch: " + myPitch + "\nRoll: " + myRoll + "\nYaw:" + myYaw;
                     message.SetText(myMessage, TextAnchor.LowerRight);
                     message.Show(3f, 0f, 0.25f, 0.25f, null);
-                    */
                 }
                 else if (RollControlPatcher.AttitudeIndicatorObject != null)
                 {
+                    /*
                     Logger.Log("killing ai");
                     RollControlPatcher.killAttitudeIndicator();
+                    */
                 }
-                SeatruckRoll();
+
+                if (RollControlPatcher.Config.isSeatruckRollOn)
+                {
+                    SeatruckRoll();
+                }
                 return;
             }
 
