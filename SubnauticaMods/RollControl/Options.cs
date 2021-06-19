@@ -5,10 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
-using Harmony;
+using HarmonyLib;
 using SMLHelper.V2.Options;
 using SMLHelper.V2.Handlers;
-using LitJson;
 
 namespace RollControl
 {

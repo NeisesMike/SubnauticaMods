@@ -5,10 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
-using Harmony;
+using HarmonyLib;
 using SMLHelper.V2.Options;
 using SMLHelper.V2.Handlers;
-using LitJson;
 using System.Runtime.CompilerServices;
 using System.Collections;
 
@@ -17,49 +16,30 @@ namespace RollControl
     [HarmonyPatch(typeof(Player))]
     [HarmonyPatch("Update")]
 
-    public class RollControlPatcher
+    public class PlayerUpdatePatcher
     {
-        public static bool isSeamothRollOn = false;
-        public static bool isScubaRollOn = false;
-
-        public static void Patch()
-        {
-            var harmony = HarmonyInstance.Create("com.garyburke.subnautica.rollcontrol.mod");
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
-            Initialise();
-        }
-
-        public static Options Options = new Options();
-        public static RollManager myRollMan = new RollManager();
-
-
-        public static void Initialise()
-        {
-            OptionsPanelHandler.RegisterModOptions(Options);
-        }
-
         [HarmonyPostfix]
         public static void Postfix(Player __instance)
         {
             // grab current roll toggle-setting
-            if (Input.GetKeyDown(Options.seamothRollToggleKey))
+            if (Input.GetKeyDown(RollControlPatcher.Config.SeamothRollToggleKey))
             {
-                isSeamothRollOn = !isSeamothRollOn;
+                RollControlPatcher.isSeamothRollOn = !RollControlPatcher.isSeamothRollOn;
             }
-            if (Input.GetKeyDown(Options.scubaRollToggleKey))
+            if (Input.GetKeyDown(RollControlPatcher.Config.SeamothRollToggleKey))
             {
-                isScubaRollOn = !isScubaRollOn;
+                RollControlPatcher.isScubaRollOn = !RollControlPatcher.isScubaRollOn;
                 PlayerAwakePatcher.myRollMan.isRollToggled = !PlayerAwakePatcher.myRollMan.isRollToggled;
             }
 
             if (__instance.inSeamoth)
             {
-                SeamothRoll(__instance, isSeamothRollOn);
+                SeamothRoll(__instance, RollControlPatcher.isSeamothRollOn);
                 return;
             }
             else if (__instance.motorMode == Player.MotorMode.Dive || __instance.motorMode == Player.MotorMode.Seaglide)
             {
-                ScubaRoll(__instance, isScubaRollOn);
+                ScubaRoll(__instance, RollControlPatcher.isScubaRollOn);
                 return;
             }
         }
@@ -78,24 +58,24 @@ namespace RollControl
             }
 
             // add roll handlers
-            if (Input.GetKey(Options.rollToPortKey))
+            if (Input.GetKey(RollControlPatcher.Config.RollPortKey))
             {
-                mySeamoth.useRigidbody.AddTorque(mySeamoth.transform.forward * (float)Options.seamothRollSpeed, ForceMode.VelocityChange);
+                mySeamoth.useRigidbody.AddTorque(mySeamoth.transform.forward * (float)RollControlPatcher.Config.SeamothRollSpeed, ForceMode.VelocityChange);
             }
-            if (Input.GetKey(Options.rollToStarboardKey))
+            if (Input.GetKey(RollControlPatcher.Config.RollStarboardKey))
             {
-                mySeamoth.useRigidbody.AddTorque(mySeamoth.transform.forward * (float)-Options.seamothRollSpeed, ForceMode.VelocityChange);
+                mySeamoth.useRigidbody.AddTorque(mySeamoth.transform.forward * (float)-RollControlPatcher.Config.SeamothRollSpeed, ForceMode.VelocityChange);
             }
         }
 
         public static void ScubaRoll(Player myPlayer, bool roll)
         {
             //get active player motor
-            UnderwaterMotor thisMotor = (UnderwaterMotor)myPlayer.playerController.activeController;
+            PlayerMotor thisMotor = myPlayer.playerController.activeController;
 
             if (roll)
             {
-                if (Options.scubaRollUnlimited)
+                if (RollControlPatcher.Config.ScubaRollUnlimited)
                 {
                     MainCameraControl.main.minimumY = -10000f;
                     MainCameraControl.main.maximumY = 10000f;
@@ -125,13 +105,13 @@ namespace RollControl
             }
 
             // add roll handlers
-            bool portUp = Input.GetKeyUp(Options.rollToPortKey);
-            bool portHeld = Input.GetKey(Options.rollToPortKey);
-            bool portDown = Input.GetKeyDown(Options.rollToPortKey);
+            bool portUp = Input.GetKeyUp(RollControlPatcher.Config.RollPortKey);
+            bool portHeld = Input.GetKey(RollControlPatcher.Config.RollPortKey);
+            bool portDown = Input.GetKeyDown(RollControlPatcher.Config.RollPortKey);
 
-            bool starUp = Input.GetKeyUp(Options.rollToStarboardKey);
-            bool starHeld = Input.GetKey(Options.rollToStarboardKey);
-            bool starDown = Input.GetKeyDown(Options.rollToStarboardKey);
+            bool starUp = Input.GetKeyUp(RollControlPatcher.Config.RollStarboardKey);
+            bool starHeld = Input.GetKey(RollControlPatcher.Config.RollStarboardKey);
+            bool starDown = Input.GetKeyDown(RollControlPatcher.Config.RollStarboardKey);
 
             if (portDown || portHeld)
             {

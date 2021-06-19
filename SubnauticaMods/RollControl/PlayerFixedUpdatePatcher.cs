@@ -5,10 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
-using Harmony;
+using HarmonyLib;
 using SMLHelper.V2.Options;
 using SMLHelper.V2.Handlers;
-using LitJson;
 using System.Runtime.CompilerServices;
 
 namespace RollControl
@@ -25,7 +24,7 @@ namespace RollControl
         private static float SLOW_FUEL_STEP = 25f;
         private static float ACCEL_FUEL_STEP = 25f;
         private static float MULTIPLIER = 1f;
-        private static float MAX_VECTOR = (float)RollControlPatcher.Options.scubaRollSpeed * MULTIPLIER;
+        private static float MAX_VECTOR = (float)RollControlPatcher.Config.ScubaRollSpeed * MULTIPLIER;
 
         [HarmonyPrefix]
         public static bool Prefix(Player __instance)
@@ -41,13 +40,13 @@ namespace RollControl
             }
             if (PlayerAwakePatcher.myRollMan.isSpeedingUpCW)
             {
-                currentVector = (float)RollControlPatcher.Options.scubaRollSpeed * MULTIPLIER * (fuel / MAX_FUEL);
+                currentVector = (float)RollControlPatcher.Config.ScubaRollSpeed * MULTIPLIER * (fuel / MAX_FUEL);
                 __instance.rigidBody.AddTorque(Camera.main.transform.forward * currentVector, ForceMode.VelocityChange);
                 fuel += ACCEL_FUEL_STEP;
             }
             if (PlayerAwakePatcher.myRollMan.isSpeedingUpCCW)
             {
-                currentVector = (float)-RollControlPatcher.Options.scubaRollSpeed * MULTIPLIER * (fuel / MAX_FUEL);
+                currentVector = (float)-RollControlPatcher.Config.ScubaRollSpeed * MULTIPLIER * (fuel / MAX_FUEL);
                 __instance.rigidBody.AddTorque(Camera.main.transform.forward * currentVector, ForceMode.VelocityChange);
                 fuel += ACCEL_FUEL_STEP;
             }

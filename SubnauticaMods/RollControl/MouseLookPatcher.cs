@@ -5,10 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
-using Harmony;
+using HarmonyLib;
 using SMLHelper.V2.Options;
 using SMLHelper.V2.Handlers;
-using LitJson;
 using System.Runtime.CompilerServices;
 
 namespace RollControl
@@ -21,8 +20,6 @@ namespace RollControl
         [HarmonyPrefix]
         public static bool Prefix(MouseLook __instance, ref float ___rotationY)
 		{
-			Debug.Log("bing");
-			// stop here please
 			bool flag = __instance.mouseLookEnabled && AvatarInputHandler.main.IsEnabled();
 			float num = flag ? Input.GetAxisRaw("Mouse X") : 0f;
 			float num2 = flag ? Input.GetAxisRaw("Mouse Y") : 0f;
