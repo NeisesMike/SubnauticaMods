@@ -13,13 +13,6 @@ namespace StealthModule
 			int ___indexLastActionChecked)
 		{
 			float distToPlayer = Vector3.Distance(Player.main.transform.position, __instance.transform.position);
-			
-			/*
-			if (__instance.name.Contains("GhostLeviathan"))
-            {
-				Logger.Output("Dist: " + distToPlayer);
-			}
-			*/
 
 			// Determine the effectiveness of our module
 			float myMaxRange;
@@ -49,6 +42,23 @@ namespace StealthModule
             {
 				return;
             }
+
+			// report on nearby dangerous leviathans
+			if (distToPlayer < 150)
+			{
+				if (__instance.name.Contains("GhostLeviathan"))
+				{
+					Logger.Output("Ghost Leviathan Distance: " + distToPlayer);
+				}
+				else if (__instance.name.Contains("ReaperLeviathan"))
+				{
+					Logger.Output("Reaper Leviathan Distance: " + distToPlayer);
+				}
+				else if (__instance.name.Contains("SeaDragon"))
+				{
+					Logger.Output("Sea Dragon Leviathan Distance: " + distToPlayer);
+				}
+			}
 
 			if (___actions.Count == 0)
 			{

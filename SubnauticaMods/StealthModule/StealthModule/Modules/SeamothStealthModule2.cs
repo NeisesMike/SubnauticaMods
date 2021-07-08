@@ -63,7 +63,7 @@ namespace StealthModule
 
         protected override Atlas.Sprite GetItemSprite()
         {
-            return SpriteManager.Get(TechType.VehicleHullModule3);
+            return StealthModulePatcher.stealthSpriteAtlas;
         }
     }
 }

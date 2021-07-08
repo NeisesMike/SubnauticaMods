@@ -14,171 +14,167 @@ using System.Net.NetworkInformation;
 
 namespace FreeLook
 {
-    public class FreeLookManager
-    {
-        public bool isFreeLooking = false;
-
-        public FreeLookManager()
-        {
-            isFreeLooking = false;
-        }
-    }
-
-    class FreeLookPatcher
-    {
-        public static void Patch()
-        {
-            var harmony = new Harmony("com.garyburke.subnautica.freelook.mod");
-            harmony.PatchAll();
-        }
-    }
-
+    /*
     [HarmonyPatch(typeof(Vehicle))]
     [HarmonyPatch("Awake")]
     public class VehicleAwakePatch
     {
-        public static FreeLookManager myFreeMan;
-        public static Options Options = new Options();
-
         [HarmonyPrefix]
         public static bool Prefix(Vehicle __instance)
         {
-            // initialize the roll manager
-            myFreeMan = new FreeLookManager();
-            OptionsPanelHandler.RegisterModOptions(Options);
+            FreeLookManager.reset();
             return true;
         }
     }
-
+    */
 
     [HarmonyPatch(typeof(Vehicle))]
     [HarmonyPatch("Update")]
     public class VehicleUpdatePatch
-    { 
-        public static void moveCamera(Vehicle mySeamoth)
+    {
+        public static void setInVehicleVars(bool inVehicleThisFrame)
         {
-            Vector2 myLookDelta = GameInput.GetLookDelta();
-            if (myLookDelta == Vector2.zero)
+            if (FreeLookManager.wasInVehicleLastFrame)
             {
-                myLookDelta.x = Input.GetAxis("ControllerAxis4");
-                myLookDelta.y = -Input.GetAxis("ControllerAxis5");
+                if (inVehicleThisFrame)
+                {
+                    // do nothing
+                }
+                else
+                {
+                    FreeLookManager.wasInVehicleLastFrame = false;
+                }
             }
-
-            MainCameraControl mainCam = MainCameraControl.main;
-            mainCam.rotationX += myLookDelta.x;
-            mainCam.rotationY += myLookDelta.y;
-            mainCam.rotationX = Mathf.Clamp(mainCam.rotationX, -100, 100);
-            mainCam.rotationY = Mathf.Clamp(mainCam.rotationY, mainCam.minimumY, mainCam.maximumY);
-
-            //mainCam.cameraUPTransform.localEulerAngles = new Vector3(Mathf.Min(0f, -mainCam.rotationY), 0f, 0f);
-
-            mainCam.transform.localEulerAngles = new Vector3(-mainCam.rotationY, mainCam.rotationX, 0f);
+            else
+            {
+                if (inVehicleThisFrame)
+                {
+                    FreeLookManager.wasInVehicleLastFrame = true;
+                    FreeLookManager.isNewlyInVehicle = true;
+                }
+                else
+                {
+                    // do nothing
+                }
+            }
         }
+        public static void setTriggerStates(bool triggerState)
+        {
 
-        // this controls whether update will be used to "snap back" the cursor to center
-        static bool resetCameraFlag = false;
-        // these are used as ref parameters in a sigmoidal lerp called smooth-damp-angle
-        static float xVelocity = 0.0f;
-        static float yVelocity = 0.0f;
-        // this is how long it takes the cursor to snap back to center
-        static float smoothTime = 0.25f;
-
-        static bool releaseFlag = false;
-        static Vector3 cameraOffsetTransformPosition = new Vector3(0, 0, 0);
-
-        static bool isTriggerDown = false;
-        static bool isTriggerNewlyDown = false;
-        static bool isTriggerNewlyUp = false;
-
-        static bool isInVehicle = false;
-        static bool isNewlyInVehicle = false;
+            if (FreeLookManager.wasTriggerDownLastFrame)
+            {
+                if (triggerState)
+                {
+                    //do nothing
+                }
+                else
+                {
+                    FreeLookManager.isTriggerNewlyUp = true;
+                    FreeLookManager.wasTriggerDownLastFrame = false;
+                }
+            }
+            else
+            {
+                if (triggerState)
+                {
+                    FreeLookManager.wasTriggerDownLastFrame = true;
+                    FreeLookManager.isTriggerNewlyDown = true;
+                }
+                else
+                {
+                    //do nothing
+                }
+            }
+        }
 
         [HarmonyPrefix]
         public static bool Prefix(Vehicle __instance)
         {
-            var mainCam = MainCameraControl.main;
-            //var cameraToPlayerMan = CameraToPlayerManager.main;
-
-            bool inVehicleNow = (Player.main.inSeamoth || Player.main.inExosuit);
-
-            if (isInVehicle)
+            if (Player.main.currentMountedVehicle == null || __instance.docked)
             {
-                if (inVehicleNow)
-                {
-                    // do nothing
-                }
-                else
-                {
-                    isInVehicle = false;
-                }
-            }
-            else
-            {
-                if (inVehicleNow)
-                {
-                    isInVehicle = true;
-                    isNewlyInVehicle = true;
-                }
-                else
-                {
-                    // do nothing
-                }
-            }
-
-            if (!inVehicleNow)
-            {
-                if (releaseFlag)
-                {
-                    cameraRelinquish();
-                    releaseFlag = false;
-                }
                 return true;
             }
-            releaseFlag = true;
 
-            if (isNewlyInVehicle)
+            bool inVehicleThisFrame = Player.main.inSeamoth || Player.main.inExosuit;
+            setInVehicleVars(inVehicleThisFrame);
+
+            // if we just got out, give up the camera right away
+            if (!inVehicleThisFrame && FreeLookManager.wasInVehicleLastFrame)
             {
-                isNewlyInVehicle = false;
-                //BasicText message = new BasicText();
-                //message.ShowMessage("This Message Will Fade In 10 Seconds", 10);
+                FreeLookManager.cameraRelinquish();
+                return true;
+            }
+            
+            // if we're not in a vehicle, and we weren't last frame either, return
+            if(!inVehicleThisFrame)
+            {
+                return true;
             }
 
-
-
-            if (Player.main.motorMode == Player.MotorMode.Seaglide)
+            // if we're resetting the camera rotation, do it right away and then return
+            if (FreeLookManager.resetCameraFlag)
             {
-                // hack the controls
+                FreeLookManager.resetCameraRotation();
+                // need to retain control in order to finish snapping back to center
+                return false;
             }
+
 
             bool triggerState = (Input.GetAxisRaw("ControllerAxis3") > 0) || (Input.GetAxisRaw("ControllerAxis3") < 0);
-            if (isTriggerDown)
+            setTriggerStates(triggerState);
+
+            // For Mimes, print out a hint
+            if (FreeLookManager.isNewlyInVehicle && FreeLookPatcher.Config.isHintingEnabled)
             {
-                if (triggerState)
-                {
-                    //do nothing
-                }
-                else
-                {
-                    isTriggerDown = false;
-                    isTriggerNewlyUp = true;
-                }
-            }
-            else
-            {
-                if (triggerState)
-                {
-                    isTriggerDown = true;
-                    isTriggerNewlyDown = true;
-                }
-                else
-                {
-                    //do nothing
-                }
+                FreeLookManager.isNewlyInVehicle = false;
+                BasicText message = new BasicText(500,0);
+                message.ShowMessage("Hold " + FreeLookPatcher.Config.FreeLookKey.ToString() + " to Free Look.", 5);
             }
 
-            // add locomotion back in
-            if ((Input.GetKey(Options.freeLookKey) || isTriggerDown) && __instance == Player.main.currentMountedVehicle)// and we're using controller)
+
+
+            //=====================
+            // begin control flow
+            //=====================
+
+
+            // If we just pressed the FreeLook button, take control of the camera.
+            if (Input.GetKeyDown(FreeLookPatcher.Config.FreeLookKey) || FreeLookManager.isTriggerNewlyDown)
             {
+                //Debug.Log("FreeLook: button pressed. Taking control of the camera.");
+
+                FreeLookManager.isFreeLooking = true;
+                FreeLookManager.isTriggerNewlyDown = false;
+                FreeLookManager.resetCameraFlag = false;
+
+                // invoke a camera vulnerability
+                MainCameraControl mainCam = MainCameraControl.main;
+                mainCam.cinematicMode = true;
+                //mainCam.lookAroundMode = false;
+            }
+
+            // If we just released the FreeLook button, relinquish control of the camera.
+            if (Input.GetKeyUp(FreeLookPatcher.Config.FreeLookKey) || FreeLookManager.isTriggerNewlyUp)
+            {
+                //Debug.Log("FreeLook: button released. Relinquishing control of the camera.");
+                FreeLookManager.isTriggerNewlyUp = false;
+                FreeLookManager.resetCameraFlag = true;
+                return false;
+            }
+
+            // if we're freelooking, control the camera
+            if ((Input.GetKey(FreeLookPatcher.Config.FreeLookKey) || triggerState) && __instance == Player.main.currentMountedVehicle)
+            {
+                FreeLookManager.resetCameraFlag = false;
+
+                // must add oxygen manually
+                OxygenManager oxygenMgr = Player.main.oxygenMgr;
+                oxygenMgr.AddOxygen(Time.deltaTime);
+
+                // control the camera
+                FreeLookManager.moveCamera(Player.main.currentMountedVehicle);
+
+                // add locomotion back in
                 Vector3 myDirection = Vector3.zero;
                 myDirection.z = Input.GetAxis("ControllerAxis1");
                 myDirection.x = -Input.GetAxis("ControllerAxis2");
@@ -195,68 +191,13 @@ namespace FreeLook
 
                 __instance.GetComponent<Rigidbody>().velocity += myModDir * Time.deltaTime * 10f;
                 __instance.GetComponent<Rigidbody>().velocity = Vector3.ClampMagnitude(__instance.GetComponent<Rigidbody>().velocity, 10f);
-            }
-
-
-            void cameraRelinquish()
-            {
-                mainCam.ResetCamera();
-                mainCam.cinematicMode = false;
-                mainCam.lookAroundMode = true;
-                VehicleAwakePatch.myFreeMan.isFreeLooking = false;
-            }
-
-            if (Input.GetKeyDown(Options.freeLookKey) || isTriggerNewlyDown)
-            {
-                Debug.Log("FreeLook: button pressed. Taking control of the camera.");
-                VehicleAwakePatch.myFreeMan.isFreeLooking = true;
-                isTriggerNewlyDown = false;
-
-                resetCameraFlag = false;
-                // invoke a camera vulnerability
-                mainCam.cinematicMode = true;
-                mainCam.lookAroundMode = false;
-                return false;
-            }
-            else if (Input.GetKeyUp(Options.freeLookKey) || isTriggerNewlyUp)
-            {
-                isTriggerNewlyUp = false;
-                Debug.Log("FreeLook: button released. Relinquishing control of the camera.");
-                resetCameraFlag = true;
-            }
-            if (!resetCameraFlag && (Input.GetKey(Options.freeLookKey) || isTriggerDown))
-            {
-                resetCameraFlag = false;
-                moveCamera(Player.main.currentMountedVehicle);
-                // adding oxygen is something vehicle.update would usually do,
-                // so we do it naively here as well.
-                // I'm not sure that Time.deltaTime seconds worth of oxygen per frame is the right amount...
-                OxygenManager oxygenMgr = Player.main.oxygenMgr;
-                oxygenMgr.AddOxygen(Time.deltaTime);
+                
                 return false;
             }
 
-            if (resetCameraFlag)
-            {
-                mainCam.rotationX = Mathf.SmoothDampAngle(mainCam.rotationX, 0f, ref xVelocity, smoothTime);
-                mainCam.rotationY = Mathf.SmoothDampAngle(mainCam.rotationY, 0f, ref yVelocity, smoothTime);
-
-                mainCam.camRotationX = mainCam.rotationX;
-                mainCam.camRotationY = mainCam.rotationY;
-
-                mainCam.cameraOffsetTransform.localEulerAngles = new Vector3(-mainCam.camRotationY, mainCam.camRotationX, 0);
-
-                double threshold = 1;
-                if (Mathf.Abs(mainCam.camRotationX) < threshold && Mathf.Abs(mainCam.camRotationY) < threshold)
-                {
-                    cameraRelinquish();
-                    resetCameraFlag = false;
-                }
-                // need to retain control in order to finish snapping back to center
-                return false;
-            }
-            // nothing from the key and the camera has been reset, so we don't need control
-            //cameraRelinquish();
+            // nothing from the key
+            // we're not freelooking
+            // the camera has been reset
             return true;
         }
     }

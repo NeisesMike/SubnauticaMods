@@ -43,7 +43,7 @@ namespace SeamothEject
         Above,
         Left,
         Right,
-        Bottom,
+        Below,
         Front,
         Normal
     }

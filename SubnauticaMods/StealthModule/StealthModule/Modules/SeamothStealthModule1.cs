@@ -4,6 +4,12 @@ using SMLHelper.V2.Handlers;
 using System.Collections.Generic;
 using UnityEngine;
 
+using System.IO;
+using System.Reflection;
+
+using UnityEngine.Sprites;
+
+
 namespace StealthModule
 {
     public class SeamothStealthModule1: Equipable
@@ -13,10 +19,11 @@ namespace StealthModule
             friendlyName: "Seamoth Stealth Module MK1",
             description: "Presence Masking. Does not stack.")
         {
-            // wat is this
             string[] stepsToTab = { "SeamothMenu" };
-            OnStartedPatching += () => CraftTreeHandler.AddTabNode(CraftTree.Type.Workbench, "Stealth", "Stealth Modules", SpriteManager.Get(TechType.VehicleHullModule1), stepsToTab);
+            OnStartedPatching += () => CraftTreeHandler.AddTabNode(CraftTree.Type.Workbench, "Stealth", "Stealth Modules", StealthModulePatcher.stealthSpriteAtlas, stepsToTab);
         }
+
+        
 
         public override EquipmentType EquipmentType => EquipmentType.SeamothModule;
 
@@ -64,7 +71,7 @@ namespace StealthModule
 
         protected override Atlas.Sprite GetItemSprite()
         {
-            return SpriteManager.Get(TechType.VehicleHullModule3);
+            return StealthModulePatcher.stealthSpriteAtlas;
         }
     }
 }

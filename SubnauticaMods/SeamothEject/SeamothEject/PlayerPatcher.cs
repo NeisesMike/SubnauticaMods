@@ -15,78 +15,93 @@ namespace SeamothEject
     [HarmonyPatch("SpawnNearby")]
     class PlayerSpawnNearbyPatcher
 	{
-        [HarmonyPostfix]
-        public static void Postfix(Player __instance, ref bool __result, float spawnRadius, GameObject ignoreObject)
-        {
-			void findPosition(EjectionPlacement placementToTry, ref Vector3 myPosition, ref bool myFlag)
-            {
-				for (int i = 0; i < 10; i++)
+		public static bool findPosition(EjectionPlacement placementToTry, ref Vector3 myPosition, Player thisPlayer, GameObject ignoreObject)
+		{
+			Vehicle thisSeamoth = thisPlayer.GetVehicle();
+
+			float spawnRadius = 0.5f;
+			for (int i = 0; i < 10; i++)
+			{
+				float f = UnityEngine.Random.value * 2f * 3.1415927f;
+				Vector3 vector = new Vector3(thisSeamoth.transform.position.x + Mathf.Cos(f) * spawnRadius,
+										     thisSeamoth.transform.position.y,
+											 thisSeamoth.transform.position.z + Mathf.Sin(f) * spawnRadius);
+
+				switch (placementToTry)
 				{
-					float f = UnityEngine.Random.value * 2f * 3.1415927f;
-					Vector3 vector = new Vector3(__instance.transform.root.position.x + Mathf.Cos(f) * spawnRadius, __instance.transform.root.position.y, __instance.transform.root.position.z + Mathf.Sin(f) * spawnRadius);
-					switch (placementToTry)
-					{
-						case (EjectionPlacement.Behind):
-							vector -= 6.5f * __instance.transform.root.forward;
-							break;
-						case (EjectionPlacement.Above):
-							vector += 6.5f * __instance.transform.root.up;
-							break;
-						case (EjectionPlacement.Left):
-							vector -= 6.5f * __instance.transform.root.right;
-							break;
-						case (EjectionPlacement.Right):
-							vector += 6.5f * __instance.transform.root.right;
-							break;
-						case (EjectionPlacement.Bottom):
-							vector -= 6.5f * __instance.transform.root.up;
-							break;
-						case (EjectionPlacement.Front):
-							vector += 6.5f * __instance.transform.root.forward;
-							break;
-						case (EjectionPlacement.Normal):
-							break;
-					}
-					if (__instance.playerController.WayToPositionClear(vector, ignoreObject, true))
-					{
-						myPosition = vector;
-						myFlag = true;
+					case (EjectionPlacement.Behind):
+						vector -= 4f * thisSeamoth.transform.forward;
 						break;
-					}
+					case (EjectionPlacement.Above):
+						vector += 2.5f * thisSeamoth.transform.up;
+						break;
+					case (EjectionPlacement.Left):
+						vector -= 3.0f * thisSeamoth.transform.right;
+						break;
+					case (EjectionPlacement.Right):
+						vector += 3.0f * thisSeamoth.transform.right;
+						break;
+					case (EjectionPlacement.Below):
+						vector -= 2.5f * thisSeamoth.transform.up;
+						break;
+					case (EjectionPlacement.Front):
+						vector += 4f * thisSeamoth.transform.forward;
+						break;
+					case (EjectionPlacement.Normal):
+						break;
+				}
+				if (thisPlayer.playerController.WayToPositionClear(vector, ignoreObject, true))
+				{
+					myPosition = vector;
+					return true;
 				}
 			}
-		
-			Vector3 position = Vector3.zero;
-			bool flag = false;
+			return false;
+		}
 
-			findPosition(SeamothEjectPatcher.Config.myPlacement, ref position, ref flag);
-			if(!flag)
+
+		[HarmonyPostfix]
+        public static void Postfix(Player __instance, ref bool __result, float spawnRadius, GameObject ignoreObject)
+        {
+			bool isSeamoth = __instance.GetVehicle().ToString().Contains("SeaMoth");
+			if(!isSeamoth)
             {
-				findPosition(EjectionPlacement.Behind, ref position, ref flag);
+				return;
+            }
+
+
+			Vector3 position = Vector3.zero;
+			bool flag = findPosition(SeamothEjectPatcher.Config.myPlacement, ref position, __instance, ignoreObject);
+
+
+			// ensure we can find a place to exit, if at all possible
+			if (!flag)
+            {
+				flag = findPosition(EjectionPlacement.Behind, ref position, __instance, ignoreObject);
 			}
 			if (!flag)
 			{
-				findPosition(EjectionPlacement.Above, ref position, ref flag);
+				flag = findPosition(EjectionPlacement.Above, ref position, __instance, ignoreObject);
 			}
 			if (!flag)
 			{
-				findPosition(EjectionPlacement.Left, ref position, ref flag);
+				flag = findPosition(EjectionPlacement.Left, ref position, __instance, ignoreObject);
 			}
 			if (!flag)
 			{
-				findPosition(EjectionPlacement.Right, ref position, ref flag);
+				flag = findPosition(EjectionPlacement.Right, ref position, __instance, ignoreObject);
 			}
 			if (!flag)
 			{
-				findPosition(EjectionPlacement.Bottom, ref position, ref flag);
+				flag = findPosition(EjectionPlacement.Below, ref position, __instance, ignoreObject);
 			}
 			if (!flag)
 			{
-				findPosition(EjectionPlacement.Front, ref position, ref flag);
+				flag = findPosition(EjectionPlacement.Front, ref position, __instance, ignoreObject);
 			}
 			if (!flag)
 			{
-				findPosition(EjectionPlacement.Normal, ref position, ref flag);
+				flag = findPosition(EjectionPlacement.Normal, ref position, __instance, ignoreObject);
 			}
 
 			if (flag)
