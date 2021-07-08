@@ -16,7 +16,7 @@ namespace RollControlZero
 {
     [HarmonyPatch(typeof(SeaTruckMotor))]
     [HarmonyPatch("StabilizeRoll")]
-    class SeaTruckMotorPatcher
+    class SeaTruckMotorStabilizeRollPatcher
     {
         [HarmonyPrefix]
         public static bool Prefix()

@@ -17,129 +17,6 @@ using SMLHelper.V2.Utility;
 
 namespace RollControlZero
 {
-    public static class Logger
-    {
-        public static void Log(string message)
-        {
-            UnityEngine.Debug.Log("[RollControlZero] " + message);
-        }
-
-        public static void Log(string format, params object[] args)
-        {
-            UnityEngine.Debug.Log("[RollControlZero] " + string.Format(format, args));
-        }
-    }
-
-    [Menu("RollControl Options")]
-    public class MyConfig : ConfigFile
-    {
-        [Toggle("Roll Enabled")]
-        public bool isSeatruckRollOn = true;
-
-        [Keybind("Roll Toggle")]
-        public KeyCode rollToggleKey = KeyCode.AltGr;
-
-        [Keybind("Roll To Port")]
-        public KeyCode rollToPortKey = KeyCode.Z;
-
-        [Keybind("Roll To Starboard")]
-        public KeyCode rollToStarboardKey = KeyCode.C;
-
-        [Slider("Roll Speed Slider", 1, 30, DefaultValue = 15)]
-        public float seatruckRollSpeed = 15;
-
-        [Toggle("Roll HUD Element")]
-        public bool isHUD = true;
-
-        [Choice("Roll HUD Placement")]
-        public TextAnchor HUDAnchor = TextAnchor.LowerRight;
-
-        /*
-        [Slider("roll hud x", -1f, 1f, Step = 0.01f)]
-        public float x = 0;
-        [Slider("roll hud y", -1f, 1f, Step = 0.01f)]
-        public float y = 0;
-        [Slider("roll hud z", 0f, 2f, Step = 0.01f)]
-        public float z = 0;
-
-        [Slider("roll hud scale", 0f, 10f, Step = 0.1f)]
-        public float scale = 0;
-        */
-    }
-
-
-    public class RollControlPatcher
-    {
-        //public static bool isScubaRollOn = false;
-        internal static MyConfig Config { get; private set; }
-
-
-        internal static GameObject AttitudeIndicatorObject;
-        internal static AssetBundle AttitudeIndicatorAssetBundle;
-
-        public static void Patch()
-        {
-            Config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
-            
-            string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            Logger.Log(modPath);
-            AttitudeIndicatorAssetBundle = AssetBundle.LoadFromFile(Path.Combine(modPath, "assets/rollcontrol"));
-
-            var harmony = new Harmony("com.garyburke.subnautica.rollcontrolzero.mod");
-            harmony.PatchAll();
-        }
-
-        //public static Options Options = new Options();
-        public static RollManager myRollMan = new RollManager();
-
-        public static void createAttitudeIndicator()
-        {
-            GameObject AttitudeIndicatorPrefab = AttitudeIndicatorAssetBundle.LoadAsset<GameObject>("AttitudeIndicator.prefab");
-            
-            AttitudeIndicatorObject = GameObject.Instantiate(AttitudeIndicatorPrefab, Vector3.zero, MainCameraControl.main.rotation, true);
-            SpriteRenderer[] rendererList = AttitudeIndicatorObject.GetComponentsInChildren<SpriteRenderer>();
-            foreach (SpriteRenderer rend in rendererList)
-            {
-                Logger.Log("bing");
-                rend.sortingLayerName = "UI";
-                rend.sortingOrder = 1;
-                rend.color = new Color(1f, 1f, 1f, 1f);
-            }
-            /*
-            Renderer[] rendererList2 = AttitudeIndicatorObject.GetComponentsInChildren<Renderer>();
-            foreach (Renderer rend in rendererList2)
-            {
-                Logger.Log("bong");
-                rend.sortingLayerName = "UI";
-                rend.sortingOrder = 1;
-            }
-            */
-            AttitudeIndicatorObject.transform.SetParent(MainCameraControl.main.transform);
-            AttitudeIndicatorObject.transform.localPosition = new Vector3(0, 0, 1);
-        }
-        public static void updateAttitudeIndicator()
-        {
-            /*
-            Transform backgroundT = AttitudeIndicatorObject.transform.Find("background").transform;
-            Transform cameraT = MainCameraControl.main.transform;
-            backgroundT.eulerAngles = new Vector3(0, 0, 0);
-            backgroundT.forward = MainCameraControl.main.transform.forward;
-            AttitudeIndicatorObject.transform.position = cameraT.position + cameraT.forward * Config.z + cameraT.right * Config.x + cameraT.up * Config.y;
-            AttitudeIndicatorObject.transform.localScale = new Vector3(1, 1, 1) * Config.scale;
-            */
-        }
-        public static void killAttitudeIndicator()
-        {
-            GameObject.Destroy(AttitudeIndicatorObject);
-        }
-
-
-        public static void Initialise()
-        {
-            //OptionsPanelHandler.RegisterModOptions(Options);
-        }
-    }
-
     [HarmonyPatch(typeof(Player))]
     [HarmonyPatch("Update")]
     public class PlayerUpdatePatcher
@@ -163,15 +40,6 @@ namespace RollControlZero
             {
                 if (RollControlPatcher.Config.isHUD)
                 {
-                    /*
-                    if(RollControlPatcher.AttitudeIndicatorObject == null)
-                    {
-                        Logger.Log("creating ai");
-                        RollControlPatcher.createAttitudeIndicator();
-                    }
-                    Logger.Log("updating ai");
-                    RollControlPatcher.updateAttitudeIndicator();
-                    */
                     Hint main = Hint.main;
                     if (main == null)
                     {
@@ -186,22 +54,13 @@ namespace RollControlZero
                     double myYaw = Math.Truncate(__instance.transform.eulerAngles.y);
                     double myRoll = Math.Truncate(__instance.transform.eulerAngles.z);
                     string myMessage = "Pitch: " + myPitch + "\nRoll: " + myRoll + "\nYaw:" + myYaw;
-                    message.SetText(myMessage, TextAnchor.LowerRight);
+                    message.SetText(myMessage, RollControlPatcher.Config.HUDAnchor);
                     message.Show(3f, 0f, 0.25f, 0.25f, null);
                 }
-                else if (RollControlPatcher.AttitudeIndicatorObject != null)
-                {
-                    /*
-                    Logger.Log("killing ai");
-                    RollControlPatcher.killAttitudeIndicator();
-                    */
-                }
-
                 if (RollControlPatcher.Config.isSeatruckRollOn)
                 {
                     SeatruckRoll();
                 }
-                return;
             }
 
             /*
