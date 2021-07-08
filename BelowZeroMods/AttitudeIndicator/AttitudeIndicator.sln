@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AttitudeIndicator", "AttitudeIndicator\AttitudeIndicator.csproj", "{C5C1AB91-E6F3-496F-B550-109E876129E9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		BelowZero|Any CPU = BelowZero|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Subnautica|Any CPU = Subnautica|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C5C1AB91-E6F3-496F-B550-109E876129E9}.BelowZero|Any CPU.ActiveCfg = BelowZero|Any CPU
+		{C5C1AB91-E6F3-496F-B550-109E876129E9}.BelowZero|Any CPU.Build.0 = BelowZero|Any CPU
+		{C5C1AB91-E6F3-496F-B550-109E876129E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5C1AB91-E6F3-496F-B550-109E876129E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5C1AB91-E6F3-496F-B550-109E876129E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5C1AB91-E6F3-496F-B550-109E876129E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5C1AB91-E6F3-496F-B550-109E876129E9}.Subnautica|Any CPU.ActiveCfg = Subnautica|Any CPU
+		{C5C1AB91-E6F3-496F-B550-109E876129E9}.Subnautica|Any CPU.Build.0 = Subnautica|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F77DF9BA-BE98-4879-B4E2-CE9B86F08897}
+	EndGlobalSection
+EndGlobal
