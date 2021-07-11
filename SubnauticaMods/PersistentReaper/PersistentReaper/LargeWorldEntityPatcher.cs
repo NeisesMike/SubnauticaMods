@@ -14,8 +14,7 @@ namespace PersistentReaper
         [HarmonyPrefix]
         public static bool Prefix(LargeWorldEntity __instance)
         {
-            // don't register Percy
-            if (!ReaperManager.reaperDict.ContainsKey(__instance.gameObject))
+            if (ReaperManager.reaperDict.ContainsKey(__instance.gameObject))
             {
                 return false;
             }
