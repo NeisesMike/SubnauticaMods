@@ -27,7 +27,7 @@ namespace PersistentReaper
             UnityEngine.Debug.Log("[PersistentReapers] " + string.Format(format, args));
         }
     }
-    public class PersistentReaperPatcher
+    public static class PersistentReaperPatcher
     {
         internal static MyConfig Config { get; private set; }
 
@@ -70,10 +70,13 @@ namespace PersistentReaper
         [Choice("Depth Map"), OnChange(nameof(setDepthMap))]
         public DepthMap depthMapChoice = DepthMap.NoShallowReapers;
 
-        public static void setDepthMap()
+        public void setDepthMap(ChoiceChangedEventArgs e)
         {
-            ReaperManager.depthDictionary = ReaperManager.getDepthDictionary();
+            ReaperManager.depthDictionary = ReaperManager.getDepthDictionary(depthMapChoice);
         }
+
+        [Slider("Reaper Wander Rate", Min = 1f, Max = 10f, Step = 0.25f, DefaultValue = 1f)]
+        public float updateInterval = 1f;
 
         [Button("Print Reaper Map")]
         public static void printReaperMap()

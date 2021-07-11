@@ -11,6 +11,11 @@ namespace PersistentReaper
 {
     public static class ReaperManager
     {
+        /*
+         * The Reaper legal y-range is [85,121] in the normal map.
+         * 
+         * 
+         */
         public static GameObject reaperParent = new GameObject("Reaper Parent Object");
         public static Dictionary<GameObject, ReaperBehavior> reaperDict = new Dictionary<GameObject, ReaperBehavior>();
         public static Dictionary<Int3, EcoRegion> ecoRegionDict;
@@ -22,7 +27,6 @@ namespace PersistentReaper
         private static GameObject reaperPrefab = CraftData.GetPrefabForTechType(TechType.ReaperLeviathan, true);
 
         // updateInterval is measured in seconds
-        private static float updateInterval = 1f;
         private static float lastUpdateTime = Time.time;
 
         // depthDictionary is the set of legal volumes which apparently have "fallen to rest"
@@ -102,6 +106,49 @@ namespace PersistentReaper
             Percy.SetActive(false);
         }
 
+
+        public static void spawnThisReaper(ReaperBehavior thisReaper)
+        {
+            // instantiate Percy somewhere up in the air
+            Vector3 spawnLocation = new Vector3(0, -300, 0);
+            GameObject Percy = UnityEngine.Object.Instantiate(reaperPrefab, spawnLocation, Quaternion.identity);
+
+            if (!reaperParent)
+            {
+                reaperParent = new GameObject("Reaper Parent Object");
+            }
+            Percy.transform.parent = reaperParent.transform;
+            ReaperBehavior percyBehavior = new ReaperBehavior();
+
+            // ensure Percy will wander freely
+            Percy.GetComponent<SwimRandom>().swimRadius = new Vector3(100f, 20f, 100f);
+            Percy.GetComponent<StayAtLeashPosition>().leashDistance = float.MaxValue;
+
+            // make Percy able to handle a punch or two
+            // remember, Percy has 5000 health
+            if (PersistentReaperPatcher.Config.reaperBehaviors == ReaperBehaviors.Bloodthirsty || PersistentReaperPatcher.Config.reaperBehaviors == ReaperBehaviors.HumanHunter)
+            {
+                Percy.GetComponent<FleeOnDamage>().damageThreshold = 1000f;
+            }
+
+            // place Percy in a "random" EcoRegion
+            Int3 regionIndex = getRandomRegion();
+            if (regionIndex != Int3.negativeOne)
+            {
+                percyBehavior.currentRegion = regionIndex;
+            }
+            else
+            {
+                percyBehavior.currentRegion = new Int3(0, 0, 0);
+            }
+
+            // store this Percy in the reaperList
+            reaperDict.Add(Percy, percyBehavior);
+
+            // deactivate Percy
+            Percy.SetActive(false);
+        }
+
         public static void updateReapers()
         {
             if (PersistentReaperPatcher.Config.areReapersActive)
@@ -127,7 +174,7 @@ namespace PersistentReaper
                 }
 
                 areAllReapersDespawned = false;
-                if (lastUpdateTime + updateInterval < Time.time)
+                if (lastUpdateTime + PersistentReaperPatcher.Config.updateInterval < Time.time)
                 {
                     foreach (KeyValuePair<GameObject, ReaperBehavior> entry in reaperDict)
                     {
@@ -403,11 +450,30 @@ namespace PersistentReaper
 
         public static Dictionary<Tuple<int, int>, int> getDepthDictionary()
         {
+            if (PersistentReaperPatcher.Config == null)
+            {
+                Logger.Log("Config not yet available. Will get the depth dictionary later.");
+                return new Dictionary<Tuple<int, int>, int>();
+            }
+            return getDepthDictionary(PersistentReaperPatcher.Config.depthMapChoice);
+        }
+
+        public static Dictionary<Tuple<int, int>, int> getDepthDictionary(DepthMap depthMapChoice)
+        {
+            if (PersistentReaperPatcher.Config == null)
+            {
+                Logger.Log("Config not yet available, but that's alright.");
+            }
+            else
+            {
+                Logger.Log("No problem grabbing the config.");
+            }
+
             Dictionary<Tuple<int, int>, int> depthDictionary = new Dictionary<Tuple<int, int>, int>();
             string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             string depthMapString = "";
-            switch(PersistentReaperPatcher.Config.depthMapChoice)
+            switch (depthMapChoice)
             {
                 case DepthMap.Normal:
                     depthMapString = "DepthDictionary.txt";
