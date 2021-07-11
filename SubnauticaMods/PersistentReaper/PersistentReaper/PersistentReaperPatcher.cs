@@ -55,8 +55,19 @@ namespace PersistentReaper
     [Menu("Persistent Reaper Options")]
     public class MyConfig : ConfigFile
     {
-        [Toggle("Toggle Persistent Reapers")]
+        [Toggle("Toggle Persistent Reapers"), OnChange(nameof(killAllReapers))]
         public bool areReapersActive = true;
+        public void killAllReapers()
+        {
+            if (ReaperManager.reaperDict != null)
+            {
+                int numCurrentReapers = ReaperManager.reaperDict.Count;
+                for (int i = 0; i < numCurrentReapers; i++)
+                {
+                    ReaperManager.removeOneReaper();
+                }
+            }
+        }
 
         [Slider("Number of Persistent Reapers", Min = 0, Max = 250, Step = 5, DefaultValue = 50)]
         public int numReapers = 50;
@@ -64,7 +75,8 @@ namespace PersistentReaper
         [Choice("Persistent Reaper Behavior")]
         public ReaperBehaviors reaperBehaviors = ReaperBehaviors.Normal;
 
-        [Slider("Scent Lifetime (Seconds)", Min = 0, Max = 600, Step = 5, DefaultValue = 120)]
+        public const string scentLifetimeTooltip = "Change how long your scent sticks around. Higher numbers make you easier to track. Consider choosing a lower number if performance is suffering.";
+        [Slider("Scent Lifetime (Seconds)", Min = 0, Max = 600, Step = 5, DefaultValue = 120, Tooltip = scentLifetimeTooltip)]
         public int scentLifetime = 120;
 
         [Choice("Depth Map"), OnChange(nameof(setDepthMap))]
@@ -73,9 +85,11 @@ namespace PersistentReaper
         public void setDepthMap(ChoiceChangedEventArgs e)
         {
             ReaperManager.depthDictionary = ReaperManager.getDepthDictionary(depthMapChoice);
+            killAllReapers();
         }
 
-        [Slider("Reaper Wander Rate", Min = 1f, Max = 10f, Step = 0.25f, DefaultValue = 1f)]
+        public const string updateIntervalTooltip = "Change this to make the reapers simulate less frequently. Simulation is balanced for 1 second here, so only increase this number if performance is suffering.";
+        [Slider("Reaper Update Interval (seconds)", Min = 1f, Max = 10f, Step = 0.25f, DefaultValue = 1f, Tooltip = updateIntervalTooltip)]
         public float updateInterval = 1f;
 
         [Button("Print Reaper Map")]
@@ -93,9 +107,9 @@ namespace PersistentReaper
                 map[x] = mapRow;
             }
 
-            foreach (KeyValuePair<GameObject, ReaperBehavior> entry in ReaperManager.reaperDict)
+            foreach (KeyValuePair<ReaperBehavior, GameObject> entry in ReaperManager.reaperDict)
             {
-                Int3 __instance3Loc = entry.Value.currentRegion;
+                Int3 __instance3Loc = entry.Key.currentRegion;
                 StringBuilder sb = new StringBuilder(map[__instance3Loc.x]);
                 sb[__instance3Loc.z] = 'X';
                 map[__instance3Loc.x] = sb.ToString();

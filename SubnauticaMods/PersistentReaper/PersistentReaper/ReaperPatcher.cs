@@ -20,7 +20,7 @@ namespace PersistentReaper
         public static void Postfix(ReaperLeviathan __instance)
         {
             // check whether we're Percy
-            if (!ReaperManager.reaperDict.ContainsKey(__instance.gameObject))
+            if (!ReaperManager.reaperDict.ContainsValue(__instance.gameObject))
             {
                 return;
             }
@@ -36,10 +36,21 @@ namespace PersistentReaper
             // HumanHunter.Update
             if (PersistentReaperPatcher.Config.reaperBehaviors == ReaperBehaviors.HumanHunter && lastUpdateTime + updateInterval < Time.time)
             {
-                // if we can see or hear the player, lock on
-                if (ReaperBehavior.isValidTargetForPercy( __instance.gameObject))
+                ReaperBehavior percyBehavior = null;
+                // we're guaranteed to find a value here, due to the earlier ContainsValue call
+                foreach (KeyValuePair<ReaperBehavior, GameObject> entry in ReaperManager.reaperDict)
                 {
-                    ReaperManager.reaperDict[__instance.gameObject].isLockedOntoPlayer = true;
+                    if (entry.Value == __instance.gameObject)
+                    {
+                        percyBehavior = entry.Key;
+                        break;
+                    }
+                }
+
+                // if we can see or hear the player, lock on
+                if (ReaperBehavior.isValidTargetForPercy(__instance.gameObject))
+                {
+                    percyBehavior.isLockedOntoPlayer = true;
                 }
 
                 Vector3 nextScentLoc = ReaperManager.tryMoveToScent(__instance.transform.position);
@@ -48,20 +59,26 @@ namespace PersistentReaper
                     return;
                 }
 
-                // if we don't really know where the player is,
-                // make sure we're following their scent
-                if (!ReaperManager.reaperDict[__instance.gameObject].isLockedOntoPlayer
+                // if we don't know where the player is,
+                // follow their scent
+                if (!percyBehavior.isLockedOntoPlayer
                     && __instance.GetComponentInParent<SwimBehaviour>().splineFollowing.targetPosition != nextScentLoc)
                 {
+                    // TODO: I'm not sure this is working as intended...
+                    // In practice, I think percy drops the trail
+                    // We must somehow make percy more one-minded
                     __instance.GetComponentInParent<SwimBehaviour>().SwimTo(nextScentLoc, 5f);
                 }
 
                 // if we're locked on, go for the attack
-                if (ReaperManager.reaperDict[__instance.gameObject].isLockedOntoPlayer)
+                if (percyBehavior.isLockedOntoPlayer)
                 {
                     Vector3 targetDirection = -MainCamera.camera.transform.forward;
                     __instance.GetComponentInParent<SwimBehaviour>().Attack(Player.main.transform.position, targetDirection, 10f);
                 }
+
+                // if there's no player and no scent trail,
+                // just do whatever
 
                 lastUpdateTime = Time.time;
             }

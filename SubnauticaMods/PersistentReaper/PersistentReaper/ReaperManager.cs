@@ -13,16 +13,16 @@ namespace PersistentReaper
     {
         /*
          * The Reaper legal y-range is [85,121] in the normal map.
-         * 
-         * 
+         * maybe we can optimize the dictionaries?
          */
+        public static int minYReaperDepth = 80;
+        public static int maxYReaperDepth = 121;
+
         public static GameObject reaperParent = new GameObject("Reaper Parent Object");
-        public static Dictionary<GameObject, ReaperBehavior> reaperDict = new Dictionary<GameObject, ReaperBehavior>();
-        public static Dictionary<Int3, EcoRegion> ecoRegionDict;
+        public static Dictionary<ReaperBehavior, GameObject> reaperDict = new Dictionary<ReaperBehavior, GameObject>();
         public static Dictionary<Int3, Scent> playerTrailDict = new Dictionary<Int3, Scent>();
         private static System.Random manRand = new System.Random();
         private static int spawnRadius = 225;
-        private static bool areAllReapersDespawned = false;
         // grab reaper prefab
         private static GameObject reaperPrefab = CraftData.GetPrefabForTechType(TechType.ReaperLeviathan, true);
 
@@ -34,59 +34,28 @@ namespace PersistentReaper
         public static Dictionary<Tuple<int, int>, int> depthDictionary;
         private static bool areDictionariesBuilt = false;
 
-        public static void initReaperManager()
+        public static Dictionary<Int3, Scent> getScentDictionary()
         {
-            if (!areDictionariesBuilt)
+            Dictionary<Int3, Scent> thisScentDict = new Dictionary<Int3, Scent>();
+            for (int x = 0; x < 256; x++)
             {
-                depthDictionary = getDepthDictionary();
-                for (int x = 0; x < 256; x++)
+                // limit the y-range of the scent dictionary to save a bit of space
+                // unfortunately this means we need to always check before we access the scent dictionary
+                for (int y = minYReaperDepth; y < maxYReaperDepth; y++)
                 {
-                    for (int y = 0; y < 256; y++)
+                    for (int z = 0; z < 256; z++)
                     {
-                        for (int z = 0; z < 256; z++)
-                        {
-                            Int3 thisLoc = new Int3(x, y, z);
-                            playerTrailDict.Add(thisLoc, null);
-                        }
+                        Int3 thisLoc = new Int3(x, y, z);
+                        thisScentDict.Add(thisLoc, null);
                     }
                 }
-                startReapers();
-                areDictionariesBuilt = true;
             }
-        }
-
-        public static void startReapers()
-        {
-            for (int i = 0; i < PersistentReaperPatcher.Config.numReapers; i++)
-            {
-                initOneReaper();
-            }
-            return;
+            return thisScentDict;
         }
 
         public static void initOneReaper()
         {
-            // instantiate Percy somewhere up in the air
-            Vector3 spawnLocation = new Vector3(0, -300, 0);
-            GameObject Percy = UnityEngine.Object.Instantiate(reaperPrefab, spawnLocation, Quaternion.identity);
-
-            if(!reaperParent)
-            {
-                reaperParent = new GameObject("Reaper Parent Object");
-            }
-            Percy.transform.parent = reaperParent.transform;
             ReaperBehavior percyBehavior = new ReaperBehavior();
-
-            // ensure Percy will wander freely
-            Percy.GetComponent<SwimRandom>().swimRadius = new Vector3(100f, 20f, 100f);
-            Percy.GetComponent<StayAtLeashPosition>().leashDistance = float.MaxValue;
-
-            // make Percy able to handle a punch or two
-            // remember, Percy has 5000 health
-            if (PersistentReaperPatcher.Config.reaperBehaviors == ReaperBehaviors.Bloodthirsty || PersistentReaperPatcher.Config.reaperBehaviors == ReaperBehaviors.HumanHunter)
-            {
-                Percy.GetComponent<FleeOnDamage>().damageThreshold = 1000f;
-            }
 
             // place Percy in a "random" EcoRegion
             Int3 regionIndex = getRandomRegion();
@@ -100,17 +69,28 @@ namespace PersistentReaper
             }
 
             // store this Percy in the reaperList
-            reaperDict.Add(Percy, percyBehavior);
-
-            // deactivate Percy
-            Percy.SetActive(false);
+            reaperDict.Add(percyBehavior, null);
         }
-
+        public static void removeOneReaper()
+        {
+            if (reaperDict[reaperDict.Keys.First()])
+            {
+                UnityEngine.Object.Destroy(reaperDict[reaperDict.Keys.First()]);
+            }
+            reaperDict.Remove(reaperDict.Keys.First());
+        }
+        public static void despawnThisReaper(ReaperBehavior percy)
+        {
+            if (reaperDict[percy])
+            {
+                UnityEngine.Object.Destroy(reaperDict[percy]);
+            }
+            reaperDict[percy] = null;
+        }
 
         public static void spawnThisReaper(ReaperBehavior thisReaper)
         {
-            // instantiate Percy somewhere up in the air
-            Vector3 spawnLocation = new Vector3(0, -300, 0);
+            Vector3 spawnLocation = getRegionPosition(thisReaper.currentRegion);
             GameObject Percy = UnityEngine.Object.Instantiate(reaperPrefab, spawnLocation, Quaternion.identity);
 
             if (!reaperParent)
@@ -118,7 +98,6 @@ namespace PersistentReaper
                 reaperParent = new GameObject("Reaper Parent Object");
             }
             Percy.transform.parent = reaperParent.transform;
-            ReaperBehavior percyBehavior = new ReaperBehavior();
 
             // ensure Percy will wander freely
             Percy.GetComponent<SwimRandom>().swimRadius = new Vector3(100f, 20f, 100f);
@@ -131,97 +110,84 @@ namespace PersistentReaper
                 Percy.GetComponent<FleeOnDamage>().damageThreshold = 1000f;
             }
 
-            // place Percy in a "random" EcoRegion
-            Int3 regionIndex = getRandomRegion();
-            if (regionIndex != Int3.negativeOne)
-            {
-                percyBehavior.currentRegion = regionIndex;
-            }
-            else
-            {
-                percyBehavior.currentRegion = new Int3(0, 0, 0);
-            }
-
-            // store this Percy in the reaperList
-            reaperDict.Add(Percy, percyBehavior);
-
-            // deactivate Percy
-            Percy.SetActive(false);
+            // attach this gameobject to percy
+            reaperDict[thisReaper] = Percy;
         }
 
         public static void updateReapers()
         {
-            if (PersistentReaperPatcher.Config.areReapersActive)
+            // ensure these dictionaries are built,
+            // and build them only once
+            if (!areDictionariesBuilt)
             {
-                if(reaperDict.Count != PersistentReaperPatcher.Config.numReapers)
+                depthDictionary = getDepthDictionary();
+                playerTrailDict = getScentDictionary();
+                areDictionariesBuilt = true;
+            }
+
+            // adjust the number of available reapers as necessary
+            if (reaperDict.Count != PersistentReaperPatcher.Config.numReapers)
+            {
+                int difference = reaperDict.Count - PersistentReaperPatcher.Config.numReapers;
+                if (difference > 0)
                 {
-                    int difference = reaperDict.Count - PersistentReaperPatcher.Config.numReapers;
-                    if(difference > 0)
+                    for (int i = 0; i < difference; i++)
                     {
-                        for(int i=0; i<difference; i++)
-                        {
-                            UnityEngine.Object.Destroy(reaperDict.Keys.First().gameObject);
-                            reaperDict.Remove(reaperDict.Keys.First());
-                        }
-                    }
-                    else
-                    {
-                        for (int i = 0; i < -difference; i++)
-                        {
-                            initOneReaper();
-                        }
+                        removeOneReaper();
                     }
                 }
-
-                areAllReapersDespawned = false;
-                if (lastUpdateTime + PersistentReaperPatcher.Config.updateInterval < Time.time)
+                else
                 {
-                    foreach (KeyValuePair<GameObject, ReaperBehavior> entry in reaperDict)
+                    for (int i = 0; i < -difference; i++)
                     {
-                        if(!entry.Key)
-                        {
-                            continue;
-                        }
+                        initOneReaper();
+                    }
+                }
+            }
 
-                        // if percy is not active,
-                        // move him to an adjacent valid region
-                        if (!entry.Key.activeSelf)
+            // PersistentReaper.Update
+            if (lastUpdateTime + PersistentReaperPatcher.Config.updateInterval < Time.time)
+            {
+                lastUpdateTime = Time.time;
+                try
+                {
+                    foreach (KeyValuePair<ReaperBehavior, GameObject> entry in reaperDict)
+                    {
+                        // if percy has no body,
+                        // simulate his movement
+                        if (!entry.Value)
                         {
                             if (PersistentReaperPatcher.Config.reaperBehaviors == ReaperBehaviors.HumanHunter)
                             {
-                                moveWithScent(entry.Value);
+                                moveWithScent(entry.Key);
                             }
                             else
                             {
-                                randomMove(entry.Value);
+                                randomMove(entry.Key);
                             }
+                        }
+                        else
+                        {
+                            // if percy has a body, update his position to where his gameobject is
+                            entry.Key.currentRegion = getEcoRegion(entry.Value.transform.position);
                         }
 
                         // let's see if we're in range to spawn,
                         // or if we're so far away we should despawn
                         controlSpawning(entry.Key);
-
-                        lastUpdateTime = Time.time;
                     }
                 }
-            }
-            else if(!areAllReapersDespawned)
-            {
-                despawnAllReapers();
-            }
-        }
-
-        private static void despawnAllReapers()
-        {
-            foreach (KeyValuePair<GameObject, ReaperBehavior> entry in reaperDict)
-            {
-                if (entry.Key)
+                catch (InvalidOperationException exception)
                 {
-                    entry.Key.SetActive(false);
+                    // if we've slid the numReapers slider -while- we're in this foreach,
+                    // just die gracefully,
+                    // and try again later
+                    return;
                 }
             }
-            areAllReapersDespawned = true;
+
         }
+
 
         private static void randomMove(ReaperBehavior percy)
         {
@@ -260,13 +226,12 @@ namespace PersistentReaper
             }
 
             // choose the destination with the highest scent intensity
+            // in the last step, we've guaranteed these scent locations are legal,
+            // so we won't do that again here.
             int maxScentIntensity = 0;
             foreach (Int3 move in moveList)
             {
-                if(playerTrailDict[move] == null)
-                {
-                    continue;
-                }
+                int thisScent = getScentIntensity(move);
                 if (maxScentIntensity < playerTrailDict[move].scentIntensity)
                 {
                     maxScentIntensity = playerTrailDict[move].scentIntensity;
@@ -316,10 +281,7 @@ namespace PersistentReaper
             int maxScentIntensity = 0;
             foreach (Int3 move in moveList)
             {
-                if (playerTrailDict[move] == null)
-                {
-                    continue;
-                }
+                int thisScent = getScentIntensity(move);
                 if (maxScentIntensity < playerTrailDict[move].scentIntensity)
                 {
                     maxScentIntensity = playerTrailDict[move].scentIntensity;
@@ -337,27 +299,19 @@ namespace PersistentReaper
             }
         }
 
-        private static void controlSpawning(GameObject percy)
+        private static void controlSpawning(ReaperBehavior percy)
         {
             // check whether we need to spawn or despawn Percy
-            bool isPercyWithinRange = isWithinRange(percy);
-            bool isPercyActive = percy.activeSelf;
-            if (isPercyWithinRange && !isPercyActive)
+            if (isWithinRange(percy))
             {
-                // activate Percy
-                percy.transform.position = getRegionPosition(reaperDict[percy].currentRegion);
-                percy.SetActive(true);
+                if(!reaperDict[percy])
+                {
+                    spawnThisReaper(percy);
+                }
             }
-            else if (!isPercyWithinRange && isPercyActive)
+            else if (reaperDict[percy])
             {
-                // deactivate Percy
-                percy.SetActive(false);
-
-                // lock off
-                reaperDict[percy].isLockedOntoPlayer = false;
-
-                // update Percy's location
-                reaperDict[percy].currentRegion = getEcoRegion(percy.transform.position);
+                despawnThisReaper(percy);
             }
         }
 
@@ -385,23 +339,15 @@ namespace PersistentReaper
             }
             return result;
         }
-        private static bool isWithinRange(GameObject percy)
+        private static bool isWithinRange(ReaperBehavior percy)
         {
-            float dist = Vector3.Distance(Player.main.transform.position, percy.transform.position);
-            if (percy.activeSelf && dist < spawnRadius)
+            float dist = Vector3.Distance(getRegionPosition(percy.currentRegion), Player.main.transform.position);
+            if (dist < spawnRadius)
             {
                 return true;
             }
-
-            dist = Vector3.Distance(getRegionPosition(reaperDict[percy].currentRegion), Player.main.transform.position);
-            if (!percy.activeSelf && dist < spawnRadius)
-            {
-                return true;
-            }
-
             return false;
         }
-
         public static Vector3 getRegionPosition(Int3 index)
         {
             Bounds ecoRegionsBounds;
@@ -414,9 +360,9 @@ namespace PersistentReaper
         }
 
         // the legal volume should range from sea level down to the highest terrain point in the region
-        private static bool checkRegionLegality(Int3 index)
+        public static bool checkRegionLegality(Int3 index)
         {
-            bool isValid = 0 <= index.x && index.x < 256 && index.y <= 121 && 0 <= index.z && index.z < 256;
+            bool isValid = 0 <= index.x && index.x < 256 && minYReaperDepth <= index.y && index.y <= maxYReaperDepth && 0 <= index.z && index.z < 256;
             if (!isValid)
             {
                 return false;
@@ -460,15 +406,6 @@ namespace PersistentReaper
 
         public static Dictionary<Tuple<int, int>, int> getDepthDictionary(DepthMap depthMapChoice)
         {
-            if (PersistentReaperPatcher.Config == null)
-            {
-                Logger.Log("Config not yet available, but that's alright.");
-            }
-            else
-            {
-                Logger.Log("No problem grabbing the config.");
-            }
-
             Dictionary<Tuple<int, int>, int> depthDictionary = new Dictionary<Tuple<int, int>, int>();
             string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 

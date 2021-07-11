@@ -26,6 +26,10 @@ namespace PersistentReaper
             {
                 await Task.Delay(TimeSpan.FromSeconds(1));
                 scentIntensity--;
+                if(scentIntensity < 0)
+                {
+                    scentIntensity = 0;
+                }
             }
         }
     }

@@ -14,7 +14,7 @@ namespace PersistentReaper
         [HarmonyPrefix]
         public static bool Prefix(LargeWorldEntity __instance)
         {
-            if (ReaperManager.reaperDict.ContainsKey(__instance.gameObject))
+            if (ReaperManager.reaperDict.ContainsValue(__instance.gameObject))
             {
                 return false;
             }

@@ -106,7 +106,7 @@ namespace PersistentReaper
         public static bool Prefix(AggressiveWhenSeeTarget __instance, ref GameObject __result)
         {
             // ensure this is HumanHunting Percy
-            if (!ReaperManager.reaperDict.ContainsKey(__instance.gameObject) || PersistentReaperPatcher.Config.reaperBehaviors != ReaperBehaviors.HumanHunter)
+            if (!ReaperManager.reaperDict.ContainsValue(__instance.gameObject) || PersistentReaperPatcher.Config.reaperBehaviors != ReaperBehaviors.HumanHunter)
             {
                 return true;
             }
@@ -131,13 +131,29 @@ namespace PersistentReaper
         public static bool Prefix(MoveTowardsTarget __instance, ref IEcoTarget ___currentTarget)
         {
             // ensure this is HumanHunting Percy
-            if (!ReaperManager.reaperDict.ContainsKey(__instance.gameObject) || PersistentReaperPatcher.Config.reaperBehaviors != ReaperBehaviors.HumanHunter)
+            if (!ReaperManager.reaperDict.ContainsValue(__instance.gameObject) || PersistentReaperPatcher.Config.reaperBehaviors != ReaperBehaviors.HumanHunter)
             {
                 return true;
             }
-            if(ReaperBehavior.isValidTargetForPercy(__instance.gameObject) || ReaperManager.reaperDict[__instance.gameObject].isLockedOntoPlayer)
+            if(ReaperBehavior.isValidTargetForPercy(__instance.gameObject))
             {
-                ___currentTarget = Player.main.gameObject.GetComponent<IEcoTarget>();
+                // long-handed way of getting the right reaper behavior...
+                // there's gotta be a better way...
+                // maybe by ensuringComponent on ReaperBehavior...
+                ReaperBehavior percyBehavior = null;
+                foreach (KeyValuePair<ReaperBehavior, GameObject> entry in ReaperManager.reaperDict)
+                {
+                    if(entry.Value == __instance.gameObject)
+                    {
+                        percyBehavior = entry.Key;
+                        break;
+                    }
+                }
+
+                if (percyBehavior.isLockedOntoPlayer)
+                {
+                    ___currentTarget = Player.main.gameObject.GetComponent<IEcoTarget>();
+                }
             }
             else
             {
