@@ -45,7 +45,7 @@ namespace EcoRegionScanner
         public bool isScannerActive = true;
 
         [Toggle("Fast Seamoth (Debug)")]
-        public bool isFastSeamoth = true;
+        public bool isFastSeamoth = false;
 
         [Keybind("Print Depth Map to File")]
         public KeyCode printMapKey = KeyCode.Backspace;
