@@ -51,12 +51,30 @@ namespace AttitudeIndicator
 
         internal static int generationStep = 0;
 
-        public static void initAttitudeIndicatorSprites()
+        public static void initAttitudeIndicatorSprites(IndicatorStyle chosenStyle)
         {
             string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-            byte[] frameBytes = System.IO.File.ReadAllBytes(Path.Combine(modPath, "assets/Alterra_UI_Frame.png"));
-            byte[] screenBytes = System.IO.File.ReadAllBytes(Path.Combine(modPath, "assets/Alterra_UI_Screen.png"));
+            byte[] frameBytes;
+            byte[] screenBytes;
+            byte[] ladderBytes;
+            switch (chosenStyle)
+            {
+                case IndicatorStyle.Standard:
+                    frameBytes = System.IO.File.ReadAllBytes(Path.Combine(modPath, "assets/Alterra_UI_Frame_Standard.png"));
+                    screenBytes = System.IO.File.ReadAllBytes(Path.Combine(modPath, "assets/Alterra_UI_Screen_Standard.png"));
+                    ladderBytes = System.IO.File.ReadAllBytes(Path.Combine(modPath, "assets/Alterra_UI_Ladder_Standard.png"));
+                    break;
+                case IndicatorStyle.Blue:
+                    frameBytes = System.IO.File.ReadAllBytes(Path.Combine(modPath, "assets/Alterra_UI_Frame_Blue.png"));
+                    screenBytes = System.IO.File.ReadAllBytes(Path.Combine(modPath, "assets/Alterra_UI_Screen_Blue.png"));
+                    ladderBytes = System.IO.File.ReadAllBytes(Path.Combine(modPath, "assets/Alterra_UI_Ladder_Blue.png"));
+                    break;
+                default:
+                    Logger.Log("Invalid Indicator Style chosen. Aborting.");
+                    return;
+            }
+
 
             Texture2D frameTexture = new Texture2D(128, 128);
             Texture2D screenTexture = new Texture2D(128, 128);
@@ -69,7 +87,6 @@ namespace AttitudeIndicator
 
             AttitudeIndicatorDiameter = screenTexture.width;
 
-            byte[] ladderBytes = System.IO.File.ReadAllBytes(Path.Combine(modPath, "assets/Alterra_UI_Ladder.png"));
             originalLadderTexture = new Texture2D(128, 128);
             originalLadderTexture.LoadImage(ladderBytes);
 
@@ -267,11 +284,14 @@ namespace AttitudeIndicator
             ladderSpriteRenderer.sortingOrder = 100;
         }
 
-        public static void updateAttitudeIndicator(VehicleType vType)
+        public static void updateAttitudeIndicator(VehicleType vType, bool shouldUpdateLadder)
         {
             Transform playerT = Player.main.transform;
 
-            getLadder();
+            if (shouldUpdateLadder)
+            {
+                getLadder();
+            }
 
             // make the instrument face the player
             AttitudeIndicatorFrame.transform.rotation = playerT.rotation;

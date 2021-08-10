@@ -13,8 +13,8 @@ Global
 		Subnautica|Any CPU = Subnautica|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C5C1AB91-E6F3-496F-B550-109E876129E9}.BelowZero|Any CPU.ActiveCfg = BelowZero|Any CPU
-		{C5C1AB91-E6F3-496F-B550-109E876129E9}.BelowZero|Any CPU.Build.0 = BelowZero|Any CPU
+		{C5C1AB91-E6F3-496F-B550-109E876129E9}.BelowZero|Any CPU.ActiveCfg = Subnautica|Any CPU
+		{C5C1AB91-E6F3-496F-B550-109E876129E9}.BelowZero|Any CPU.Build.0 = Subnautica|Any CPU
 		{C5C1AB91-E6F3-496F-B550-109E876129E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C5C1AB91-E6F3-496F-B550-109E876129E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5C1AB91-E6F3-496F-B550-109E876129E9}.Release|Any CPU.ActiveCfg = Release|Any CPU

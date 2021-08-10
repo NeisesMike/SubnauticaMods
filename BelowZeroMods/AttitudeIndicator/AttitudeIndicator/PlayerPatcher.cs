@@ -21,9 +21,27 @@ namespace AttitudeIndicator
     [HarmonyPatch("Update")]
     public class PlayerUpdatePatcher
     {
+        public static float lastUpdateTime = Time.time;
+
         [HarmonyPostfix]
         public static void Postfix(Player __instance)
         {
+            bool shouldWeUpdateLadder = false;
+#if SUBNAUTICA
+            if (lastUpdateTime + AttitudeIndicatorPatcher.SubnauticaConfig.updateInterval < Time.time)
+            {
+                lastUpdateTime = Time.time;
+                shouldWeUpdateLadder = true;
+            }
+#elif BELOWZERO
+            if (lastUpdateTime + AttitudeIndicatorPatcher.BelowZeroConfig.updateInterval < Time.time)
+            {
+                lastUpdateTime = Time.time;
+                shouldWeUpdateLadder = true;
+            }
+#endif
+
+
 #if SUBNAUTICA
             if (!__instance.isPiloting)
             {
@@ -42,7 +60,7 @@ namespace AttitudeIndicator
                         {
                             AttitudeIndicator.createAttitudeIndicator(VehicleType.Seamoth);
                         }
-                        AttitudeIndicator.updateAttitudeIndicator(VehicleType.Seamoth);
+                        AttitudeIndicator.updateAttitudeIndicator(VehicleType.Seamoth, shouldWeUpdateLadder);
                     }
                     else if (AttitudeIndicator.AttitudeIndicatorScreen != null)
                     {
@@ -61,7 +79,7 @@ namespace AttitudeIndicator
                         {
                             AttitudeIndicator.createAttitudeIndicator(VehicleType.Cyclops);
                         }
-                        AttitudeIndicator.updateAttitudeIndicator(VehicleType.Cyclops);
+                        AttitudeIndicator.updateAttitudeIndicator(VehicleType.Cyclops, shouldWeUpdateLadder);
                     }
                     else if (AttitudeIndicator.AttitudeIndicatorScreen != null)
                     {
@@ -85,7 +103,7 @@ namespace AttitudeIndicator
                     {
                         AttitudeIndicator.createAttitudeIndicator(VehicleType.Seatruck);
                     }
-                    AttitudeIndicator.updateAttitudeIndicator(VehicleType.Seatruck);
+                    AttitudeIndicator.updateAttitudeIndicator(VehicleType.Seatruck, shouldWeUpdateLadder);
                 }
                 else if (AttitudeIndicator.AttitudeIndicatorScreen != null)
                 {
@@ -101,7 +119,7 @@ namespace AttitudeIndicator
                     {
                         AttitudeIndicator.createAttitudeIndicator(VehicleType.Snowfox);
                     }
-                    AttitudeIndicator.updateAttitudeIndicator(VehicleType.Snowfox);
+                    AttitudeIndicator.updateAttitudeIndicator(VehicleType.Snowfox, shouldWeUpdateLadder);
                 }
                 else if (AttitudeIndicator.AttitudeIndicatorScreen != null)
                 {

@@ -45,12 +45,25 @@ namespace AttitudeIndicator
 #endif
     }
 
+    public enum IndicatorStyle
+    {
+        Standard,
+        Blue
+    }
+
 #if SUBNAUTICA
     [Menu("Attitude Indicators")]
     public class SubnauticaConfig : ConfigFile
     {
         List<GameObject> seamothOptions = new List<GameObject>();
         List<GameObject> cyclopsOptions = new List<GameObject>();
+        
+        [Choice("Indicator Style"), OnChange(nameof(changeIndicatorStyle))]
+        public IndicatorStyle chosenStyle = IndicatorStyle.Standard;
+
+        private const string updateIntervalTooltip = "This defines the minimum number of seconds the indicator will wait between updates.";
+        [Slider("Update Interval", Min = 0, Max = 1, DefaultValue = 0, Step = 0.001f, Tooltip = updateIntervalTooltip)]
+        public float updateInterval = 0;
 
         [Toggle("Enable Seamoth Attitude Indicator"), OnChange(nameof(setVisibilitySeamoth)), OnGameObjectCreated(nameof(setToggleActiveSeamoth))]
         public bool SisAttitudeIndicatorOn = true;
@@ -140,6 +153,12 @@ namespace AttitudeIndicator
             cyclopsOptions.Add(e.GameObject);
             e.GameObject.SetActive(AttitudeIndicatorPatcher.currentVehicle == VehicleType.Cyclops && CisAttitudeIndicatorOn);
         }
+
+        public void changeIndicatorStyle(ChoiceChangedEventArgs e)
+        {
+            AttitudeIndicator.killAttitudeIndicator();
+            AttitudeIndicator.initAttitudeIndicatorSprites((IndicatorStyle)e.Index);
+        }
     }
 #elif BELOWZERO
     [Menu("Attitude Indicators")]
@@ -147,6 +166,13 @@ namespace AttitudeIndicator
     {
         List<GameObject> seatruckOptions = new List<GameObject>();
         List<GameObject> snowfoxOptions = new List<GameObject>();
+
+        [Choice("Indicator Style"), OnChange(nameof(changeIndicatorStyle))]
+        public IndicatorStyle chosenStyle = IndicatorStyle.Standard;
+
+        private const string updateIntervalTooltip = "This defines the minimum number of seconds the indicator will wait between updates.";
+        [Slider("Update Interval", Min = 0, Max = 1, DefaultValue = 0, Step = 0.001f, Tooltip = updateIntervalTooltip)]
+        public float updateInterval = 0;
 
         [Toggle("Enable Seatruck Attitude Indicator"), OnChange(nameof(setVisibilitySeatruck)), OnGameObjectCreated(nameof(setToggleActiveSeatruck))]
         public bool TisAttitudeIndicatorOn = true;
@@ -236,6 +262,12 @@ namespace AttitudeIndicator
             snowfoxOptions.Add(e.GameObject);
             e.GameObject.SetActive(AttitudeIndicatorPatcher.currentVehicle == VehicleType.Snowfox && FisAttitudeIndicatorOn);
         }
+
+        public void changeIndicatorStyle(ChoiceChangedEventArgs e)
+        {
+            AttitudeIndicator.killAttitudeIndicator();
+            AttitudeIndicator.initAttitudeIndicatorSprites((IndicatorStyle)e.Index);
+        }
     }
 #endif
 
@@ -250,13 +282,14 @@ namespace AttitudeIndicator
 
         public static void Patch()
         {
-            AttitudeIndicator.initAttitudeIndicatorSprites();
 #if SUBNAUTICA
             SubnauticaConfig = OptionsPanelHandler.Main.RegisterModOptions<SubnauticaConfig>();
             var harmony = new Harmony("com.mikjaw.subnautica.attitudeindicator.mod");
+            AttitudeIndicator.initAttitudeIndicatorSprites(SubnauticaConfig.chosenStyle);
 #elif BELOWZERO
             BelowZeroConfig = OptionsPanelHandler.Main.RegisterModOptions<BelowZeroConfig>();
             var harmony = new Harmony("com.mikjaw.belowzero.attitudeindicator.mod");
+            AttitudeIndicator.initAttitudeIndicatorSprites(BelowZeroConfig.chosenStyle);
 #endif
             harmony.PatchAll();
         }
