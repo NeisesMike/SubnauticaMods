@@ -17,7 +17,7 @@ namespace PersistentCreatures
         [HarmonyPatch("Start")]
         public static void Postfix()
         {
-            Player.main.gameObject.EnsureComponent<PersistentCreatureSimulator>();
+            PersistentCreaturesPatcher.Simulator = Player.main.gameObject.EnsureComponent<PersistentCreatureSimulator>();
         }
     }
 }
