@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistentCreatures", "PersistentCreatures\PersistentCreatures.csproj", "{F52BC7E1-A01E-4905-BB93-BF316BE38BE6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F52BC7E1-A01E-4905-BB93-BF316BE38BE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F52BC7E1-A01E-4905-BB93-BF316BE38BE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F52BC7E1-A01E-4905-BB93-BF316BE38BE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F52BC7E1-A01E-4905-BB93-BF316BE38BE6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0B35461A-A04B-4B6B-8A69-D930D1CFB6C9}
+	EndGlobalSection
+EndGlobal
