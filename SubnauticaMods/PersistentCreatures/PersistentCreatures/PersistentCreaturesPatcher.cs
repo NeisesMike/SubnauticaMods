@@ -43,8 +43,8 @@ namespace PersistentCreatures
     [Menu("Persistent Creature Options")]
     public class PersistentCreaturesConfig : ConfigFile
     {
-        [Toggle("Toggle Persistent Creature")]
-        public bool areCreaturesActive = true;
+        [Slider("Simulation Period", Min = 1f, Max = 100f)]
+        public float simulationPeriod = 1f;
 
     }
 }

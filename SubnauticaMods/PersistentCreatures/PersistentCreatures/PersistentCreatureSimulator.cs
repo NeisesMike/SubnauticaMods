@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
+using System.Threading;
 
 namespace PersistentCreatures
 {
-	public static class PersistentCreatureSimulator
+	public class PersistentCreatureSimulator : MonoBehaviour
 	{
 		// a pre-generated Terrain Map
 		public static bool[,,] terrainMap;
@@ -19,6 +22,9 @@ namespace PersistentCreatures
 		// a unique-id for each persistent creature
 		private static int unique_id = 0;
 
+		// the number of creatures to allocate to each thread
+		private static int taskSize = 50;
+
 		// This 3D array of dictionaries supports finding PC neighbors in O(1) time.
 		// Each PersistentCreature manages its own value in this array.
 		// To correctly find neighbors, it requires PCs to update their currentLocation faithfully.
@@ -28,6 +34,41 @@ namespace PersistentCreatures
 		// It also retrieves .Values in O(1), so iterating over all creatures is O(n)
 		private static Dictionary<int, PersistentCreature> creatureList = new Dictionary<int, PersistentCreature>();
 
+		public void Start()
+		{
+			StartCoroutine(SimulatedUpdate());
+		}
+
+		/*
+		 * Ultimately this method is O(n*m) where
+		 *		n is the number of PCs currently registered
+		 *		m is the number of PCs in the region this PC is in
+		 */
+		private IEnumerator SimulatedUpdate()
+		{
+			while (true)
+			{
+				yield return new WaitForSeconds(PersistentCreaturesPatcher.Config.simulationPeriod);
+				Logger.Log("Tick");
+				int numTasks = 0;
+				List<Thread> threads = new List<Thread>();
+				while (numTasks * taskSize < PersistentCreatureSimulator.getNumCreatures())
+				{
+					Thread thisThread = new Thread(Simulate);
+					thisThread.Start(numTasks);
+					threads.Add(thisThread);
+					numTasks++;
+				}
+			}
+		}
+
+		private static void Simulate(object taskID)
+		{
+			foreach (PersistentCreature pc in creatureList.Values.Skip((int)taskID * taskSize).Take((int)taskID * taskSize))
+			{
+				pc.SimulatedUpdate(terrainMap);
+			}
+		}
 
 		// call this at patch time
 		public static void Init()
@@ -45,14 +86,15 @@ namespace PersistentCreatures
 			}
 		}
 
-		// should thread this out every-so-often from Player.Update()
-		public static void SimulatedUpdate()
+
+		public static int getNumCreatures()
 		{
-			foreach (PersistentCreature pc in creatureList.Values)
-			{
-				pc.SimulatedUpdate(terrainMap);
-			}
+			return creatureList.Count;
 		}
+		public static Dictionary<int, PersistentCreature>.ValueCollection getCreatures()
+        {
+			return creatureList.Values;
+        }
 
 		public static void RegisterCreature(PersistentCreature pc, int x, int y, int z)
 		{
