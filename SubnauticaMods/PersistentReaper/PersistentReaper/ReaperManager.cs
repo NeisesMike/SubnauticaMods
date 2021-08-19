@@ -232,9 +232,9 @@ namespace PersistentReaper
             foreach (Int3 move in moveList)
             {
                 int thisScent = getScentIntensity(move);
-                if (maxScentIntensity < playerTrailDict[move].scentIntensity)
+                if (maxScentIntensity < thisScent)
                 {
-                    maxScentIntensity = playerTrailDict[move].scentIntensity;
+                    maxScentIntensity = thisScent;
                 }
             }
 
@@ -282,9 +282,9 @@ namespace PersistentReaper
             foreach (Int3 move in moveList)
             {
                 int thisScent = getScentIntensity(move);
-                if (maxScentIntensity < playerTrailDict[move].scentIntensity)
+                if (maxScentIntensity < thisScent)
                 {
-                    maxScentIntensity = playerTrailDict[move].scentIntensity;
+                    maxScentIntensity = thisScent;
                 }
             }
 
@@ -362,7 +362,7 @@ namespace PersistentReaper
         // the legal volume should range from sea level down to the highest terrain point in the region
         public static bool checkRegionLegality(Int3 index)
         {
-            bool isValid = 0 <= index.x && index.x < 256 && minYReaperDepth <= index.y && index.y <= maxYReaperDepth && 0 <= index.z && index.z < 256;
+            bool isValid = 0 <= index.x && index.x < 256 && minYReaperDepth <= index.y && index.y < maxYReaperDepth && 0 <= index.z && index.z < 256;
             if (!isValid)
             {
                 return false;
