@@ -22,9 +22,6 @@ namespace PersistentCreatures
 		// a unique-id for each persistent creature
 		private static int unique_id = 0;
 
-		// the number of creatures to allocate to each thread
-		private static int taskSize = 50;
-
 		// This 3D array of dictionaries supports finding PC neighbors in O(1) time.
 		// Each PersistentCreature manages its own value in this array.
 		// To correctly find neighbors, it requires PCs to update their currentLocation faithfully.
@@ -36,6 +33,17 @@ namespace PersistentCreatures
 
 		public void Start()
 		{
+			getTerrainMapFromFile();
+			for (int x = 0; x < x_max; x++)
+			{
+				for (int y = 0; y < y_max; y++)
+				{
+					for (int z = 0; z < z_max; z++)
+					{
+						creatureMap[x, y, z] = new Dictionary<int, PersistentCreature>();
+					}
+				}
+			}
 			StartCoroutine(SimulatedUpdate());
 		}
 
@@ -52,7 +60,7 @@ namespace PersistentCreatures
 				Logger.Log("Tick");
 				int numTasks = 0;
 				List<Thread> threads = new List<Thread>();
-				while (numTasks * taskSize < PersistentCreatureSimulator.getNumCreatures())
+				while (numTasks * PersistentCreaturesPatcher.Config.creaturesPerTask < PersistentCreatureSimulator.getNumCreatures())
 				{
 					Thread thisThread = new Thread(Simulate);
 					thisThread.Start(numTasks);
@@ -64,28 +72,12 @@ namespace PersistentCreatures
 
 		private static void Simulate(object taskID)
 		{
-			foreach (PersistentCreature pc in creatureList.Values.Skip((int)taskID * taskSize).Take((int)taskID * taskSize))
+			// operate on the taskIDth set of creaturesPerTask creatures
+			foreach (PersistentCreature pc in creatureList.Values.Skip((int)taskID * PersistentCreaturesPatcher.Config.creaturesPerTask).Take(PersistentCreaturesPatcher.Config.creaturesPerTask))
 			{
 				pc.SimulatedUpdate(terrainMap);
 			}
 		}
-
-		// call this at patch time
-		public static void Init()
-		{
-			getTerrainMapFromFile();
-			for (int x = 0; x < x_max; x++)
-			{
-				for (int y = 0; y < y_max; y++)
-				{
-					for (int z = 0; z < z_max; z++)
-					{
-						creatureMap[x, y, z] = new Dictionary<int, PersistentCreature>();
-					}
-				}
-			}
-		}
-
 
 		public static int getNumCreatures()
 		{
