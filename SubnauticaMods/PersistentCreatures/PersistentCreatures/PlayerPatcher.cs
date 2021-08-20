@@ -15,9 +15,23 @@ namespace PersistentCreatures
     {
         [HarmonyPostfix]
         [HarmonyPatch("Start")]
-        public static void Postfix()
+        public static void StartPostfix()
         {
             PersistentCreaturesPatcher.Simulator = Player.main.gameObject.EnsureComponent<PersistentCreatureSimulator>();
         }
+
+        /*
+        [HarmonyPostfix]
+        [HarmonyPatch("Update")]
+        public static void UpdatePostfix()
+        {
+            if(Input.GetKeyDown(KeyCode.Backspace))
+            {
+                // create and register a shoal in front of the player
+
+
+            }
+        }
+        */
     }
 }

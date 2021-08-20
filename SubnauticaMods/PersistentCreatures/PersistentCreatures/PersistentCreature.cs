@@ -7,39 +7,26 @@ using UnityEngine;
 
 namespace PersistentCreatures
 {
-	public abstract class PersistentCreature
+	public abstract class PersistentCreature : MonoBehaviour
 	{
+		public PersistentCreatureBehavior behavior = null;
+
 		public int unique_id;
-		protected GameObject prefab;
-		protected GameObject instance;
 		protected bool isActiveInWorld;
-		protected Tuple<int, int, int> lastLocation;
-		protected Tuple<int, int, int> currentLocation;
+		protected Int3 lastLocation;
+		protected Int3 currentLocation;
 		private int currentBehavior = -1;
+		protected float distToSpawn = 50f;
+		protected float distToDespawn = 225f;
 
 		public void Register(int x, int y, int z)
-        {
+		{
+			currentLocation = new Int3(x, y, z);
 			PersistentCreatureSimulator.RegisterCreature(this, x, y, z);
         }
 		// This will be called by the PersistentCreatureSimulator
 		public void SimulatedUpdate(bool[,,] inputMap)
 		{
-			if (isActiveInWorld)
-			{
-				if (225 < Vector3.Distance(Player.main.transform.position, instance.transform.position))
-				{
-					DespawnMe();
-					isActiveInWorld = false;
-				}
-			}
-			else
-			{
-				if (PersistentCreatureSimulator.GetRegionDistanceToPlayer(currentLocation) < 175)
-				{
-					SpawnMe();
-					isActiveInWorld = true;
-				}
-			}
 			if (!isActiveInWorld)
 			{
 				lastLocation = currentLocation;
@@ -58,13 +45,32 @@ namespace PersistentCreatures
 						currentBehavior = -1;
 					}
 				}
-				PersistentCreatureSimulator.RemoveFromLocation(this, lastLocation.Item1, lastLocation.Item2, lastLocation.Item3);
-				PersistentCreatureSimulator.AddToLocation(this, currentLocation.Item1, currentLocation.Item2, currentLocation.Item3);
+				PersistentCreatureSimulator.RemoveFromLocation(this, lastLocation.x, lastLocation.y, lastLocation.z);
+				PersistentCreatureSimulator.AddToLocation(this, currentLocation.x, currentLocation.y, currentLocation.z);
+			}
+		}
+
+		public void ControlSpawning()
+		{
+			if (isActiveInWorld)
+			{
+				if (distToDespawn < Vector3.Distance(Player.main.transform.position, Utils.GetVectorFromRegion(currentLocation)))
+				{
+					SpawnMe();
+					isActiveInWorld = false;
+				}
+			}
+			else
+			{
+				if (Utils.GetRegionDistanceToPlayer(currentLocation) < distToSpawn)
+				{
+					DespawnMe();
+					isActiveInWorld = true;
+				}
 			}
 		}
 
 		public abstract void SpawnMe();
-
 		public abstract void DespawnMe();
 
 		public abstract int ChooseBehavior(bool[,,] terrainMap);

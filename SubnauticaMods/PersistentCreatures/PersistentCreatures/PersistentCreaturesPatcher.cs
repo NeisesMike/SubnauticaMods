@@ -13,6 +13,7 @@ using SMLHelper.V2.Options;
 using SMLHelper.V2.Json;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
+using QModManager.API.ModLoading;
 
 namespace PersistentCreatures
 {
@@ -29,10 +30,20 @@ namespace PersistentCreatures
             message.ShowMessage(msg, 1);
         }
     }
+
+    [QModCore]
     public static class PersistentCreaturesPatcher
     {
         internal static PersistentCreaturesConfig Config { get; private set; }
         internal static PersistentCreatureSimulator Simulator { get; set; }
+
+        [QModPrePatch]
+        public static void PrePatch()
+        {
+            PersistentCreatureSimulator.Init();
+        }
+
+        [QModPatch]
         public static void Patch()
         {
             Config = OptionsPanelHandler.Main.RegisterModOptions<PersistentCreaturesConfig>();

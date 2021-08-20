@@ -12,12 +12,14 @@ namespace PersistentCreatures
 	public class PersistentCreatureSimulator : MonoBehaviour
 	{
 		// a pre-generated Terrain Map
+		// false for open space
+		// true for terrain
 		public static bool[,,] terrainMap;
 
 		// the width, height, and depth of the world in regions
-		private static int x_max = 256;
-		private static int y_max = 128;
-		private static int z_max = 256;
+		public readonly static int x_max = 256;
+		public readonly static int y_max = 128;
+		public readonly static int z_max = 256;
 
 		// a unique-id for each persistent creature
 		private static int unique_id = 0;
@@ -33,7 +35,12 @@ namespace PersistentCreatures
 
 		public void Start()
 		{
-			getTerrainMapFromFile();
+			StartCoroutine(SimulatedUpdate());
+		}
+
+		public static void Init()
+        {
+			Utils.getTerrainMapFromFile();
 			for (int x = 0; x < x_max; x++)
 			{
 				for (int y = 0; y < y_max; y++)
@@ -44,7 +51,6 @@ namespace PersistentCreatures
 					}
 				}
 			}
-			StartCoroutine(SimulatedUpdate());
 		}
 
 		/*
@@ -56,16 +62,22 @@ namespace PersistentCreatures
 		{
 			while (true)
 			{
-				yield return new WaitForSeconds(PersistentCreaturesPatcher.Config.simulationPeriod);
-				Logger.Log("Tick");
+				//yield return new WaitForSeconds(PersistentCreaturesPatcher.Config.simulationPeriod);
+				yield return WaitForSimulationTick(Time.time);
+				yield return ControlSpawning(creatureList.Values);
+
 				int numTasks = 0;
 				List<Thread> threads = new List<Thread>();
-				while (numTasks * PersistentCreaturesPatcher.Config.creaturesPerTask < PersistentCreatureSimulator.getNumCreatures())
+				while (numTasks * PersistentCreaturesPatcher.Config.creaturesPerTask < getNumCreatures())
 				{
 					Thread thisThread = new Thread(Simulate);
 					thisThread.Start(numTasks);
 					threads.Add(thisThread);
 					numTasks++;
+				}
+				foreach(Thread th in threads)
+                {
+					th.Join();
 				}
 			}
 		}
@@ -77,6 +89,28 @@ namespace PersistentCreatures
 			{
 				pc.SimulatedUpdate(terrainMap);
 			}
+		}
+		private static IEnumerator ControlSpawning(Dictionary<int, PersistentCreature>.ValueCollection PCs)
+		{
+			int i = 0;
+			foreach (PersistentCreature pc in PCs)
+			{
+				pc.ControlSpawning();
+				i++;
+				// control PCs ten at a time
+				if (i % 10 == 0)
+				{
+					yield return null;
+				}
+			}
+		}
+		private static IEnumerator WaitForSimulationTick(float startTime)
+		{
+			// operate on the taskIDth set of creaturesPerTask creatures
+			while (Time.time < startTime + PersistentCreaturesPatcher.Config.simulationPeriod)
+            {
+				yield return new WaitForSeconds(0.1f);
+            }
 		}
 
 		public static int getNumCreatures()
@@ -120,7 +154,7 @@ namespace PersistentCreatures
 				{
 					for (int z = inZ - 1; z <= inZ + 1; z++)
 					{
-						if (IsValidRegion(x, y, z))
+						if (Utils.IsValidRegion(x, y, z))
 						{
 							neighbors.AddRange(creatureMap[x, y, z].Values);
 						}
@@ -130,27 +164,9 @@ namespace PersistentCreatures
 			return neighbors;
 		}
 
-		public static bool IsValidRegion(int x, int y, int z)
+		public static void RemoveNormalSpawnsOfTechType(TechType tt)
         {
-			return
-			(
-				0 <= x && x < x_max &&
-				0 <= y && y < y_max &&
-				0 <= z && z < z_max
-			);
+			Logger.Log("Implement me!");
         }
-
-		public static float GetRegionDistanceToPlayer(Tuple<int,int,int> region)
-        {
-			Logger.Log("Implement me!");
-			// somehow convert region to a Vector3
-			// and then to Vector3.Distance with Player.main.transform.position
-			return 0;
-		}
-
-		public static void getTerrainMapFromFile()
-		{
-			Logger.Log("Implement me!");
-		}
 	}
 }
