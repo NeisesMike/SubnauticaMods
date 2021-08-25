@@ -34,7 +34,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony">
+    <Reference Include="0Harmony, Version=2.4.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\core\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
@@ -42,6 +43,9 @@
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="QModInstaller">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\plugins\QModManager\QModInstaller.dll</HintPath>
     </Reference>
     <Reference Include="QModManager">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\SubnauticaZero\BepInEx\patchers\QModManager\QModManager.exe</HintPath>
@@ -88,4 +92,7 @@
     <Compile Include="RollControlPatcher.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy  $(TargetPath) "C:\Program Files (x86)\Steam\steamapps\common\Subnautica\QMods\$(SolutionName)\" /y</PostBuildEvent>
+  </PropertyGroup>
 </Project>

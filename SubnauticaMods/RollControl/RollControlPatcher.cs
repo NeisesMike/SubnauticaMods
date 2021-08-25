@@ -7,6 +7,7 @@ using SMLHelper.V2.Json;
 using SMLHelper.V2.Handlers;
 using UnityEngine;
 using HarmonyLib;
+using QModManager.API.ModLoading;
 
 namespace RollControl
 {
@@ -26,7 +27,7 @@ namespace RollControl
         public KeyCode ScubaRollToggleKey = KeyCode.RightControl;
 
         [Toggle("Enable Scuba Roll Unlimited (experimental)")]
-        public bool ScubaRollUnlimited = false;
+        public bool ScubaRollUnlimited = true;
 
         [Slider("Seamoth Roll Speed", Min = 0f, Max = 1f, Step = 0.01f)]
         public double SeamothRollSpeed = 0.3f;
@@ -35,13 +36,15 @@ namespace RollControl
         public double ScubaRollSpeed = 0.3f;
     }
 
-    class RollControlPatcher
+    [QModCore]
+    public static class RollControlPatcher
     {
         internal static MyConfig Config { get; private set; }
 
         public static bool isSeamothRollOn = false;
         public static bool isScubaRollOn = false;
 
+        [QModPatch]
         public static void Patch()
         {
             Config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
