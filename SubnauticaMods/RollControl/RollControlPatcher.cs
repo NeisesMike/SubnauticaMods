@@ -26,23 +26,20 @@ namespace RollControl
         [Keybind("Toggle Scuba Roll")]
         public KeyCode ScubaRollToggleKey = KeyCode.RightControl;
 
-        [Toggle("Enable Scuba Roll Unlimited (experimental)")]
-        public bool ScubaRollUnlimited = true;
-
-        [Slider("Seamoth Roll Speed", Min = 0f, Max = 1f, Step = 0.01f)]
+        [Slider("Seamoth Roll Speed", Min = 0f, Max = 1f, Step = 0.01f, DefaultValue = 0.3f)]
         public double SeamothRollSpeed = 0.3f;
 
-        [Slider("Scuba Roll Speed", Min = 0f, Max = 1f, Step = 0.01f)]
+        [Slider("Scuba Roll Speed", Min = 0f, Max = 1f, Step = 0.01f, DefaultValue = 0.3f)]
         public double ScubaRollSpeed = 0.3f;
+
+        [Slider("Scuba Look Sensitivity", Min = 0.30f, Max = 1.2f, Step = 0.01f, DefaultValue = 0.75f)]
+        public float ScubaLookSensitivity = 0.75f;
     }
 
     [QModCore]
     public static class RollControlPatcher
     {
         internal static MyConfig Config { get; private set; }
-
-        public static bool isSeamothRollOn = false;
-        public static bool isScubaRollOn = false;
 
         [QModPatch]
         public static void Patch()
@@ -51,8 +48,5 @@ namespace RollControl
             var harmony = new Harmony("com.mikjaw.subnautica.rollcontrol.mod");
             harmony.PatchAll();
         }
-
-        public static RollManager myRollMan = new RollManager();
     }
-
 }

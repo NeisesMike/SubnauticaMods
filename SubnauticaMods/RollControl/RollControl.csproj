@@ -83,13 +83,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PlayerFixedUpdatePatcher.cs" />
-    <Compile Include="PlayerAwakePatcher.cs" />
-    <Compile Include="PlayerFixedPatcher.cs" />
     <Compile Include="PlayerPatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RCMouseLook.cs" />
     <Compile Include="RollControlPatcher.cs" />
+    <Compile Include="ScubaRollManager.cs" />
     <Compile Include="SeamothPatcher.cs" />
     <Compile Include="SeamothRollController.cs" />
   </ItemGroup>
