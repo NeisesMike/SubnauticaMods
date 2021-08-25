@@ -83,7 +83,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MouseLookPatcher.cs" />
     <Compile Include="PlayerFixedUpdatePatcher.cs" />
     <Compile Include="PlayerAwakePatcher.cs" />
     <Compile Include="PlayerFixedPatcher.cs" />

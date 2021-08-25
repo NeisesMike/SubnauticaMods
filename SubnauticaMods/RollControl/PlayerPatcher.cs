@@ -77,8 +77,9 @@ namespace RollControl
             {
                 if (RollControlPatcher.Config.ScubaRollUnlimited)
                 {
-                    MainCameraControl.main.minimumY = -10000f;
-                    MainCameraControl.main.maximumY = 10000f;
+                    MainCameraControl.main.rotationY %= 360;
+                    MainCameraControl.main.minimumY = -360f;
+                    MainCameraControl.main.maximumY = 720f;
                 }
                 else
                 {
