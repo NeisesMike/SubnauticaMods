@@ -26,7 +26,7 @@ namespace RollControl
             {
                 RollControlPatcher.isSeamothRollOn = !RollControlPatcher.isSeamothRollOn;
             }
-            if (Input.GetKeyDown(RollControlPatcher.Config.SeamothRollToggleKey))
+            if (Input.GetKeyDown(RollControlPatcher.Config.ScubaRollToggleKey))
             {
                 RollControlPatcher.isScubaRollOn = !RollControlPatcher.isScubaRollOn;
                 PlayerAwakePatcher.myRollMan.isRollToggled = !PlayerAwakePatcher.myRollMan.isRollToggled;
@@ -114,13 +114,17 @@ namespace RollControl
             bool starHeld = Input.GetKey(RollControlPatcher.Config.RollStarboardKey);
             bool starDown = Input.GetKeyDown(RollControlPatcher.Config.RollStarboardKey);
 
-            if (portDown || portHeld)
+            if ((portDown || portHeld) && !(starDown || starHeld))
             {
                 PlayerAwakePatcher.myRollMan.startScubaRoll(true);
             }
-            else if (starDown || starHeld)
+            else if ((starDown || starHeld) && !(portDown || portHeld))
             {
                 PlayerAwakePatcher.myRollMan.startScubaRoll(false);
+            }
+            else if ((starDown || starHeld) && (portDown || portHeld))
+            {
+                PlayerAwakePatcher.myRollMan.stopScubaRoll();
             }
             else if ( (starUp && !portHeld) || (portUp && !starHeld) || (!portHeld && !starHeld) )
             {
