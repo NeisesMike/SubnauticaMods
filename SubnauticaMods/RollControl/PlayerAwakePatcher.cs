@@ -60,6 +60,8 @@ namespace RollControl
             // initialize the roll manager
             myRollMan = new RollManager();
 
+            __instance.gameObject.EnsureComponent<RCMouseLook>();
+
             return true;
         }
     }

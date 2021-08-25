@@ -15,7 +15,6 @@ namespace RollControl
 {
     [HarmonyPatch(typeof(Player))]
     [HarmonyPatch("Update")]
-
     public class PlayerUpdatePatcher
     {
         [HarmonyPostfix]
@@ -32,41 +31,13 @@ namespace RollControl
                 PlayerAwakePatcher.myRollMan.isRollToggled = !PlayerAwakePatcher.myRollMan.isRollToggled;
             }
 
-            if (__instance.inSeamoth)
-            {
-                SeamothRoll(__instance, RollControlPatcher.isSeamothRollOn);
-                return;
-            }
-            else if (__instance.motorMode == Player.MotorMode.Dive || __instance.motorMode == Player.MotorMode.Seaglide)
+            if (__instance.motorMode == Player.MotorMode.Dive || __instance.motorMode == Player.MotorMode.Seaglide)
             {
                 ScubaRoll(__instance, RollControlPatcher.isScubaRollOn);
                 return;
             }
         }
 
-        public static void SeamothRoll(Player myPlayer, bool roll)
-        {
-            Vehicle mySeamoth = myPlayer.currentMountedVehicle;
-            if (roll)
-            {
-                mySeamoth.stabilizeRoll = false;
-            }
-            else
-            {
-                mySeamoth.stabilizeRoll = true;
-                return;
-            }
-
-            // add roll handlers
-            if (Input.GetKey(RollControlPatcher.Config.RollPortKey))
-            {
-                mySeamoth.useRigidbody.AddTorque(mySeamoth.transform.forward * (float)RollControlPatcher.Config.SeamothRollSpeed, ForceMode.VelocityChange);
-            }
-            if (Input.GetKey(RollControlPatcher.Config.RollStarboardKey))
-            {
-                mySeamoth.useRigidbody.AddTorque(mySeamoth.transform.forward * (float)-RollControlPatcher.Config.SeamothRollSpeed, ForceMode.VelocityChange);
-            }
-        }
 
         public static void ScubaRoll(Player myPlayer, bool roll)
         {
