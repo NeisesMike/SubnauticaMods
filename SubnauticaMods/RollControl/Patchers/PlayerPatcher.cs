@@ -20,7 +20,7 @@ namespace RollControl
         [HarmonyPatch("Awake")]
         public static void AwakePostfix(Player __instance)
         {
-            var srm = __instance.gameObject.EnsureComponent<ScubaRollManager>();
+            var srm = __instance.gameObject.EnsureComponent<ScubaRollController>();
             srm.player = __instance;
         }
 
@@ -34,7 +34,7 @@ namespace RollControl
         [HarmonyPatch("UpdateRotation")]
         public static bool Prefix(Player __instance)
         {
-            if (__instance.GetComponent<ScubaRollManager>().isRollToggled && __instance.IsUnderwater())
+            if (__instance.GetComponent<ScubaRollController>().isRollToggled && __instance.IsUnderwater())
             {
                 return false;
             }

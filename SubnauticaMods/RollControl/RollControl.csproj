@@ -83,11 +83,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PlayerPatcher.cs" />
+    <Compile Include="Patchers\PlayerPatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RollControlPatcher.cs" />
-    <Compile Include="ScubaRollManager.cs" />
-    <Compile Include="SeamothPatcher.cs" />
+    <Compile Include="Patchers\RollControlPatcher.cs" />
+    <Compile Include="ScubaRollController.cs" />
+    <Compile Include="Patchers\SeamothPatcher.cs" />
     <Compile Include="SeamothRollController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

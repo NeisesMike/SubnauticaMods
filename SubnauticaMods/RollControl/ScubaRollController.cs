@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace RollControl
 {
-    public class ScubaRollManager : MonoBehaviour
+    public class ScubaRollController : MonoBehaviour
     {
         public Player player = null;
         public bool isRollToggled;
@@ -23,7 +23,7 @@ namespace RollControl
         private static readonly float ACCEL_FUEL_STEP = 25f;
         private static readonly float MULTIPLIER = 1f;
 
-        public ScubaRollManager()
+        public ScubaRollController()
         {
             isRollToggled = false;
         }
