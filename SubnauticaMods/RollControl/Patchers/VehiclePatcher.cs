@@ -11,15 +11,18 @@ namespace RollControl
     [HarmonyPatch(typeof(Vehicle))]
     public class VehiclePatcher
     {
-        /*
         [HarmonyPostfix]
         [HarmonyPatch("Start")]
         public static void StartPostfix(Vehicle __instance)
         {
-            var src = __instance.gameObject.EnsureComponent<SeamothRollController>();
-            src.mySeamoth = __instance;
+            var src = __instance.gameObject.EnsureComponent<VehicleRollController>();
+            src.myVehicle = __instance;
+            SeaMoth sm = __instance as SeaMoth;
+            if(sm != null)
+            {
+                sm.stabilizeRoll = !RollControlPatcher.Config.SubRoll;
+            }
         }
-        */
 
         [HarmonyPrefix]
         [HarmonyPatch("EnterVehicle")]

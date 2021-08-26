@@ -22,6 +22,10 @@ namespace RollControl
         {
             var srm = __instance.gameObject.EnsureComponent<ScubaRollController>();
             srm.player = __instance;
+            if(__instance.IsUnderwater())
+            {
+                srm.OnSwimmingStarted();
+            }
         }
 
         [HarmonyPrefix]
@@ -39,22 +43,38 @@ namespace RollControl
         [HarmonyPatch("SetMotorMode")]
         public static bool SetMotorMode(Player __instance, Player.MotorMode newMotorMode)
         {
-            
             if ( // we're transitioning into swimming
-                (newMotorMode == Player.MotorMode.Seaglide && __instance.motorMode != Player.MotorMode.Seaglide) ||
-                (newMotorMode == Player.MotorMode.Dive     && __instance.motorMode != Player.MotorMode.Dive)
+                (newMotorMode == Player.MotorMode.Seaglide && __instance.motorMode != Player.MotorMode.Seaglide && __instance.motorMode != Player.MotorMode.Dive) ||
+                (newMotorMode == Player.MotorMode.Dive     && __instance.motorMode != Player.MotorMode.Seaglide && __instance.motorMode != Player.MotorMode.Dive)
                 )
             {
                 __instance.gameObject.GetComponent<ScubaRollController>().OnSwimmingStarted();
             }
             else if ( // we're transitioning out of swimming
-                (newMotorMode != Player.MotorMode.Seaglide && __instance.motorMode == Player.MotorMode.Seaglide) ||
-                (newMotorMode != Player.MotorMode.Dive && __instance.motorMode == Player.MotorMode.Dive)
+                (newMotorMode != Player.MotorMode.Seaglide && newMotorMode != Player.MotorMode.Dive) && 
+                (__instance.motorMode == Player.MotorMode.Seaglide || __instance.motorMode == Player.MotorMode.Dive)
                 )
             {
                 __instance.gameObject.GetComponent<ScubaRollController>().GetReadyToStopRolling();
             }
             return true;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch("OnPlayerIsUnderwaterChanged")]
+        public static bool OnPlayerIsUnderwaterChanged(Utils.MonitoredValue<bool> isUnderwater)
+        {
+            return false;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch("GetPlayFallingAnimation")]
+        public static void GetPlayFallingAnimation(ref bool __result)
+        {
+            if(RollControlPatcher.Config.ScubaRoll)
+            {
+                __result = false;
+            }
         }
     }
 }

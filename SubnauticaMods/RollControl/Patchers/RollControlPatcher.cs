@@ -35,12 +35,11 @@ namespace RollControl
     {
         [Keybind("Roll Counter-Clockwise")]
         public KeyCode RollPortKey = KeyCode.Z;
-
         [Keybind("Roll Clockwise")]
         public KeyCode RollStarboardKey = KeyCode.C;
 
-        [Toggle("Toggle Seamoth Roll"), OnChange(nameof(ChangeStabilization))]
-        public bool SeamothRoll = true;
+        [Toggle("Toggle Submarine Roll"), OnChange(nameof(ChangeStabilization))]
+        public bool SubRoll = true;
         public void ChangeStabilization(ToggleChangedEventArgs e)
         {
             foreach(SeaMoth sm in Transform.FindObjectsOfType<SeaMoth>())
@@ -48,16 +47,13 @@ namespace RollControl
                 sm.stabilizeRoll = e.Value;
             }
         }
+        [Slider("Submarine Roll Speed", Min = 0f, Max = 1f, Step = 0.01f, DefaultValue = 0.3f)]
+        public double SubmarineRollSpeed = 0.3f;
 
         [Toggle("Toggle Scuba Roll")]
         public bool ScubaRoll = true;
-
-        [Slider("Seamoth Roll Speed", Min = 0f, Max = 1f, Step = 0.01f, DefaultValue = 0.3f)]
-        public double SeamothRollSpeed = 0.3f;
-
         [Slider("Scuba Roll Speed", Min = 0f, Max = 1f, Step = 0.01f, DefaultValue = 0.3f)]
         public double ScubaRollSpeed = 0.3f;
-
         [Slider("Scuba Look Sensitivity", Min = 0.30f, Max = 1.2f, Step = 0.01f, DefaultValue = 0.75f)]
         public float ScubaLookSensitivity = 0.75f;
     }

@@ -49,16 +49,15 @@ namespace RollControl
         }
         public void Update()
         {
-            /*
-            if (Swimming && Input.GetKeyDown(RollControlPatcher.Config.ScubaRollToggleKey))
+            if (Input.GetKeyDown(KeyCode.Keypad0))
             {
-                GetReadyToStopRolling();
+                Logger.Log("press");
+                RefreshTransforms();
             }
-            */
         }
         public void GetReadyToRoll()
         {
-            player.armsController.enabled = false; // turn off the body-animations that sometimes get in the way
+            //player.armsController.enabled = false; // turn off the body-animations that sometimes get in the way
             player.rigidBody.angularDrag = 15; // ensure a good mouse-feel
             MainCameraControl.main.rotationX = 0; // set the camera rotation to zed
             MainCameraControl.main.rotationY = 0;
@@ -67,7 +66,7 @@ namespace RollControl
         }
         public void GetReadyToStopRolling()
         {
-            player.armsController.enabled = true; // turn the body-animations back on
+            //player.armsController.enabled = true; // turn the body-animations back on
             player.rigidBody.angularDrag = 4; // put this to what it was before
             MainCameraControl.main.SetEnabled(true); // re-enable the camera
             isRollReady = false;
@@ -247,41 +246,26 @@ namespace RollControl
         }
         public IEnumerator RollSwimStart()
         {
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            GetReadyToRoll();
+            // spam this for 3 seconds
+            for (int i = 0; i < 30; i++)
+            {
+                yield return new WaitForSeconds(0.01f);
+                GetReadyToStopRolling();
+                GetReadyToRoll();
+            }
             yield break;
+        }
+        public void RefreshTransforms()
+        {
+            RollControlPatcher.Config.ScubaRoll = !RollControlPatcher.Config.ScubaRoll;
+            if(RollControlPatcher.Config.ScubaRoll)
+            {
+                GetReadyToRoll();
+            }
+            else
+            {
+                GetReadyToStopRolling();
+            }
         }
     }
 }
