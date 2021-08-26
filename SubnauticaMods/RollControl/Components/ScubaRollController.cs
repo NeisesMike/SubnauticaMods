@@ -13,11 +13,11 @@ namespace RollControl
         public Player player = null;
         private bool isRollReady = false;
 
-        public bool Swimming
+        public static bool Swimming
         {
             get
             { 
-                return (player.motorMode == Player.MotorMode.Dive || player.motorMode == Player.MotorMode.Seaglide);
+                return Player.main.motorMode == Player.MotorMode.Dive || Player.main.motorMode == Player.MotorMode.Seaglide;
             }
         }
 
@@ -35,43 +35,34 @@ namespace RollControl
 
         public void FixedUpdate()
         {
-            if (RollControlPatcher.Config.ScubaRoll && isRollReady && Swimming)
+            if (RollControlPatcher.Config.ScubaRoll && isRollReady && Swimming && AvatarInputHandler.main.IsEnabled())
             {
-                // ensure the camera is correct
-                MainCameraControl.main.SetEnabled(false); // disable the camera rotation
+                MainCameraControl.main.SetEnabled(false);
                 MainCameraControl.main.transform.localRotation = Quaternion.identity;
-
-                ScubaRoll();
                 PhysicsMouseLook();
+
+                SetupScubaRoll();
+                ExecuteScubaRoll();
                 CorrectVerticalMovement();
-                continueScubaRoll();
-            }
-        }
-        public void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Keypad0))
-            {
-                Logger.Log("press");
-                RefreshTransforms();
             }
         }
         public void GetReadyToRoll()
         {
-            //player.armsController.enabled = false; // turn off the body-animations that sometimes get in the way
-            player.rigidBody.angularDrag = 15; // ensure a good mouse-feel
-            MainCameraControl.main.rotationX = 0; // set the camera rotation to zed
+            player.transform.rotation = Quaternion.Euler(MainCameraControl.main.transform.eulerAngles.x, MainCameraControl.main.transform.eulerAngles.y, Player.main.transform.rotation.eulerAngles.z);
+            // ensure a good mouse-feel
+            player.rigidBody.angularDrag = 15;
+            // set the camera rotation to zed
+            MainCameraControl.main.rotationX = 0; 
             MainCameraControl.main.rotationY = 0;
-            MainCameraControl.main.transform.rotation = player.transform.rotation; // align the camera to the player
             isRollReady = true;
         }
         public void GetReadyToStopRolling()
         {
-            //player.armsController.enabled = true; // turn the body-animations back on
-            player.rigidBody.angularDrag = 4; // put this to what it was before
-            MainCameraControl.main.SetEnabled(true); // re-enable the camera
+            // re-enable the camera
+            MainCameraControl.main.SetEnabled(true);
             isRollReady = false;
         }
-        private void continueScubaRoll()
+        private void ExecuteScubaRoll()
         {
             if (isSlowingDown)
             {
@@ -85,13 +76,13 @@ namespace RollControl
             }
             if (isSpeedingUpCW && isRollReady)
             {
-                rollMagnitude = (float)RollControlPatcher.Config.ScubaRollSpeed * SCALING_FACTOR * (fuel / MAX_FUEL);
+                rollMagnitude = (float)RollControlPatcher.Config.ScubaRollSpeed / 100f * SCALING_FACTOR * (fuel / MAX_FUEL);
                 GetComponent<Rigidbody>().AddTorque(player.transform.forward * rollMagnitude, ForceMode.VelocityChange);
                 fuel += ACCEL_FUEL_STEP;
             }
             if (isSpeedingUpCCW && isRollReady)
             {
-                rollMagnitude = (float)-RollControlPatcher.Config.ScubaRollSpeed * SCALING_FACTOR * (fuel / MAX_FUEL);
+                rollMagnitude = (float)-RollControlPatcher.Config.ScubaRollSpeed / 100f * SCALING_FACTOR * (fuel / MAX_FUEL);
                 GetComponent<Rigidbody>().AddTorque(player.transform.forward * rollMagnitude, ForceMode.VelocityChange);
                 fuel += ACCEL_FUEL_STEP;
             }
@@ -128,15 +119,11 @@ namespace RollControl
         public void PhysicsMouseLook()
         {
             Vector2 offset = GameInput.GetLookDelta();
-            player.rigidBody.AddTorque(RollControlPatcher.Config.ScubaLookSensitivity * player.transform.up    *  offset.x, ForceMode.VelocityChange);
-            player.rigidBody.AddTorque(RollControlPatcher.Config.ScubaLookSensitivity * player.transform.right * -offset.y, ForceMode.VelocityChange);
+            player.rigidBody.AddTorque(RollControlPatcher.Config.ScubaLookSensitivity / 100f * player.transform.up * offset.x, ForceMode.VelocityChange);
+            player.rigidBody.AddTorque(RollControlPatcher.Config.ScubaLookSensitivity / 100f * player.transform.right * -offset.y, ForceMode.VelocityChange);
         }
-        public void ScubaRoll()
+        public void SetupScubaRoll()
         {
-            Rigidbody proper = player.rigidBody;
-            player.transform.position = proper.position;
-            player.transform.rotation = proper.rotation;
-
             bool portUp = Input.GetKeyUp(RollControlPatcher.Config.RollPortKey);
             bool portHeld = Input.GetKey(RollControlPatcher.Config.RollPortKey);
             bool portDown = Input.GetKeyDown(RollControlPatcher.Config.RollPortKey);
@@ -242,30 +229,7 @@ namespace RollControl
         }
         public void OnSwimmingStarted()
         {
-            StartCoroutine(RollSwimStart());
-        }
-        public IEnumerator RollSwimStart()
-        {
-            // spam this for 3 seconds
-            for (int i = 0; i < 30; i++)
-            {
-                yield return new WaitForSeconds(0.01f);
-                GetReadyToStopRolling();
-                GetReadyToRoll();
-            }
-            yield break;
-        }
-        public void RefreshTransforms()
-        {
-            RollControlPatcher.Config.ScubaRoll = !RollControlPatcher.Config.ScubaRoll;
-            if(RollControlPatcher.Config.ScubaRoll)
-            {
-                GetReadyToRoll();
-            }
-            else
-            {
-                GetReadyToStopRolling();
-            }
+            GetReadyToRoll();
         }
     }
 }

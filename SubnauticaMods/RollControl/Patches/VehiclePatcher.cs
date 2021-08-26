@@ -17,16 +17,12 @@ namespace RollControl
         {
             var src = __instance.gameObject.EnsureComponent<VehicleRollController>();
             src.myVehicle = __instance;
-            SeaMoth sm = __instance as SeaMoth;
-            if(sm != null)
-            {
-                sm.stabilizeRoll = !RollControlPatcher.Config.SubRoll;
-            }
+            src.myVehicle.stabilizeRoll = !RollControlPatcher.Config.SubRoll;
         }
 
         [HarmonyPrefix]
         [HarmonyPatch("EnterVehicle")]
-        public static bool EnterVehiclePrefix()
+        public static bool EnterVehiclePrefix(Vehicle __instance)
         {
             // ensure we enter vehicles correctly
             Player.main.GetComponent<ScubaRollController>().GetReadyToStopRolling();
@@ -38,7 +34,7 @@ namespace RollControl
         public static void FixedUpdatePostfix(Vehicle __instance)
         {
             // ensure we're rotated correctly
-            if (Player.main.currentMountedVehicle == __instance)
+            if (Player.main.GetMode() == Player.Mode.LockedPiloting)
             {
                 Player.main.transform.localRotation = Quaternion.identity;
             }

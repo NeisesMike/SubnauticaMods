@@ -13,7 +13,12 @@ namespace RollControl
 
         public void FixedUpdate()
         {
-            if (RollControlPatcher.Config.SubRoll && Player.main.currentMountedVehicle == myVehicle)
+            Exosuit maybeExosuit = myVehicle as Exosuit;
+            if (RollControlPatcher.Config.SubRoll && 
+                Player.main.currentMountedVehicle == myVehicle && 
+                AvatarInputHandler.main.IsEnabled() &&
+                maybeExosuit == null
+                )
             {
                 SubmarineRoll();
             }
@@ -23,11 +28,11 @@ namespace RollControl
         {
             if (Input.GetKey(RollControlPatcher.Config.RollPortKey))
             {
-                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)RollControlPatcher.Config.SubmarineRollSpeed, ForceMode.VelocityChange);
+                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)RollControlPatcher.Config.SubmarineRollSpeed / 100f, ForceMode.VelocityChange);
             }
             if (Input.GetKey(RollControlPatcher.Config.RollStarboardKey))
             {
-                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)-RollControlPatcher.Config.SubmarineRollSpeed, ForceMode.VelocityChange);
+                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)-RollControlPatcher.Config.SubmarineRollSpeed / 100f, ForceMode.VelocityChange);
             }
         }
     }

@@ -42,20 +42,20 @@ namespace RollControl
         public bool SubRoll = true;
         public void ChangeStabilization(ToggleChangedEventArgs e)
         {
-            foreach(SeaMoth sm in Transform.FindObjectsOfType<SeaMoth>())
+            foreach(Vehicle veh in Transform.FindObjectsOfType<Vehicle>())
             {
-                sm.stabilizeRoll = e.Value;
+                veh.stabilizeRoll = e.Value;
             }
         }
-        [Slider("Submarine Roll Speed", Min = 0f, Max = 1f, Step = 0.01f, DefaultValue = 0.3f)]
-        public double SubmarineRollSpeed = 0.3f;
+        [Slider("Submarine Roll Speed", Min = 0f, Max = 100f, Step = 1f, DefaultValue = 30f)]
+        public double SubmarineRollSpeed = 30f;
 
         [Toggle("Toggle Scuba Roll")]
         public bool ScubaRoll = true;
-        [Slider("Scuba Roll Speed", Min = 0f, Max = 1f, Step = 0.01f, DefaultValue = 0.3f)]
-        public double ScubaRollSpeed = 0.3f;
-        [Slider("Scuba Look Sensitivity", Min = 0.30f, Max = 1.2f, Step = 0.01f, DefaultValue = 0.75f)]
-        public float ScubaLookSensitivity = 0.75f;
+        [Slider("Scuba Roll Speed", Min = 0f, Max = 100f, Step = 1f, DefaultValue = 75f)]
+        public double ScubaRollSpeed = 75f;
+        [Slider("Scuba Look Sensitivity", Min = 0f, Max = 100f, Step = 1f, DefaultValue = 30f)]
+        public float ScubaLookSensitivity = 30f;
     }
 
     [QModCore]

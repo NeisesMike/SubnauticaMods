@@ -87,13 +87,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArmsControllerPatcher.cs" />
-    <Compile Include="Patchers\PlayerPatcher.cs" />
+    <Compile Include="Patches\ArmsControllerPatcher.cs" />
+    <Compile Include="Patches\PlayerPatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Patchers\RollControlPatcher.cs" />
-    <Compile Include="ScubaRollController.cs" />
-    <Compile Include="VehicleRollController.cs" />
-    <Compile Include="Patchers\VehiclePatcher.cs" />
+    <Compile Include="Patches\RollControlPatcher.cs" />
+    <Compile Include="Components\ScubaRollController.cs" />
+    <Compile Include="Components\VehicleRollController.cs" />
+    <Compile Include="Patches\VehiclePatcher.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
