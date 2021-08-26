@@ -10,30 +10,10 @@ namespace RollControl
     public class SeamothRollController : MonoBehaviour
     {
         public SeaMoth mySeamoth;
-        private bool isRollOn = false;
-        private bool wasRollOn = false;
-
-        public void Update()
-        {
-            if (Input.GetKeyDown(RollControlPatcher.Config.SeamothRollToggleKey))
-            {
-                isRollOn = !isRollOn;
-            }
-            if (isRollOn && !wasRollOn)
-            {
-                mySeamoth.stabilizeRoll = false;
-                wasRollOn = true;
-            }
-            else if (!isRollOn && wasRollOn)
-            {
-                mySeamoth.stabilizeRoll = true;
-                wasRollOn = false;
-            }
-        }
 
         public void FixedUpdate()
         {
-            if (isRollOn && Player.main.currentMountedVehicle == mySeamoth)
+            if (RollControlPatcher.Config.SeamothRoll && Player.main.currentMountedVehicle == mySeamoth)
             {
                 SeamothRoll();
             }

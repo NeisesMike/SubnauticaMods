@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,55 +11,66 @@ namespace RollControl
     public class ScubaRollController : MonoBehaviour
     {
         public Player player = null;
-        public bool isRollToggled;
-        public bool isSlowingDown = true;
-        public bool isSpeedingUpCW = false;
-        public bool isSpeedingUpCCW = false;
-        public static float fuel = 0;
-        
-        private static float rollMagnitude = 0;
+        private bool isRollReady = false;
+
+        public bool Swimming
+        {
+            get
+            { 
+                return (player.motorMode == Player.MotorMode.Dive || player.motorMode == Player.MotorMode.Seaglide);
+            }
+        }
+
+        private bool isSlowingDown = true;
+        private bool isSpeedingUpCW = false;
+        private bool isSpeedingUpCCW = false;
+        private float fuel = 0;
+        private float rollMagnitude = 0;
+
         private static readonly float MAX_FUEL = 100f;
         private static readonly float MIN_FUEL = 0f;
         private static readonly float SLOW_FUEL_STEP = 10f;
         private static readonly float ACCEL_FUEL_STEP = 25f;
-        private static readonly float MULTIPLIER = 1f;
+        private static readonly float SCALING_FACTOR = 1f;
 
-        public ScubaRollController()
-        {
-            isRollToggled = false;
-        }
         public void FixedUpdate()
         {
-            if(!isRollToggled)
+            if (RollControlPatcher.Config.ScubaRoll && isRollReady && Swimming)
             {
-                player.rigidBody.angularDrag = 4;
-                MainCameraControl.main.SetEnabled(true);
-                player.armsController.enabled = true;
-                return;
-            }
+                // ensure the camera is correct
+                MainCameraControl.main.SetEnabled(false); // disable the camera rotation
+                MainCameraControl.main.transform.localRotation = Quaternion.identity;
 
-            if (player.motorMode == Player.MotorMode.Dive || player.motorMode == Player.MotorMode.Seaglide)
-            {
-                player.rigidBody.angularDrag = 15;
-                player.armsController.enabled = false; // turn off the body-animations that sometimes get in the way
                 ScubaRoll();
                 PhysicsMouseLook();
                 CorrectVerticalMovement();
+                continueScubaRoll();
             }
-            else
-            {
-                player.rigidBody.angularDrag = 4;
-                MainCameraControl.main.SetEnabled(true);
-                player.armsController.enabled = true;
-            }
-            continueScubaRoll();
         }
         public void Update()
         {
-            if (Input.GetKeyDown(RollControlPatcher.Config.ScubaRollToggleKey))
+            /*
+            if (Swimming && Input.GetKeyDown(RollControlPatcher.Config.ScubaRollToggleKey))
             {
-                isRollToggled = !isRollToggled;
+                GetReadyToStopRolling();
             }
+            */
+        }
+        public void GetReadyToRoll()
+        {
+            player.armsController.enabled = false; // turn off the body-animations that sometimes get in the way
+            player.rigidBody.angularDrag = 15; // ensure a good mouse-feel
+            MainCameraControl.main.rotationX = 0; // set the camera rotation to zed
+            MainCameraControl.main.rotationY = 0;
+            MainCameraControl.main.transform.rotation = player.transform.rotation; // align the camera to the player
+            isRollReady = true;
+        }
+        public void GetReadyToStopRolling()
+        {
+            player.armsController.enabled = true; // turn the body-animations back on
+            player.rigidBody.angularDrag = 4; // put this to what it was before
+            MainCameraControl.main.SetEnabled(true); // re-enable the camera
+            isRollReady = false;
         }
         private void continueScubaRoll()
         {
@@ -72,15 +84,15 @@ namespace RollControl
                     isSlowingDown = false;
                 }
             }
-            if (isSpeedingUpCW && isRollToggled)
+            if (isSpeedingUpCW && isRollReady)
             {
-                rollMagnitude = (float)RollControlPatcher.Config.ScubaRollSpeed * MULTIPLIER * (fuel / MAX_FUEL);
+                rollMagnitude = (float)RollControlPatcher.Config.ScubaRollSpeed * SCALING_FACTOR * (fuel / MAX_FUEL);
                 GetComponent<Rigidbody>().AddTorque(player.transform.forward * rollMagnitude, ForceMode.VelocityChange);
                 fuel += ACCEL_FUEL_STEP;
             }
-            if (isSpeedingUpCCW && isRollToggled)
+            if (isSpeedingUpCCW && isRollReady)
             {
-                rollMagnitude = (float)-RollControlPatcher.Config.ScubaRollSpeed * MULTIPLIER * (fuel / MAX_FUEL);
+                rollMagnitude = (float)-RollControlPatcher.Config.ScubaRollSpeed * SCALING_FACTOR * (fuel / MAX_FUEL);
                 GetComponent<Rigidbody>().AddTorque(player.transform.forward * rollMagnitude, ForceMode.VelocityChange);
                 fuel += ACCEL_FUEL_STEP;
             }
@@ -116,16 +128,9 @@ namespace RollControl
         }
         public void PhysicsMouseLook()
         {
-            MainCameraControl.main.rotationX = 0;
-            MainCameraControl.main.rotationY = 0;
-            MainCameraControl.main.SetEnabled(false);
-
             Vector2 offset = GameInput.GetLookDelta();
             player.rigidBody.AddTorque(RollControlPatcher.Config.ScubaLookSensitivity * player.transform.up    *  offset.x, ForceMode.VelocityChange);
             player.rigidBody.AddTorque(RollControlPatcher.Config.ScubaLookSensitivity * player.transform.right * -offset.y, ForceMode.VelocityChange);
-
-            MainCameraControl.main.transform.rotation = player.transform.rotation;
-            MainCameraControl.main.transform.localRotation = Quaternion.identity;
         }
         public void ScubaRoll()
         {
@@ -235,6 +240,48 @@ namespace RollControl
                     player.rigidBody.AddForce(-myNewVector, ForceMode.VelocityChange);
                 }
             }
+        }
+        public void OnSwimmingStarted()
+        {
+            StartCoroutine(RollSwimStart());
+        }
+        public IEnumerator RollSwimStart()
+        {
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            GetReadyToRoll();
+            yield break;
         }
     }
 }

@@ -89,6 +89,7 @@
     <Compile Include="ScubaRollController.cs" />
     <Compile Include="Patchers\SeamothPatcher.cs" />
     <Compile Include="SeamothRollController.cs" />
+    <Compile Include="Patchers\VehiclePatcher.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

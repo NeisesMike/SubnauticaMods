@@ -24,19 +24,35 @@ namespace RollControl
             srm.player = __instance;
         }
 
-        /*
-         * Here we do all the normal stuff except for a case where we were falling last frame
-         * Since we're underwater, there's no chance we were falling last frame
-         * They key here is that we can use this function to override and delete the og FixedUpdate,
-         * which is what lerps the player rotations back to normal
-         */
         [HarmonyPrefix]
         [HarmonyPatch("UpdateRotation")]
         public static bool Prefix(Player __instance)
         {
-            if (__instance.GetComponent<ScubaRollController>().isRollToggled && __instance.IsUnderwater())
+            if (__instance.motorMode == Player.MotorMode.Dive || __instance.motorMode == Player.MotorMode.Seaglide)
             {
                 return false;
+            }
+            return true;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch("SetMotorMode")]
+        public static bool SetMotorMode(Player __instance, Player.MotorMode newMotorMode)
+        {
+            
+            if ( // we're transitioning into swimming
+                (newMotorMode == Player.MotorMode.Seaglide && __instance.motorMode != Player.MotorMode.Seaglide) ||
+                (newMotorMode == Player.MotorMode.Dive     && __instance.motorMode != Player.MotorMode.Dive)
+                )
+            {
+                __instance.gameObject.GetComponent<ScubaRollController>().OnSwimmingStarted();
+            }
+            else if ( // we're transitioning out of swimming
+                (newMotorMode != Player.MotorMode.Seaglide && __instance.motorMode == Player.MotorMode.Seaglide) ||
+                (newMotorMode != Player.MotorMode.Dive && __instance.motorMode == Player.MotorMode.Dive)
+                )
+            {
+                __instance.gameObject.GetComponent<ScubaRollController>().GetReadyToStopRolling();
             }
             return true;
         }
