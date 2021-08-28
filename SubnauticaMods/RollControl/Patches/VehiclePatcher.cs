@@ -17,7 +17,7 @@ namespace RollControl
         {
             var src = __instance.gameObject.EnsureComponent<VehicleRollController>();
             src.myVehicle = __instance;
-            src.myVehicle.stabilizeRoll = !RollControlPatcher.Config.SubRoll;
+            src.myVehicle.stabilizeRoll = false;
         }
 
         [HarmonyPrefix]

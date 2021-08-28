@@ -20,11 +20,11 @@ namespace RollControl
         [HarmonyPatch("Awake")]
         public static void AwakePostfix(Player __instance)
         {
-            var srm = __instance.gameObject.EnsureComponent<ScubaRollController>();
-            srm.player = __instance;
+            __instance.gameObject.EnsureComponent<ScubaRollController>();
+            ScubaRollController.player = __instance;
             if(__instance.IsUnderwater())
             {
-                srm.OnSwimmingStarted();
+                ScubaRollController.ResetForStartRoll();
             }
         }
 
@@ -48,14 +48,15 @@ namespace RollControl
                 (newMotorMode == Player.MotorMode.Dive     && __instance.motorMode != Player.MotorMode.Seaglide && __instance.motorMode != Player.MotorMode.Dive)
                 )
             {
-                __instance.gameObject.GetComponent<ScubaRollController>().OnSwimmingStarted();
+                // __instance.gameObject.GetComponent<ScubaRollController>().GetReadyToRoll();
+                ScubaRollController.ResetForStartRoll();
             }
             else if ( // we're transitioning out of swimming
-                (        newMotorMode != Player.MotorMode.Seaglide &&         newMotorMode != Player.MotorMode.Dive) && 
-                (__instance.motorMode == Player.MotorMode.Seaglide || __instance.motorMode == Player.MotorMode.Dive)
+                (__instance.motorMode == Player.MotorMode.Seaglide || __instance.motorMode == Player.MotorMode.Dive) &&
+                (        newMotorMode != Player.MotorMode.Seaglide &&         newMotorMode != Player.MotorMode.Dive)
                 )
             {
-                __instance.gameObject.GetComponent<ScubaRollController>().GetReadyToStopRolling();
+                ScubaRollController.ResetForEndRoll();
             }
             return true;
         }

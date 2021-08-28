@@ -10,8 +10,14 @@ namespace RollControl
 {
     public class ScubaRollController : MonoBehaviour
     {
-        public Player player = null;
-        private bool isRollReady = false;
+        public static bool isRollEnabled = true;
+        public static Player player = null;
+        public static MainCameraControl camControl = MainCameraControl.main;
+        public static Camera camera;
+        private static bool isRollReady = false;
+        public static bool wasRollingBeforeBuilder = false;
+
+        public static ScubaRollController main;
 
         public static bool Swimming
         {
@@ -33,33 +39,90 @@ namespace RollControl
         private static readonly float ACCEL_FUEL_STEP = 25f;
         private static readonly float SCALING_FACTOR = 1f;
 
-        public void FixedUpdate()
+        public static void ResetRotsForStartRoll()
         {
-            if (RollControlPatcher.Config.ScubaRoll && isRollReady && Swimming && AvatarInputHandler.main.IsEnabled())
+            player.transform.eulerAngles = new Vector3(-camControl.rotationY, camControl.rotationX, 0);
+            player.transform.Find("body").localEulerAngles = Vector3.zero;
+            camControl.transform.localEulerAngles = Vector3.zero;
+            camControl.transform.Find("camOffset").localEulerAngles = Vector3.zero;
+            camControl.rotationX = 0;
+            camControl.rotationY = 0;
+        }
+        public static void ResetForStartRoll()
+        {
+            player.rigidBody.angularDrag = 15;
+            main.StartCoroutine(PauseCameraOneFrame());
+            ResetRotsForStartRoll();
+            isRollReady = true;
+        }
+        public static void ResetForEndRoll()
+        {
+            GameObject look_target = new GameObject("look target");
+            look_target.transform.position = player.transform.position + player.transform.forward;
+            main.StartCoroutine(PauseCameraOneFrame());
+            player.transform.LookAt(look_target.transform, Vector3.up);
+            camControl.rotationX = player.transform.eulerAngles.y;
+            float pitchOffset = player.transform.eulerAngles.x;
+            if (pitchOffset < 180)
             {
-                MainCameraControl.main.SetEnabled(false);
-                MainCameraControl.main.transform.localRotation = Quaternion.identity;
-                PhysicsMouseLook();
-
-                SetupScubaRoll();
-                ExecuteScubaRoll();
-                CorrectVerticalMovement();
+                camControl.rotationY = -pitchOffset;
+            }
+            else
+            {
+                camControl.rotationY = 360 - pitchOffset;
+            }
+            player.transform.rotation = Quaternion.identity;
+            camControl.transform.localRotation = Quaternion.identity;
+            isRollReady = false;
+        }
+        public void Start()
+        {
+            main = this;
+            camera = camControl.transform.Find("camOffset/pdaCamPivot/PlayerCameras/MainCamera").GetComponent<Camera>();
+        }
+        public void Update()
+        {
+            if (Swimming && AvatarInputHandler.main.IsEnabled())
+            {
+                if (Input.GetKeyDown(RollControlPatcher.Config.ToggleRollKey))
+                {
+                    if (isRollEnabled)
+                    {
+                        isRollEnabled = false;
+                        ResetForEndRoll();
+                    }
+                    else
+                    {
+                        ResetForStartRoll();
+                        isRollEnabled = true;
+                    }
+                }
             }
         }
-        public void GetReadyToRoll()
+        private static IEnumerator PauseCameraOneFrame()
         {
-            player.transform.rotation = Quaternion.Euler(MainCameraControl.main.transform.eulerAngles.x, MainCameraControl.main.transform.eulerAngles.y, Player.main.transform.rotation.eulerAngles.z);
-            // ensure a good mouse-feel
-            player.rigidBody.angularDrag = 15;
-            // set the camera rotation to zed
-            MainCameraControl.main.rotationX = 0; 
-            MainCameraControl.main.rotationY = 0;
-            isRollReady = true;
+            Camera myCam = Camera.main;
+            myCam.enabled = false;
+            yield return null;
+            myCam.enabled = true;
+        }
+        public void FixedUpdate()
+        {
+            if (Swimming)
+            {
+                if (isRollEnabled && AvatarInputHandler.main.IsEnabled() && isRollReady)
+                {
+                    camControl.transform.localRotation = Quaternion.identity;
+                    PhysicsMouseLook();
+
+                    SetupScubaRoll();
+                    ExecuteScubaRoll();
+                    CorrectVerticalMovement();
+                }
+            }
         }
         public void GetReadyToStopRolling()
         {
-            // re-enable the camera
-            MainCameraControl.main.SetEnabled(true);
             isRollReady = false;
         }
         private void ExecuteScubaRoll()
@@ -227,9 +290,12 @@ namespace RollControl
                 }
             }
         }
-        public void OnSwimmingStarted()
+        public static void MaybeSetLocalEuler(Transform camTrans, Vector3 input)
         {
-            GetReadyToRoll();
+            if(!Swimming || !isRollEnabled || Builder.isPlacing)
+            {
+                camTrans.localEulerAngles = input;
+            }
         }
     }
 }

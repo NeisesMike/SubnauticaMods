@@ -87,6 +87,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Patches\BuilderPatcher.cs" />
+    <Compile Include="Patches\MainCameraControlPatcher.cs" />
     <Compile Include="Patches\ArmsControllerPatcher.cs" />
     <Compile Include="Patches\PlayerPatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

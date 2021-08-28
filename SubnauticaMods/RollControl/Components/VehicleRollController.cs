@@ -10,11 +10,25 @@ namespace RollControl
     public class VehicleRollController : MonoBehaviour
     {
         public Vehicle myVehicle;
+        private bool isRollEnabled = true;
+
+        public void Update()
+        {
+            if (Input.GetKeyDown(RollControlPatcher.Config.ToggleRollKey) &&
+                Player.main.currentMountedVehicle == myVehicle &&
+                AvatarInputHandler.main.IsEnabled() &&
+                (myVehicle as Exosuit) == null
+                )
+            {
+                isRollEnabled = !isRollEnabled;
+                myVehicle.stabilizeRoll = !isRollEnabled;
+            }
+        }
 
         public void FixedUpdate()
         {
             Exosuit maybeExosuit = myVehicle as Exosuit;
-            if (RollControlPatcher.Config.SubRoll && 
+            if (isRollEnabled && 
                 Player.main.currentMountedVehicle == myVehicle && 
                 AvatarInputHandler.main.IsEnabled() &&
                 maybeExosuit == null

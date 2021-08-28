@@ -16,6 +16,7 @@ namespace RollControl
 		[HarmonyPatch("SetPlayerSpeedParameters")]
 		public static void SetPlayerSpeedParametersPostfix(Animator ___animator)
 		{
+			// do we still need this?
 			SafeAnimator.SetFloat(___animator, "view_pitch", 0);
 		}
 	}

@@ -33,28 +33,17 @@ namespace RollControl
     [Menu("RollControl Options")]
     public class MyConfig : ConfigFile
     {
+        [Keybind("Toggle Roll"), Tooltip("Roll is toggled individually for scuba mode and for each vehicle you have.")]
+        public KeyCode ToggleRollKey = KeyCode.RightAlt;
         [Keybind("Roll Counter-Clockwise")]
         public KeyCode RollPortKey = KeyCode.Z;
         [Keybind("Roll Clockwise")]
         public KeyCode RollStarboardKey = KeyCode.C;
-
-        [Toggle("Toggle Submarine Roll"), OnChange(nameof(ChangeStabilization))]
-        public bool SubRoll = true;
-        public void ChangeStabilization(ToggleChangedEventArgs e)
-        {
-            foreach(Vehicle veh in Transform.FindObjectsOfType<Vehicle>())
-            {
-                veh.stabilizeRoll = e.Value;
-            }
-        }
         [Slider("Submarine Roll Speed", Min = 0f, Max = 100f, Step = 1f, DefaultValue = 30f)]
         public double SubmarineRollSpeed = 30f;
-
-        [Toggle("Toggle Scuba Roll")]
-        public bool ScubaRoll = true;
         [Slider("Scuba Roll Speed", Min = 0f, Max = 100f, Step = 1f, DefaultValue = 75f)]
         public double ScubaRollSpeed = 75f;
-        [Slider("Scuba Look Sensitivity", Min = 0f, Max = 100f, Step = 1f, DefaultValue = 30f)]
+        [Slider("Scuba Look Sensitivity", Min = 0f, Max = 200f, Step = 1f, DefaultValue = 30f)]
         public float ScubaLookSensitivity = 30f;
     }
 
