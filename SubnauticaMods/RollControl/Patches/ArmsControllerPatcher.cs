@@ -16,7 +16,8 @@ namespace RollControl
 		[HarmonyPatch("SetPlayerSpeedParameters")]
 		public static void SetPlayerSpeedParametersPostfix(Animator ___animator)
 		{
-			// do we still need this?
+            // this odd line fixes the body getting in the way sometimes when
+            // swimming down while roll is enabled
 			SafeAnimator.SetFloat(___animator, "view_pitch", 0);
 		}
 	}
