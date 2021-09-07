@@ -12,7 +12,22 @@ namespace RollControl
     {
         public static bool isRollEnabled = true;
         public static Player player = null;
-        public static MainCameraControl camControl = MainCameraControl.main;
+
+        private static MainCameraControl _CamControl = MainCameraControl.main;
+        public static MainCameraControl CamControl
+        {
+            get
+            {
+                if(_CamControl == null)
+                {
+                    _CamControl = MainCameraControl.main;
+                    return _CamControl;
+                }
+                return _CamControl;
+            }
+        }
+
+
         public static Camera camera;
         private static bool isRollReady = false;
         public static bool wasRollingBeforeBuilder = false;
@@ -41,12 +56,12 @@ namespace RollControl
 
         public static void ResetRotsForStartRoll()
         {
-            player.transform.eulerAngles = new Vector3(-camControl.rotationY, camControl.rotationX, 0);
+            player.transform.eulerAngles = new Vector3(-CamControl.rotationY, CamControl.rotationX, 0);
             player.transform.Find("body").localEulerAngles = Vector3.zero;
-            camControl.transform.localEulerAngles = Vector3.zero;
-            camControl.transform.Find("camOffset").localEulerAngles = Vector3.zero;
-            camControl.rotationX = 0;
-            camControl.rotationY = 0;
+            CamControl.transform.localEulerAngles = Vector3.zero;
+            CamControl.transform.Find("camOffset").localEulerAngles = Vector3.zero;
+            CamControl.rotationX = 0;
+            CamControl.rotationY = 0;
         }
         public static void ResetForStartRoll()
         {
@@ -61,27 +76,31 @@ namespace RollControl
             look_target.transform.position = player.transform.position + player.transform.forward;
             main.StartCoroutine(PauseCameraOneFrame());
             player.transform.LookAt(look_target.transform, Vector3.up);
-            camControl.rotationX = player.transform.eulerAngles.y;
+            CamControl.rotationX = player.transform.eulerAngles.y;
             float pitchOffset = player.transform.eulerAngles.x;
             if (pitchOffset < 180)
             {
-                camControl.rotationY = -pitchOffset;
+                CamControl.rotationY = -pitchOffset;
             }
             else
             {
-                camControl.rotationY = 360 - pitchOffset;
+                CamControl.rotationY = 360 - pitchOffset;
             }
             player.transform.rotation = Quaternion.identity;
-            camControl.transform.localRotation = Quaternion.identity;
+            CamControl.transform.localRotation = Quaternion.identity;
             isRollReady = false;
         }
         public void Start()
         {
             main = this;
-            camera = camControl.transform.Find("camOffset/pdaCamPivot/PlayerCameras/MainCamera").GetComponent<Camera>();
+            camera = CamControl?.transform.Find("camOffset/pdaCamPivot/PlayerCameras/MainCamera")?.GetComponent<Camera>();
         }
         public void Update()
         {
+            if(camera==null)
+            {
+                camera = CamControl?.transform.Find("camOffset/pdaCamPivot/PlayerCameras/MainCamera")?.GetComponent<Camera>();
+            }
             if (Swimming && AvatarInputHandler.main.IsEnabled())
             {
                 if (Input.GetKeyDown(RollControlPatcher.Config.ToggleRollKey))
@@ -112,7 +131,7 @@ namespace RollControl
             {
                 if (isRollEnabled && AvatarInputHandler.main.IsEnabled() && isRollReady)
                 {
-                    camControl.transform.localRotation = Quaternion.identity;
+                    CamControl.transform.localRotation = Quaternion.identity;
                     PhysicsMouseLook();
 
                     SetupScubaRoll();
