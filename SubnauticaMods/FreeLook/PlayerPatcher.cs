@@ -15,39 +15,14 @@ using System.Net.NetworkInformation;
 namespace FreeLook
 {
     [HarmonyPatch(typeof(Player))]
-    [HarmonyPatch("Start")]
     public class PlayerStartPatcher
     {
         [HarmonyPrefix]
+        [HarmonyPatch("Start")]
         public static bool Prefix(Player __instance)
         {
+            __instance.gameObject.EnsureComponent<FreeLookManager>();
             return true;
-        }
-    }
-
-    [HarmonyPatch(typeof(Player))]
-    [HarmonyPatch("Update")]
-    public class PlayerUpdatePatcher
-    {
-        private static bool isRelinquished = false;
-
-        [HarmonyPostfix]
-        public static void Postfix(Player __instance)
-        {
-            if(Player.main.currentMountedVehicle == null || Player.main.currentMountedVehicle.docked)
-            {
-                return;
-            }
-            bool inVehicleThisFrame = (__instance.inSeamoth || __instance.inExosuit);
-            if(!inVehicleThisFrame && !isRelinquished)
-            {
-                FreeLookManager.cameraRelinquish();
-                isRelinquished = true;
-            }
-            else if(inVehicleThisFrame)
-            {
-                isRelinquished = false;
-            }
         }
     }
 }
