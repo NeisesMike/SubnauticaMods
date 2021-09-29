@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,7 +28,7 @@ namespace FreeLook
         {
             get
             {
-                if(_mcc==null)
+                if (_mcc == null)
                 {
                     _mcc = player.GetComponentInChildren<MainCameraControl>();
                 }
@@ -39,7 +40,7 @@ namespace FreeLook
         {
             get
             {
-                if(_vehicle == null)
+                if (_vehicle == null)
                 {
                     _vehicle = player.GetVehicle();
                 }
@@ -72,6 +73,16 @@ namespace FreeLook
 
         public void Update()
         {
+            if (player.playerAnimator.GetBool("cyclops_launch") ||
+                player.playerAnimator.GetBool("exosuit_launch") ||
+                player.playerAnimator.GetBool("moonpool_launchright") ||
+                player.playerAnimator.GetBool("moonpool_launchleft") ||
+                player.playerAnimator.GetBool("moonpool_exolaunchleft") ||
+                player.playerAnimator.GetBool("moonpool_exolaunchright"))
+            {
+                mcc.cinematicMode = true;
+                return;
+            }
             void setInVehicleVars(bool inVehicleThisFrame)
             {
                 if (wasInVehicleLastFrame)
@@ -136,7 +147,7 @@ namespace FreeLook
             }
             bool isPilotingUndockedVehicle = player.GetVehicle() != null && !player.GetVehicle().docked && player.IsPiloting();
 
-            if (!isPilotingUndockedVehicle && wasInVehicleLastFrame)
+            if ((!isPilotingUndockedVehicle && wasInVehicleLastFrame) || (player.GetVehicle() != null && player.GetVehicle().docked))
             {
                 // if we just got out, give up the camera right away
                 CameraRelinquish();
@@ -145,55 +156,41 @@ namespace FreeLook
             }
 
             setInVehicleVars(isPilotingUndockedVehicle);
-            if (!isPilotingUndockedVehicle)
+
+            // For Mimes, print out a hint
+            if (isNewlyInVehicle && FreeLookPatcher.Config.isHintingEnabled)
             {
-                CameraRelinquish();
+                isNewlyInVehicle = false;
+                BasicText message = new BasicText(500, 0);
+                message.ShowMessage("Hold " + FreeLookPatcher.Config.FreeLookKey.ToString() + " to Free Look.", 5);
             }
-            else
+
+            if (isPilotingUndockedVehicle)
             {
                 vehicle = player.GetVehicle();
-
-                // if we're resetting the camera rotation, do it right away and then return
+                // TODO: abstract these constants away
+                bool triggerState = (Input.GetAxisRaw("ControllerAxis3") > 0) || (Input.GetAxisRaw("ControllerAxis3") < 0);
+                setTriggerStates(triggerState);
+                if ((Input.GetKey(FreeLookPatcher.Config.FreeLookKey) || triggerState))
+                {
+                    if (Input.GetKeyDown(FreeLookPatcher.Config.FreeLookKey) || isTriggerNewlyDown)
+                    {
+                        // If we just pressed the FreeLook button, take control of the camera.
+                        BeginFreeLook();
+                    }
+                    // if we're freelooking, control the camera
+                    ExecuteFreeLook(vehicle);
+                }
+                else if (Input.GetKeyUp(FreeLookPatcher.Config.FreeLookKey) || isTriggerNewlyUp)
+                {
+                    // If we just released the FreeLook button, flag camera for release
+                    BeginReleaseCamera();
+                }
                 if (resetCameraFlag)
                 {
                     ResetCameraRotation();
                     return;
                 }
-
-                // TODO: abstract these constants away
-                bool triggerState = (Input.GetAxisRaw("ControllerAxis3") > 0) || (Input.GetAxisRaw("ControllerAxis3") < 0);
-                setTriggerStates(triggerState);
-
-                // For Mimes, print out a hint
-                if (isNewlyInVehicle && FreeLookPatcher.Config.isHintingEnabled)
-                {
-                    isNewlyInVehicle = false;
-                    BasicText message = new BasicText(500, 0);
-                    message.ShowMessage("Hold " + FreeLookPatcher.Config.FreeLookKey.ToString() + " to Free Look.", 5);
-                }
-
-
-                //=====================
-                // begin control flow
-                //=====================
-                if (Input.GetKeyUp(FreeLookPatcher.Config.FreeLookKey) || isTriggerNewlyUp)
-                {
-                    // If we just released the FreeLook button, begin to release the camera
-                    BeginReleaseCamera();
-                    return;
-                }
-                else if (Input.GetKeyDown(FreeLookPatcher.Config.FreeLookKey) || isTriggerNewlyDown)
-                {
-                    // If we just pressed the FreeLook button, take control of the camera.
-                    BeginFreeLook();
-                }
-
-                if ((Input.GetKey(FreeLookPatcher.Config.FreeLookKey) || triggerState))
-                {
-                    // if we're freelooking, control the camera
-                    ExecuteFreeLook(vehicle);
-                }
-
             }
         }
         private void ExecuteFreeLook(Vehicle vehicle)
@@ -283,8 +280,19 @@ namespace FreeLook
         }
         internal void CameraRelinquish()
         {
-            resetCameraFlag = false;
-            mcc.cinematicMode = false;
+            IEnumerator RelinquishCameraAfterAnimationEnds()
+            {
+                while (player.playerAnimator.GetBool("cyclops_dock") ||
+                       player.playerAnimator.GetBool("moonpool_dock") ||
+                       player.playerAnimator.GetBool("exosuit_dock") ||
+                       player.playerAnimator.GetBool("moonpool_exodock"))
+                {
+                    yield return null;
+                }
+                resetCameraFlag = false;
+                mcc.cinematicMode = false;
+            }
+            StartCoroutine(RelinquishCameraAfterAnimationEnds());
         }
     }
 }
