@@ -1,0 +1,32 @@
+﻿
+Consider first the solution: 
+	Every few seconds
+		if depth is greater than appropriate
+			set us back up above the ground,
+			and let us float back down
+
+Consider a second solution:
+	Set the tooth entity-level to the same level as the terrain
+
+Consider a third solution:
+	The first time we hit the ground
+		make us kinematic
+
+I favor this third solution.
+	The first solution is computationally expensive.
+	I am not confident in the correctness of the second solution.
+
+How do we tell that we've come to a rest on the ground?
+	Check that our position has remained more or less constant for 1 second.
+
+Solution 3 was indeed good, and it worked for perhaps 99% of teeth.
+	For the remaining 1% we would like to implement solution 1, I think,
+		but checks on the order of 10 seconds.
+	We can use the depth map to check if we've sunk too far.
+
+We are not considering the Stalkers in the spoiler area,
+	but we're not sure they drop teeth anyways
+
+Solution 3 with a dash of 1 was good,
+	but sometimes the tooth was disabled before it could sink far enough,
+	so we've set their cell-level to global.
