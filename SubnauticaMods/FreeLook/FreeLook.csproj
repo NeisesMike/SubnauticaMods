@@ -23,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -94,9 +95,6 @@
     </Reference>
     <Reference Include="UnityEngine_publicized">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\publicized_assemblies\UnityEngine_publicized.dll</HintPath>
-    </Reference>
-    <Reference Include="VehicleFramework">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\QMods\VehicleFramework\VehicleFramework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

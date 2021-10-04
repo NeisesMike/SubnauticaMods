@@ -15,9 +15,9 @@ namespace FreeLook
         [HarmonyPatch("Update")]
         public static bool UpdatePrefix(Vehicle __instance)
         {
-            foreach(var tmp in __instance.GetComponentsInChildren<Player>())
+            foreach(var player in __instance.GetComponentsInChildren<Player>())
             {
-                if(tmp.GetVehicle() == __instance && tmp.IsPiloting() && tmp.GetComponent<FreeLookManager>().isFreeLooking)
+                if (player.GetVehicle() == __instance && player.IsPiloting() && player.mode == Player.Mode.LockedPiloting && player.GetComponent<FreeLookManager>().isFreeLooking)
                 {
                     return false;
                 }

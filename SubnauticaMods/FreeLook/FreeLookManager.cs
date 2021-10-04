@@ -71,6 +71,15 @@ namespace FreeLook
         public bool isTriggerNewlyDown = false;
         public bool isTriggerNewlyUp = false;
 
+        public void Start()
+        {
+            // check for the existence of The Vehicle Framework
+            var type = Type.GetType("VehicleFramework.VehicleManager", false, false);
+            if (type != null)
+            {
+                Logger.Log("Found VehicleFramework. Compensating.");
+            }
+        }
         public void Update()
         {
             if (player.playerAnimator.GetBool("cyclops_launch") ||
@@ -206,20 +215,20 @@ namespace FreeLook
 
             // add locomotion back in
             Vector3 myDirection = Vector3.zero;
-            myDirection.z = Input.GetAxis("ControllerAxis1");
+            myDirection.z =  Input.GetAxis("ControllerAxis1");
             myDirection.x = -Input.GetAxis("ControllerAxis2");
             myDirection.y =
-                GameInput.GetButtonHeld(GameInput.Button.MoveUp) ?
-                (GameInput.GetButtonHeld(GameInput.Button.MoveDown) ? 0 : 1) :
+                 GameInput.GetButtonHeld(GameInput.Button.MoveUp)   ?
+                (GameInput.GetButtonHeld(GameInput.Button.MoveDown) ?  0 : 1) :
                 (GameInput.GetButtonHeld(GameInput.Button.MoveDown) ? -1 : 0);
 
-            Vector3 myModDir = vehicle.transform.forward * myDirection.x +
-                                vehicle.transform.right * myDirection.z +
-                                vehicle.transform.up * myDirection.y;
+            Vector3 thisMovementVector = vehicle.transform.forward * myDirection.x +
+                                         vehicle.transform.right   * myDirection.z +
+                                         vehicle.transform.up      * myDirection.y;
 
-            myModDir = Vector3.Normalize(myModDir);
+            thisMovementVector = Vector3.Normalize(thisMovementVector);
 
-            vehicle.GetComponent<Rigidbody>().velocity += myModDir * Time.deltaTime * 10f;
+            vehicle.GetComponent<Rigidbody>().velocity += thisMovementVector * Time.deltaTime * 10f;
             vehicle.GetComponent<Rigidbody>().velocity = Vector3.ClampMagnitude(vehicle.GetComponent<Rigidbody>().velocity, 10f);
         }
         private void BeginFreeLook()
@@ -230,30 +239,56 @@ namespace FreeLook
             // invoke a camera vulnerability
             mcc.cinematicMode = true;
 
-            // compensate for VehicleFramework
-            VehicleFramework.ModVehicle mv = vehicle as VehicleFramework.ModVehicle;
-            if (mv != null)
+            // We must work with camRotation here for the case where the user is in the exosuit.
+            // In this case, camRotation Y can take on values somewhere around [-80,80].
+            // We should set rotation to camRotation here,
+            // and set the camPivot rotation to zero,
+            // so that our subsequent logic has the right origin
+            mcc.rotationX = mcc.camRotationX;
+            mcc.rotationY = mcc.camRotationY;
+            var camPivot = mcc.transform.Find("camOffset/pdaCamPivot").localRotation = Quaternion.identity;
+
+            // exosuit test
+            Exosuit exo = vehicle as Exosuit;
+            if (exo != null)
             {
-                mv.engine.canControlRotation = false;
+                foreach (var tmp in exo.GetComponentsInChildren<RootMotion.FinalIK.AimIK>())
+                {
+                    tmp.enabled = false;
+                }
             }
         }
         private void BeginReleaseCamera()
         {
             resetCameraFlag = true;
-            ResetCameraRotation();
             isFreeLooking = false;
-            // compensate for VehicleFramework
-            VehicleFramework.ModVehicle mv = vehicle as VehicleFramework.ModVehicle;
-            if (mv != null)
+
+            Exosuit exo = vehicle as Exosuit;
+            if (exo != null)
             {
-                mv.engine.canControlRotation = true;
+                startQuat = exo.transform.Find("exosuit_01/root/geoChildren/lArm_clav").transform.localRotation;
+                Logger.Log("startQuat " + startQuat.eulerAngles.ToString());
+                resetArmStartTime = 0f;
             }
         }
+
+        private Quaternion startQuat = Quaternion.identity;
+        private readonly Quaternion endQuat = Quaternion.Euler(2.2f, 0, 0);
+        private float resetArmStartTime = 0f;
         internal void ResetCameraRotation()
         {
             mcc.rotationX = Mathf.SmoothDampAngle(mcc.rotationX, 0f, ref xVelocity, smoothTime);
             mcc.rotationY = Mathf.SmoothDampAngle(mcc.rotationY, 0f, ref yVelocity, smoothTime);
             mcc.transform.localEulerAngles = new Vector3(-mcc.rotationY, mcc.rotationX, 0);
+
+            Exosuit exo = vehicle as Exosuit;
+            if (exo != null)
+            {
+                exo.transform.Find("exosuit_01/root/geoChildren/lArm_clav").transform.localRotation = Quaternion.Slerp(startQuat, endQuat, resetArmStartTime);
+                exo.transform.Find("exosuit_01/root/geoChildren/rArm_clav").transform.localRotation = Quaternion.Slerp(startQuat, endQuat, resetArmStartTime);
+                resetArmStartTime += 4 * Time.deltaTime;
+            }
+
             // if we're close enough to center, snap back and stop executing
             double threshold = 1;
             if (Mathf.Abs(mcc.rotationX) < threshold && Mathf.Abs(mcc.rotationY) < threshold)
@@ -291,6 +326,17 @@ namespace FreeLook
                 }
                 resetCameraFlag = false;
                 mcc.cinematicMode = false;
+                
+                Exosuit exo = vehicle as Exosuit;
+                if (exo != null)
+                {
+                    foreach (var tmp in exo.GetComponentsInChildren<RootMotion.FinalIK.AimIK>())
+                    {
+                        tmp.enabled = true;
+                        exo.transform.Find("exosuit_01/root/geoChildren/lArm_clav").transform.localRotation = endQuat;
+                        exo.transform.Find("exosuit_01/root/geoChildren/rArm_clav").transform.localRotation = endQuat;
+                    }
+                }
             }
             StartCoroutine(RelinquishCameraAfterAnimationEnds());
         }
