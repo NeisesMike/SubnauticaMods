@@ -29,7 +29,8 @@ namespace RollControl
         {
             Exosuit maybeExosuit = myVehicle as Exosuit;
             if (isRollEnabled && 
-                Player.main.currentMountedVehicle == myVehicle && 
+                Player.main.currentMountedVehicle == myVehicle &&
+                Player.main.mode == Player.Mode.LockedPiloting &&
                 AvatarInputHandler.main.IsEnabled() &&
                 maybeExosuit == null
                 )
