@@ -1,21 +1,29 @@
 using SMLHelper.V2.Assets;
 using SMLHelper.V2.Crafting;
+using SMLHelper.V2.Handlers;
 using System.Collections.Generic;
 using UnityEngine;
 
+using System.IO;
+using System.Reflection;
+
+using UnityEngine.Sprites;
+
+
 namespace StealthModule
 {
-    public class SeamothStealthModule2: Equipable
+    public class ModVehicleStealthModule1 : Equipable
     {
-        public SeamothStealthModule2() : base(
-            classId: "SeamothStealthModule2",
-            friendlyName: "Seamoth Stealth Module MK2",
-            description: "Better presence masking. Does not stack.")
+        public ModVehicleStealthModule1() : base(
+            classId: "ModVehicleStealthModule1",
+            friendlyName: "Vehicle Stealth Module MK1",
+            description: "Presence Masking. Does not stack.")
         {
-
+            string[] stepsToStealthTab = { "SeamothMenu", "ModVehicle" };
+            OnStartedPatching += () => CraftTreeHandler.AddTabNode(CraftTree.Type.Workbench, "Stealth", "Stealth Modules", StealthModulePatcher.stealthSpriteAtlas, stepsToStealthTab);
         }
 
-        public override EquipmentType EquipmentType => EquipmentType.SeamothModule;
+        public override EquipmentType EquipmentType => (EquipmentType)625;
 
         public override TechType RequiredForUnlock => TechType.BaseUpgradeConsole;
 
@@ -25,8 +33,7 @@ namespace StealthModule
 
         public override CraftTree.Type FabricatorType => CraftTree.Type.Workbench;
 
-        public override string[] StepsToFabricatorTab => new string[] { "SeamothMenu", "Stealth" };
-
+        public override string[] StepsToFabricatorTab => new string[] { "SeamothMenu", "ModVehicle", "Stealth" };
         public override QuickSlotType QuickSlotType => QuickSlotType.Passive;
 
         public override GameObject GetGameObject()
@@ -52,9 +59,8 @@ namespace StealthModule
             {
                 Ingredients = new List<Ingredient>()
                 {
-                    new Ingredient(StealthModulePatcher.stealthModule1.TechType, 1),
-                    new Ingredient(TechType.Silicone, 1),
-                    new Ingredient(TechType.Lithium, 1),
+                    new Ingredient(TechType.FiberMesh, 1),
+                    new Ingredient(TechType.Quartz, 1),
                     new Ingredient(TechType.Gold, 1)
                 },
                 craftAmount = 1

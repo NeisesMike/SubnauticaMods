@@ -3,37 +3,33 @@ using System.Collections.Generic;
 
 namespace StealthModule
 {
-    [HarmonyPatch(typeof(SeaMoth))]
-    [HarmonyPatch("Awake")]
-    class SMAwakePatcher
+    class MVAwakePatcher
     {
         [HarmonyPostfix]
-        public static void Postfix(SeaMoth __instance)
+        public static void Postfix(VehicleFramework.ModVehicle __instance)
         {
             __instance.gameObject.EnsureComponent<StealthModule>();
         }
     }
 
-    [HarmonyPatch(typeof(SeaMoth))]
-    [HarmonyPatch("OnUpgradeModuleChange")]
-    class OnUpgradeModuleChangeSMPatcher
+    class MVOnUpgradeModuleChangePatcher
     {
         [HarmonyPostfix]
-        public static void Postfix(SeaMoth __instance)
+        public static void Postfix(VehicleFramework.ModVehicle __instance)
         {
             // Dictionary of TechTypes and their stealth additions.
             Dictionary<TechType, StealthQuality> dictionary = new Dictionary<TechType, StealthQuality>
             {
                 {
-                    StealthModulePatcher.seamothStealthModule1.TechType,
+                    VehicleFrameworkHandler.modVehicleStealthModule1.TechType,
                     StealthQuality.Low
                 },
                 {
-                    StealthModulePatcher.seamothStealthModule2.TechType,
+                    VehicleFrameworkHandler.modVehicleStealthModule2.TechType,
                     StealthQuality.Medium
                 },
                 {
-                    StealthModulePatcher.seamothStealthModule3.TechType,
+                    VehicleFrameworkHandler.modVehicleStealthModule3.TechType,
                     StealthQuality.High
                 }
             };

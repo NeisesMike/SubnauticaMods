@@ -12,11 +12,19 @@ namespace StealthModule
 		public static void Postfix(Creature __instance, ref CreatureAction __result, List<CreatureAction> ___actions, CreatureAction ___prevBestAction,
 			int ___indexLastActionChecked)
 		{
+			// Ensure the player is in a vehicle with a stealth module equipped
+			if(Player.main.currentMountedVehicle == null || Player.main.currentMountedVehicle.GetComponent<StealthModule>() == null)
+            {
+				return;
+            }
+
+			StealthQuality thisVehicleSQ = Player.main.currentMountedVehicle.GetComponent<StealthModule>().quality;
+
 			float distToPlayer = Vector3.Distance(Player.main.transform.position, __instance.transform.position);
 
 			// Determine the effectiveness of our module
 			float myMaxRange;
-			switch (StealthModulePatcher.stealthQuality)
+			switch (thisVehicleSQ)
 			{
 				case (StealthQuality.None):
 					myMaxRange = float.MaxValue;
@@ -38,7 +46,7 @@ namespace StealthModule
 					break;
 			}
 
-			if(StealthModulePatcher.stealthQuality == StealthQuality.None)
+			if(thisVehicleSQ == StealthQuality.None)
             {
 				return;
             }

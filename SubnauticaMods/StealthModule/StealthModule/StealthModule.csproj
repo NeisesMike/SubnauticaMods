@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,11 +35,11 @@
     <Reference Include="0Harmony">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\SubnauticaZero\BepInEx\core\0Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    <Reference Include="Assembly-CSharp-firstpass_publicized">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\publicized_assemblies\Assembly-CSharp-firstpass_publicized.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp_publicized">
+    <Reference Include="Assembly-CSharp_publicized, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
     </Reference>
     <Reference Include="LitJson">
@@ -79,15 +80,27 @@
     <Reference Include="UnityEngine_publicized">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\publicized_assemblies\UnityEngine_publicized.dll</HintPath>
     </Reference>
+    <Reference Include="VehicleFramework">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\QMods\VehicleFramework\VehicleFramework.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Modules\SeamothStealthModule1.cs" />
-    <Compile Include="Modules\SeamothStealthModule2.cs" />
-    <Compile Include="Modules\SeamothStealthModule3.cs" />
+    <Compile Include="ModVehicleModules\ModVehicleStealthModule1.cs" />
+    <Compile Include="ModVehicleModules\ModVehicleStealthModule2.cs" />
+    <Compile Include="ModVehicleModules\ModVehicleStealthModule3.cs" />
+    <Compile Include="SeamothModules\SeamothStealthModule1.cs" />
+    <Compile Include="SeamothModules\SeamothStealthModule2.cs" />
+    <Compile Include="SeamothModules\SeamothStealthModule3.cs" />
+    <Compile Include="ModVehiclePatcher.cs" />
     <Compile Include="SeamothPatcher.cs" />
     <Compile Include="CreaturePatcher.cs" />
+    <Compile Include="StealthModule.cs" />
     <Compile Include="StealthModulePatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VehicleFrameworkHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy  $(TargetPath) "C:\Program Files (x86)\Steam\steamapps\common\Subnautica\QMods\$(SolutionName)\" /y</PostBuildEvent>
+  </PropertyGroup>
 </Project>

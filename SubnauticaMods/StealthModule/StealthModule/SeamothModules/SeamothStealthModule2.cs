@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace StealthModule
 {
-    public class SeamothStealthModule3: Equipable
+    public class SeamothStealthModule2: Equipable
     {
-        public SeamothStealthModule3() : base(
-            classId: "SeamothStealthModule3",
-            friendlyName: "Seamoth Stealth Module MK3",
-            description: "Best presence masking. Does not stack.")
+        public SeamothStealthModule2() : base(
+            classId: "SeamothStealthModule2",
+            friendlyName: "Seamoth Stealth Module MK2",
+            description: "Better presence masking. Does not stack.")
         {
 
         }
@@ -52,9 +52,9 @@ namespace StealthModule
             {
                 Ingredients = new List<Ingredient>()
                 {
-                    new Ingredient(StealthModulePatcher.stealthModule2.TechType, 1),
-                    new Ingredient(TechType.AramidFibers, 1),
-                    new Ingredient(TechType.Nickel, 1),
+                    new Ingredient(StealthModulePatcher.seamothStealthModule1.TechType, 1),
+                    new Ingredient(TechType.Silicone, 1),
+                    new Ingredient(TechType.Lithium, 1),
                     new Ingredient(TechType.Gold, 1)
                 },
                 craftAmount = 1

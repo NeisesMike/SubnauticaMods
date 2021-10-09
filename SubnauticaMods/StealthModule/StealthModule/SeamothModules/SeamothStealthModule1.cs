@@ -23,8 +23,6 @@ namespace StealthModule
             OnStartedPatching += () => CraftTreeHandler.AddTabNode(CraftTree.Type.Workbench, "Stealth", "Stealth Modules", StealthModulePatcher.stealthSpriteAtlas, stepsToTab);
         }
 
-        
-
         public override EquipmentType EquipmentType => EquipmentType.SeamothModule;
 
         public override TechType RequiredForUnlock => TechType.BaseUpgradeConsole;
