@@ -14,7 +14,7 @@ namespace StealthModule
         {
         }
 
-        public override EquipmentType EquipmentType => (EquipmentType)625;
+        public override EquipmentType EquipmentType => VehicleFramework.VehicleBuilder.ModuleType;
 
         public override TechType RequiredForUnlock => TechType.BaseUpgradeConsole;
 

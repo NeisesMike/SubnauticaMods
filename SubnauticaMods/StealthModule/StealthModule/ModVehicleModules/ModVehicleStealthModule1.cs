@@ -23,7 +23,7 @@ namespace StealthModule
             OnStartedPatching += () => CraftTreeHandler.AddTabNode(CraftTree.Type.Workbench, "Stealth", "Stealth Modules", StealthModulePatcher.stealthSpriteAtlas, stepsToStealthTab);
         }
 
-        public override EquipmentType EquipmentType => (EquipmentType)625;
+        public override EquipmentType EquipmentType => VehicleFramework.VehicleBuilder.ModuleType;
 
         public override TechType RequiredForUnlock => TechType.BaseUpgradeConsole;
 
