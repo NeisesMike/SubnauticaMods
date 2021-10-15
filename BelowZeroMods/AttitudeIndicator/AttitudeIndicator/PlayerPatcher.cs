@@ -51,7 +51,7 @@ namespace AttitudeIndicator
             }
             if (__instance.currentMountedVehicle)
             {
-                if (__instance.currentMountedVehicle.name.Contains("SeaMoth"))
+                if (!__instance.currentMountedVehicle.name.Contains("Exosuit"))
                 {
                     AttitudeIndicatorPatcher.currentVehicle = VehicleType.Seamoth;
                     if (AttitudeIndicatorPatcher.SubnauticaConfig.SisAttitudeIndicatorOn)
