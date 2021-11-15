@@ -19,8 +19,8 @@ namespace StealthModule
             friendlyName: "Vehicle Stealth Module MK1",
             description: "Presence Masking. Does not stack.")
         {
-            string[] stepsToStealthTab = { "SeamothMenu", "ModVehicle" };
-            OnStartedPatching += () => CraftTreeHandler.AddTabNode(CraftTree.Type.Workbench, "Stealth", "Stealth Modules", StealthModulePatcher.stealthSpriteAtlas, stepsToStealthTab);
+            string[] stepsToStealthTab = { "MVUM" };
+            OnStartedPatching += () => CraftTreeHandler.AddTabNode(CraftTree.Type.Workbench, "MVSM", "ModVehicle Stealth Modules", StealthModulePatcher.stealthSpriteAtlas, stepsToStealthTab);
         }
 
         public override EquipmentType EquipmentType => VehicleFramework.VehicleBuilder.ModuleType;
@@ -33,7 +33,7 @@ namespace StealthModule
 
         public override CraftTree.Type FabricatorType => CraftTree.Type.Workbench;
 
-        public override string[] StepsToFabricatorTab => new string[] { "SeamothMenu", "ModVehicle", "Stealth" };
+        public override string[] StepsToFabricatorTab => new string[] { "MVUM", "MVSM" };
         public override QuickSlotType QuickSlotType => QuickSlotType.Passive;
 
         public override GameObject GetGameObject()

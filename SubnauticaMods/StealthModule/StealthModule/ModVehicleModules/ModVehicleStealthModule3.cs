@@ -24,7 +24,7 @@ namespace StealthModule
 
         public override CraftTree.Type FabricatorType => CraftTree.Type.Workbench;
 
-        public override string[] StepsToFabricatorTab => new string[] { "SeamothMenu", "ModVehicle", "Stealth" };
+        public override string[] StepsToFabricatorTab => new string[] { "MVUM", "MVSM" };
 
         public override QuickSlotType QuickSlotType => QuickSlotType.Passive;
 
