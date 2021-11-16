@@ -14,16 +14,18 @@ namespace StealthModule
 {
     public class ModVehicleStealthModule1 : Equipable
     {
-        public ModVehicleStealthModule1() : base(
+        EquipmentType ModVehicleUpgradeModuleType;
+        public ModVehicleStealthModule1(EquipmentType mvModuleType) : base(
             classId: "ModVehicleStealthModule1",
             friendlyName: "Vehicle Stealth Module MK1",
             description: "Presence Masking. Does not stack.")
         {
             string[] stepsToStealthTab = { "MVUM" };
             OnStartedPatching += () => CraftTreeHandler.AddTabNode(CraftTree.Type.Workbench, "MVSM", "ModVehicle Stealth Modules", StealthModulePatcher.stealthSpriteAtlas, stepsToStealthTab);
+            ModVehicleUpgradeModuleType = mvModuleType;
         }
 
-        public override EquipmentType EquipmentType => VehicleFramework.VehicleBuilder.ModuleType;
+        public override EquipmentType EquipmentType => ModVehicleUpgradeModuleType;
 
         public override TechType RequiredForUnlock => TechType.BaseUpgradeConsole;
 

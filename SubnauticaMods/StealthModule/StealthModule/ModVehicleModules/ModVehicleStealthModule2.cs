@@ -7,14 +7,16 @@ namespace StealthModule
 {
     public class ModVehicleStealthModule2 : Equipable
     {
-        public ModVehicleStealthModule2() : base(
+        EquipmentType ModVehicleUpgradeModuleType;
+        public ModVehicleStealthModule2(EquipmentType mvModuleType) : base(
             classId: "ModVehicleStealthModule2",
             friendlyName: "Vehicle Stealth Module MK2",
             description: "Better presence masking. Does not stack.")
         {
+            ModVehicleUpgradeModuleType = mvModuleType;
         }
 
-        public override EquipmentType EquipmentType => VehicleFramework.VehicleBuilder.ModuleType;
+        public override EquipmentType EquipmentType => ModVehicleUpgradeModuleType;
 
         public override TechType RequiredForUnlock => TechType.BaseUpgradeConsole;
 

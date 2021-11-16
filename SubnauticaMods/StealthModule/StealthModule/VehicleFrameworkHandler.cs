@@ -15,9 +15,15 @@ namespace StealthModule
         internal static ModVehicleStealthModule3 modVehicleStealthModule3;
         public static void PatchModVehicleModules(ref Harmony harmony)
         {
-            modVehicleStealthModule1 = new ModVehicleStealthModule1();
-            modVehicleStealthModule2 = new ModVehicleStealthModule2();
-            modVehicleStealthModule3 = new ModVehicleStealthModule3();
+            EquipmentType ModVehicleUpgradeModuleType;
+            if(!SMLHelper.V2.Handlers.EquipmentHandler.Main.TryGetModdedEquipmentType("ModVehicleModule", out ModVehicleUpgradeModuleType))
+            {
+                Logger.Log("ERROR: Failed to recover ModVehicle Upgrade Equipment Type");
+            }
+
+            modVehicleStealthModule1 = new ModVehicleStealthModule1(ModVehicleUpgradeModuleType);
+            modVehicleStealthModule2 = new ModVehicleStealthModule2(ModVehicleUpgradeModuleType);
+            modVehicleStealthModule3 = new ModVehicleStealthModule3(ModVehicleUpgradeModuleType);
             modVehicleStealthModule1.Patch();
             modVehicleStealthModule2.Patch();
             modVehicleStealthModule3.Patch();

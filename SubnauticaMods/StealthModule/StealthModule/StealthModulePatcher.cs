@@ -63,7 +63,7 @@ namespace StealthModule
             var type = System.Type.GetType("VehicleFramework.ModVehicle, VehicleFramework", false, false);
             if (type != null)
             {
-                Logger.Log("patching mod vehicle");
+                Logger.Log("Found VehicleFramework! Patching...");
                 VehicleFrameworkHandler.PatchModVehicleModules(ref harmony);
             }
 
