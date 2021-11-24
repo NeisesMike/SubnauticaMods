@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreatureFleeFix", "CreatureFleeFix\CreatureFleeFix.csproj", "{AF24AA8E-55BA-448D-9A94-5C668EF5FD98}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AF24AA8E-55BA-448D-9A94-5C668EF5FD98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF24AA8E-55BA-448D-9A94-5C668EF5FD98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF24AA8E-55BA-448D-9A94-5C668EF5FD98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF24AA8E-55BA-448D-9A94-5C668EF5FD98}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A2A252B8-3CAF-45A7-BED3-2A828F7E1BDA}
+	EndGlobalSection
+EndGlobal
