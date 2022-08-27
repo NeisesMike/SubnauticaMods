@@ -4,12 +4,6 @@ using SMLHelper.V2.Handlers;
 using System.Collections.Generic;
 using UnityEngine;
 
-using System.IO;
-using System.Reflection;
-
-using UnityEngine.Sprites;
-
-
 namespace StealthModule
 {
     public class SeamothStealthModule1: Equipable
@@ -17,7 +11,7 @@ namespace StealthModule
         public SeamothStealthModule1() : base(
             classId: "SeamothStealthModule1",
             friendlyName: "Seamoth Stealth Module MK1",
-            description: "Presence Masking. Does not stack.")
+            description: "Presence masking past 80 meters. Does not stack.")
         {
             string[] stepsToTab = { "SeamothMenu" };
             OnStartedPatching += () => CraftTreeHandler.AddTabNode(CraftTree.Type.Workbench, "Stealth", "Stealth Modules", StealthModulePatcher.stealthSpriteAtlas, stepsToTab);

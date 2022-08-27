@@ -4,12 +4,6 @@ using SMLHelper.V2.Handlers;
 using System.Collections.Generic;
 using UnityEngine;
 
-using System.IO;
-using System.Reflection;
-
-using UnityEngine.Sprites;
-
-
 namespace StealthModule
 {
     public class ModVehicleStealthModule1 : Equipable
@@ -17,7 +11,7 @@ namespace StealthModule
         public ModVehicleStealthModule1() : base(
             classId: "ModVehicleStealthModule1",
             friendlyName: "Vehicle Stealth Module MK1",
-            description: "Presence Masking. Does not stack.")
+            description: "Presence masking past 80 meters. Does not stack.")
         {
             string[] stepsToStealthTab = { "MVUM" };
             OnStartedPatching += () => CraftTreeHandler.AddTabNode(CraftTree.Type.Workbench, "MVSM", "ModVehicle Stealth Modules", StealthModulePatcher.stealthSpriteAtlas, stepsToStealthTab);

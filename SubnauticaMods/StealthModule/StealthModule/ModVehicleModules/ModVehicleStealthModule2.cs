@@ -3,6 +3,7 @@ using SMLHelper.V2.Crafting;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 namespace StealthModule
 {
     public class ModVehicleStealthModule2 : Equipable
@@ -10,7 +11,7 @@ namespace StealthModule
         public ModVehicleStealthModule2() : base(
             classId: "ModVehicleStealthModule2",
             friendlyName: "Vehicle Stealth Module MK2",
-            description: "Better presence masking. Does not stack.")
+            description: "Presence masking past 60 meters. Does not stack.")
         {
         }
 

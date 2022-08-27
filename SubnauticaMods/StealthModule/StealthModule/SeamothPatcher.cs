@@ -21,6 +21,8 @@ namespace StealthModule
         [HarmonyPostfix]
         public static void Postfix(SeaMoth __instance)
         {
+            __instance.gameObject.EnsureComponent<StealthModule>();
+
             // Dictionary of TechTypes and their stealth additions.
             Dictionary<TechType, StealthQuality> dictionary = new Dictionary<TechType, StealthQuality>
             {

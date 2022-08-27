@@ -3,6 +3,7 @@ using SMLHelper.V2.Crafting;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 namespace StealthModule
 {
     public class SeamothStealthModule3: Equipable
@@ -10,7 +11,7 @@ namespace StealthModule
         public SeamothStealthModule3() : base(
             classId: "SeamothStealthModule3",
             friendlyName: "Seamoth Stealth Module MK3",
-            description: "Best presence masking. Does not stack.")
+            description: "Presence masking past 40 meters. Does not stack.")
         {
 
         }
