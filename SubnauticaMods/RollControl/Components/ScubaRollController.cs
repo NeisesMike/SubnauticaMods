@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using SMLHelper.V2.Utility;
 
 namespace RollControl
 {
     public class ScubaRollController : MonoBehaviour
     {
-        public static bool isRollEnabled = true;
+        public static bool isRollEnabled = RollControlPatcher.Config.IsScubaRollDefaultEnabled;
         public static Player player = null;
 
         private static MainCameraControl _CamControl = MainCameraControl.main;
@@ -27,18 +28,57 @@ namespace RollControl
             }
         }
 
-
         public static Camera camera;
-        private static bool isRollReady = false;
+        public static bool isRollReady = false;
         public static bool wasRollingBeforeBuilder = false;
 
         public static ScubaRollController main;
 
-        public static bool Swimming
+        public enum SwimState
+        {
+            Dive,
+            Surface,
+            Breach,
+            RunFall
+        }
+        public static SwimState swimstate;
+
+        public static bool IsActuallyScubaRolling
         {
             get
-            { 
-                return Player.main.motorMode == Player.MotorMode.Dive || Player.main.motorMode == Player.MotorMode.Seaglide;
+            {
+                return
+                    isRollEnabled &&
+                    isRollReady &&
+                    AreWeSwimming;
+            }
+        }
+        public static bool IsAbleToStartScubaRolling
+        {
+            get
+            {
+                return
+                    IsAbleToToggleScubaRolling &&
+                    isRollEnabled;
+            }
+        }
+        public static bool IsAbleToToggleScubaRolling
+        {
+            get
+            {
+                return
+                    AreWeSwimming &&
+                    AvatarInputHandler.main.IsEnabled();
+            }
+        }
+        public static bool AreWeSwimming
+        {
+            get
+            {
+                return
+                    swimstate != SwimState.RunFall &&
+                    (Player.main.transform.position.y < Ocean.main.GetOceanLevel() || Player.main.GetComponent<UnderwaterMotor>().isActiveAndEnabled || swimstate == SwimState.Breach);
+                    //Player.main.GetComponent<UnderwaterMotor>().isActiveAndEnabled; // This not works because not available at Start time
             }
         }
 
@@ -63,11 +103,27 @@ namespace RollControl
             CamControl.rotationX = 0;
             CamControl.rotationY = 0;
         }
-        public static void ResetForStartRoll()
+        public static void ResetRotsForStartRollAfterCinematic(Quaternion desiredRotation)
+        {
+            player.transform.rotation = desiredRotation;
+            player.transform.Find("body").localEulerAngles = Vector3.zero;
+            CamControl.transform.localEulerAngles = Vector3.zero;
+            CamControl.transform.Find("camOffset").localEulerAngles = Vector3.zero;
+            CamControl.rotationX = 0;
+            CamControl.rotationY = 0;
+        }
+        public static void ResetForStartRoll(GameObject lookTarget)
         {
             player.rigidBody.angularDrag = 15;
             main.StartCoroutine(PauseCameraOneFrame());
-            ResetRotsForStartRoll();
+            if (lookTarget)
+            {
+                ResetRotsForStartRollAfterCinematic(lookTarget.transform.rotation);
+            }
+            else
+            {
+                ResetRotsForStartRoll();
+            }
             isRollReady = true;
         }
         public static void ResetForEndRoll()
@@ -97,11 +153,50 @@ namespace RollControl
         }
         public void Update()
         {
-            if(camera==null)
+            if (camera==null)
             {
                 camera = CamControl?.transform.Find("camOffset/pdaCamPivot/PlayerCameras/MainCamera")?.GetComponent<Camera>();
             }
-            if (Swimming && AvatarInputHandler.main.IsEnabled())
+            SwimState lastSwimState = swimstate;
+            swimstate = DetermineSwimState();
+            CheckForUserToggleInput();
+            HandleSwimStateChange(lastSwimState);
+        }
+        private void HandleSwimStateChange(SwimState lastSwimState)
+        {
+            if (isRollEnabled && lastSwimState != swimstate)
+            {
+                if (lastSwimState == SwimState.RunFall && IsAbleToToggleScubaRolling)
+                {
+                    // transition into a scuba roll control state
+                    ResetForStartRoll(null);
+                }
+                if (swimstate == SwimState.RunFall)
+                {
+                    // transition into a normal camera state
+                    ResetForEndRoll();
+                }
+            }
+        }
+        private SwimState DetermineSwimState()
+        {
+            if (Player.main.motorMode == Player.MotorMode.Dive || Player.main.motorMode == Player.MotorMode.Seaglide)
+            {
+                return SwimState.Dive;
+            }
+            if (!Player.main.GetComponent<GroundMotor>().IsGrounded() && (swimstate == SwimState.Surface || swimstate == SwimState.Breach))
+            {
+                return SwimState.Breach;
+            }
+            if (Player.main.motorMode == Player.MotorMode.Run && Player.main.IsUnderwaterForSwimming())
+            {
+                return SwimState.Surface;
+            }
+            return SwimState.RunFall;
+        }
+        private void CheckForUserToggleInput()
+        {
+            if (IsAbleToToggleScubaRolling)
             {
                 if (Input.GetKeyDown(RollControlPatcher.Config.ToggleRollKey))
                 {
@@ -112,7 +207,7 @@ namespace RollControl
                     }
                     else
                     {
-                        ResetForStartRoll();
+                        ResetForStartRoll(null);
                         isRollEnabled = true;
                     }
                 }
@@ -121,23 +216,23 @@ namespace RollControl
         private static IEnumerator PauseCameraOneFrame()
         {
             Camera myCam = Camera.main;
+            if(myCam is null)
+            {
+                yield break;
+            }
             myCam.enabled = false;
             yield return null;
             myCam.enabled = true;
         }
         public void FixedUpdate()
         {
-            if (Swimming)
+            if (IsActuallyScubaRolling && AvatarInputHandler.main.IsEnabled())
             {
-                if (isRollEnabled && AvatarInputHandler.main.IsEnabled() && isRollReady)
-                {
-                    CamControl.transform.localRotation = Quaternion.identity;
-                    PhysicsMouseLook();
-
-                    SetupScubaRoll();
-                    ExecuteScubaRoll();
-                    CorrectVerticalMovement();
-                }
+                CamControl.transform.localRotation = Quaternion.identity;
+                PhysicsMouseLook();
+                SetupScubaRoll();
+                ExecuteScubaRoll();
+                CorrectVerticalMovement();
             }
         }
         public void GetReadyToStopRolling()
@@ -148,7 +243,7 @@ namespace RollControl
         {
             if (isSlowingDown)
             {
-                rollMagnitude = rollMagnitude * (fuel / MAX_FUEL);
+                rollMagnitude *= (fuel / MAX_FUEL);
                 GetComponent<Rigidbody>().AddTorque(player.transform.forward * rollMagnitude, ForceMode.VelocityChange);
                 fuel -= SLOW_FUEL_STEP;
                 if (fuel <= 0)
@@ -177,7 +272,7 @@ namespace RollControl
                 fuel = MIN_FUEL;
             }
         }
-        public void startScubaRoll(bool isCW)
+        public void StartScubaRoll(bool isCW)
         {
             if (isCW)
             {
@@ -192,7 +287,7 @@ namespace RollControl
                 isSpeedingUpCCW = true;
             }
         }
-        public void stopScubaRoll()
+        public void StopScubaRoll()
         {
             isSlowingDown = true;
             isSpeedingUpCW = false;
@@ -216,19 +311,19 @@ namespace RollControl
 
             if ((portDown || portHeld) && !(starDown || starHeld))
             {
-                startScubaRoll(true);
+                StartScubaRoll(true);
             }
             else if ((starDown || starHeld) && !(portDown || portHeld))
             {
-                startScubaRoll(false);
+                StartScubaRoll(false);
             }
             else if ((starDown || starHeld) && (portDown || portHeld))
             {
-                stopScubaRoll();
+                StopScubaRoll();
             }
             else if ((starUp && !portHeld) || (portUp && !starHeld) || (!portHeld && !starHeld))
             {
-                stopScubaRoll();
+                StopScubaRoll();
             }
         }
         public void CorrectVerticalMovement()
@@ -239,6 +334,13 @@ namespace RollControl
                 // Here we cancel out the normal spacebar movement.
                 // We reconstruct the vector from scratch,
                 // the way Subnautica does it.
+
+                // TODO
+                // There is a problem here.
+                // Namely, Subnautica normally disallows the player from looking straight up or straight down
+                // (to, I think, 5 degrees of tolerance)
+                // so it stands to reason that when we try to "recreate" the OG vector in this "impossible" situation,
+                // we fail in strange ways.
 
                 PlayerMotor thisMotor = player.playerController.activeController;
 
@@ -265,7 +367,8 @@ namespace RollControl
                 num2 = Mathf.Max(num2, thisMotor.verticalMaxSpeed);
                 num2 *= Player.main.mesmerizedSpeedMultiplier;
                 float num3 = Mathf.Max(velocity.magnitude, num2);
-                Vector3 vector2 = thisMotor.playerController.forwardReference.rotation * vector;
+                //Vector3 vector2 = thisMotor.playerController.forwardReference.rotation * vector; // this was not the problem
+                Vector3 vector2 = Player.main.transform.rotation * vector; // this was not the solution
                 vector = vector2;
                 vector.y += y;
                 vector.Normalize();
@@ -282,7 +385,7 @@ namespace RollControl
                 float num5 = num * num4 * Time.deltaTime;
                 if (num5 > 0f)
                 {
-                    Vector3 vector3 = velocity + vector * num5;
+                    Vector3 vector3 = velocity + vector * num5; // maybe this is the problom?
                     if (vector3.magnitude > num3)
                     {
                         vector3.Normalize();
@@ -309,9 +412,11 @@ namespace RollControl
                 }
             }
         }
+
+        // MaybeSetLocalEuler is used in a MainCameraControl transpiler
         public static void MaybeSetLocalEuler(Transform camTrans, Vector3 input)
         {
-            if(!Swimming || !isRollEnabled || Builder.isPlacing)
+            if(swimstate == SwimState.RunFall || !isRollEnabled || Builder.isPlacing)
             {
                 camTrans.localEulerAngles = input;
             }

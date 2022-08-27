@@ -22,13 +22,11 @@ namespace RollControl
             int number_of_extra_instructions = 0;
             List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
             List<CodeInstruction> newCodes = new List<CodeInstruction>(codes.Count + number_of_extra_instructions);
-
             CodeInstruction myNOP = new CodeInstruction(OpCodes.Nop);
             for (int i = 0; i < codes.Count + number_of_extra_instructions; i++)
             {
                 newCodes.Add(myNOP);
             }
-
             for (int i = 0; i < codes.Count; i++)
             {
                 if (

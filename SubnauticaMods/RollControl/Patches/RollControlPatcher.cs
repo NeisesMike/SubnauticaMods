@@ -17,11 +17,11 @@ namespace RollControl
     {
         public static void Log(string message)
         {
-            UnityEngine.Debug.Log("[DebugScene] " + message);
+            UnityEngine.Debug.Log("[RollControl] " + message);
         }
         public static void Log(string format, params object[] args)
         {
-            UnityEngine.Debug.Log("[DebugScene] " + string.Format(format, args));
+            UnityEngine.Debug.Log("[RollControl] " + string.Format(format, args));
         }
         public static void Output(string msg)
         {
@@ -33,7 +33,7 @@ namespace RollControl
     [Menu("RollControl Options")]
     public class MyConfig : ConfigFile
     {
-        [Keybind("Toggle Roll"), Tooltip("Roll is toggled individually for scuba mode and for each vehicle you have.")]
+        [Keybind("Toggle Roll Key"), Tooltip("Roll is toggled individually for scuba mode and for each vehicle you have.")]
         public KeyCode ToggleRollKey = KeyCode.RightAlt;
         [Keybind("Roll Counter-Clockwise")]
         public KeyCode RollPortKey = KeyCode.Z;
@@ -45,6 +45,10 @@ namespace RollControl
         public double ScubaRollSpeed = 75f;
         [Slider("Scuba Look Sensitivity", Min = 0f, Max = 200f, Step = 1f, DefaultValue = 30f)]
         public float ScubaLookSensitivity = 30f;
+        [Toggle("Enable Vehicle Roll by Default")]
+        public bool IsVehicleRollDefaultEnabled = true;
+        [Toggle("Enable Scuba Roll by Default")]
+        public bool IsScubaRollDefaultEnabled = true;
     }
 
     [QModCore]

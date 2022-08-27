@@ -17,48 +17,47 @@ namespace RollControl
     public class PlayerPatcher
     {
         [HarmonyPostfix]
-        [HarmonyPatch("Awake")]
+        [HarmonyPatch("Start")]
         public static void AwakePostfix(Player __instance)
         {
             __instance.gameObject.EnsureComponent<ScubaRollController>();
             ScubaRollController.player = __instance;
-            if(__instance.IsUnderwater())
+            ScubaRollController.isRollEnabled = RollControlPatcher.Config.IsScubaRollDefaultEnabled;
+            /*
+            if(RollControlPatcher.Config.IsScubaRollDefaultEnabled)
             {
-                ScubaRollController.ResetForStartRoll();
+                Player.main.StartCoroutine(DetermineWhetherWeStartBySwimming());
             }
+            */
         }
 
         [HarmonyPrefix]
         [HarmonyPatch("UpdateRotation")]
         public static bool Prefix(Player __instance)
         {
-            if (__instance.motorMode == Player.MotorMode.Dive || __instance.motorMode == Player.MotorMode.Seaglide)
+            if (ScubaRollController.IsActuallyScubaRolling)
             {
                 return false;
             }
             return true;
         }
 
-        [HarmonyPrefix]
-        [HarmonyPatch("SetMotorMode")]
-        public static bool SetMotorMode(Player __instance, Player.MotorMode newMotorMode)
+        /// <summary>
+        /// Okay so this actually isn't necessary here, but it's great intel,
+        /// so I'm going to let this sleeping dog lie.
+        /// </summary>
+        /// <returns></returns>
+        private static IEnumerator DetermineWhetherWeStartBySwimming()
         {
-            if ( // we're transitioning into swimming
-                (newMotorMode == Player.MotorMode.Seaglide && __instance.motorMode != Player.MotorMode.Seaglide && __instance.motorMode != Player.MotorMode.Dive) ||
-                (newMotorMode == Player.MotorMode.Dive     && __instance.motorMode != Player.MotorMode.Seaglide && __instance.motorMode != Player.MotorMode.Dive)
-                )
+            // don't do anything until the world is actually loaded
+            while (!PAXTerrainController.main || !LargeWorldStreamer.main || !LargeWorldStreamer.main.IsWorldSettled())
             {
-                // __instance.gameObject.GetComponent<ScubaRollController>().GetReadyToRoll();
-                ScubaRollController.ResetForStartRoll();
+                yield return null;
             }
-            else if ( // we're transitioning out of swimming
-                (__instance.motorMode == Player.MotorMode.Seaglide || __instance.motorMode == Player.MotorMode.Dive) &&
-                (        newMotorMode != Player.MotorMode.Seaglide &&         newMotorMode != Player.MotorMode.Dive)
-                )
+            if (ScubaRollController.AreWeSwimming)
             {
-                ScubaRollController.ResetForEndRoll();
+                ScubaRollController.ResetForStartRoll(null);
             }
-            return true;
         }
     }
 }

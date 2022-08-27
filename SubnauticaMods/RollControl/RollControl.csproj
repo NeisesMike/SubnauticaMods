@@ -92,6 +92,7 @@
     <Compile Include="Patches\BuilderPatcher.cs" />
     <Compile Include="Patches\MainCameraControlPatcher.cs" />
     <Compile Include="Patches\ArmsControllerPatcher.cs" />
+    <Compile Include="Patches\PlayerCinematicControllerPatcher.cs" />
     <Compile Include="Patches\PlayerPatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Patches\RollControlPatcher.cs" />

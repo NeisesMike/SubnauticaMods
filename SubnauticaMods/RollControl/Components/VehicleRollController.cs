@@ -10,12 +10,12 @@ namespace RollControl
     public class VehicleRollController : MonoBehaviour
     {
         public Vehicle myVehicle;
-        private bool isRollEnabled = true;
+        private bool isRollEnabled = RollControlPatcher.Config.IsVehicleRollDefaultEnabled;
 
         public void Update()
         {
             if (Input.GetKeyDown(RollControlPatcher.Config.ToggleRollKey) &&
-                Player.main.currentMountedVehicle == myVehicle &&
+                Player.main.currentMountedVehicle == myVehicle &&   
                 AvatarInputHandler.main.IsEnabled() &&
                 (myVehicle as Exosuit) == null
                 )
@@ -28,7 +28,10 @@ namespace RollControl
         public void FixedUpdate()
         {
             Exosuit maybeExosuit = myVehicle as Exosuit;
-            if (isRollEnabled && 
+            bool isUnderwater = myVehicle.transform.position.y < Ocean.main.GetOceanLevel() && myVehicle.transform.position.y < myVehicle.worldForces.waterDepth && !myVehicle.precursorOutOfWater;
+
+            if (isRollEnabled &&
+                isUnderwater && 
                 Player.main.currentMountedVehicle == myVehicle &&
                 Player.main.mode == Player.Mode.LockedPiloting &&
                 AvatarInputHandler.main.IsEnabled() &&
