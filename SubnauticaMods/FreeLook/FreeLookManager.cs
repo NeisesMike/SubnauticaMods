@@ -214,22 +214,26 @@ namespace FreeLook
             MoveCamera();
 
             // add locomotion back in
-            Vector3 myDirection = Vector3.zero;
-            myDirection.z =  Input.GetAxis("ControllerAxis1");
-            myDirection.x = -Input.GetAxis("ControllerAxis2");
-            myDirection.y =
-                 GameInput.GetButtonHeld(GameInput.Button.MoveUp)   ?
-                (GameInput.GetButtonHeld(GameInput.Button.MoveDown) ?  0 : 1) :
-                (GameInput.GetButtonHeld(GameInput.Button.MoveDown) ? -1 : 0);
+            if (vehicle.transform.position.y < Ocean.main.GetOceanLevel() && vehicle.transform.position.y < vehicle.worldForces.waterDepth && !vehicle.precursorOutOfWater)
+            {
+                Vector3 myDirection = Vector3.zero;
+                myDirection.z = Input.GetAxis("ControllerAxis1");
+                myDirection.x = -Input.GetAxis("ControllerAxis2");
+                myDirection.y =
+                     GameInput.GetButtonHeld(GameInput.Button.MoveUp) ?
+                    (GameInput.GetButtonHeld(GameInput.Button.MoveDown) ? 0 : 1) :
+                    (GameInput.GetButtonHeld(GameInput.Button.MoveDown) ? -1 : 0);
 
-            Vector3 thisMovementVector = vehicle.transform.forward * myDirection.x +
-                                         vehicle.transform.right   * myDirection.z +
-                                         vehicle.transform.up      * myDirection.y;
+                Vector3 thisMovementVector = vehicle.transform.forward * myDirection.x +
+                                             vehicle.transform.right * myDirection.z +
+                                             vehicle.transform.up * myDirection.y;
 
-            thisMovementVector = Vector3.Normalize(thisMovementVector);
+                thisMovementVector = Vector3.Normalize(thisMovementVector);
 
-            vehicle.GetComponent<Rigidbody>().velocity += thisMovementVector * Time.deltaTime * 10f;
-            vehicle.GetComponent<Rigidbody>().velocity = Vector3.ClampMagnitude(vehicle.GetComponent<Rigidbody>().velocity, 10f);
+                vehicle.GetComponent<Rigidbody>().velocity += thisMovementVector * Time.deltaTime * 10f;
+                vehicle.GetComponent<Rigidbody>().velocity = Vector3.ClampMagnitude(vehicle.GetComponent<Rigidbody>().velocity, 10f);
+
+            }
         }
         private void BeginFreeLook()
         {
