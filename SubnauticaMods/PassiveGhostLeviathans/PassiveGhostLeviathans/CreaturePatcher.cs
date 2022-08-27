@@ -11,6 +11,13 @@ using System.Collections;
 
 namespace PassiveGhostLeviathans
 {
+	/*
+	 * I honestly have no recall of how this works.
+	 * I thought it was simply setting aggression to zero, but no
+	 * Then I thought it was replacing aggressive actions with non-aggressive actions, but that doesn't seem to be it
+	 * Does this work?
+	 * 
+	 */
 	[HarmonyPatch(typeof(Creature))]
 	[HarmonyPatch("UpdateBehaviour")]
 	class CreatureUpdateBehaviourPatcher
@@ -22,10 +29,15 @@ namespace PassiveGhostLeviathans
 		{
 			TechType techType = CraftData.GetTechType(__instance.gameObject);
 			string myTechType = techType.AsString(true);
-			if (!(myTechType == "ghostleviathan" || myTechType == "ghostleviathanjuvenile") || !PassiveGhostLeviathansPatcher.Config.isGhostPassive)
-			{
+
+			bool shouldWeManageAdult = myTechType == "ghostleviathan" && PassiveGhostLeviathansPatcher.Config.isGhostPassive;
+			bool shouldWeManageJuvenile = myTechType == "ghostleviathanjuvenile" && PassiveGhostLeviathansPatcher.Config.isJuvenileGhostPassive;
+			bool isThisCaseSomethingWeCareAbout = shouldWeManageAdult || shouldWeManageJuvenile;
+
+			if(!isThisCaseSomethingWeCareAbout)
+            {
 				return true;
-			}
+            }
 
 			int myIndexLast = ___indexLastActionChecked;
 
@@ -126,14 +138,18 @@ namespace PassiveGhostLeviathans
 	class GhostLeviathanMeleeAttackGetBiteDamagePatcher
 	{
 		[HarmonyPostfix]
-		public static void Postfix(ref float __result)
+		public static void Postfix(GhostLeviathanMeleeAttack __instance, ref float __result)
 		{
-			if (PassiveGhostLeviathansPatcher.Config.isNoBiteDamage)
-			{
+			TechType techType = CraftData.GetTechType(__instance.gameObject);
+			string myTechType = techType.AsString(true);
+
+			bool shouldWeManageAdult = myTechType == "ghostleviathan" && PassiveGhostLeviathansPatcher.Config.isNoBiteDamage;
+			bool shouldWeManageJuvenile = myTechType == "ghostleviathanjuvenile" && PassiveGhostLeviathansPatcher.Config.isJuvenileNoBiteDamage;
+
+			if(shouldWeManageAdult || shouldWeManageJuvenile)
+            {
 				__result = 0;
-			}
+            }
 		}
 	}
-
-
 }

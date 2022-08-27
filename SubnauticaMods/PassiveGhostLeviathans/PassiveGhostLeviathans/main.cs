@@ -41,10 +41,16 @@ namespace PassiveGhostLeviathans
     [Menu("Passive Ghost Leviathan Options")]
     public class MyConfig : ConfigFile
     {
-        [Toggle("Passive Ghost Leviathans")]
+        [Toggle("Adult Ghosts Passive")]
         public bool isGhostPassive = true;
 
-        [Toggle("Ghost Leviathans No Bite Damage")]
+        [Toggle("Adult Ghosts Disable Bite Damage")]
         public bool isNoBiteDamage = false;
+
+        [Toggle("Juvenile Ghosts Passive")]
+        public bool isJuvenileGhostPassive = true;
+
+        [Toggle("Juvenile Ghosts Disable Bite Damage")]
+        public bool isJuvenileNoBiteDamage = false;
     }
 }
