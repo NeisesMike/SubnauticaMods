@@ -168,15 +168,21 @@ namespace FreeLook
 
             if (resetCameraFlag)
             {
-                mainCam.rotationX = Mathf.SmoothDampAngle(mainCam.rotationX, 0f, ref xVelocity, smoothTime);
-                mainCam.rotationY = Mathf.SmoothDampAngle(mainCam.rotationY, 0f, ref yVelocity, smoothTime);
+                double threshold = 1;
 
-                mainCam.camRotationX = mainCam.rotationX;
-                mainCam.camRotationY = mainCam.rotationY;
+                if (threshold <= Mathf.Abs(mainCam.rotationX))
+                {
+                    mainCam.rotationX = Mathf.SmoothDampAngle(mainCam.rotationX, 0f, ref xVelocity, smoothTime);
+                    mainCam.camRotationX = mainCam.rotationX;
+                }
+                if (threshold <= Mathf.Abs(mainCam.rotationY))
+                {
+                    mainCam.rotationY = Mathf.SmoothDampAngle(mainCam.rotationY, 0f, ref yVelocity, smoothTime);
+                    mainCam.camRotationY = mainCam.rotationY;
+                }
 
                 mainCam.transform.localEulerAngles = new Vector3(-mainCam.camRotationY, mainCam.camRotationX, 0);
 
-                double threshold = 1;
                 if (Mathf.Abs(mainCam.camRotationX) < threshold && Mathf.Abs(mainCam.camRotationY) < threshold)
                 {
                     cameraRelinquish();
