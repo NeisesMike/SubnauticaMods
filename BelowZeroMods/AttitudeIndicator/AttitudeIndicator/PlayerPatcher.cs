@@ -19,118 +19,45 @@ namespace AttitudeIndicator
 {
     [HarmonyPatch(typeof(Player))]
     [HarmonyPatch("Update")]
-    public class PlayerUpdatePatcher
+    public class PlayerUpdatePatcher2
     {
-        public static float lastUpdateTime = Time.time;
+        public static GameObject indicator = null;
+        public static bool isEnabled = false;
 
         [HarmonyPostfix]
         public static void Postfix(Player __instance)
         {
-            bool shouldWeUpdateLadder = false;
-#if SUBNAUTICA
-            if (lastUpdateTime + AttitudeIndicatorPatcher.SubnauticaConfig.updateInterval < Time.time)
+            if (!AttitudeIndicatorPatcher.SubnauticaConfig.isAttitudeIndicatorOn)
             {
-                lastUpdateTime = Time.time;
-                shouldWeUpdateLadder = true;
-            }
-#elif BELOWZERO
-            if (lastUpdateTime + AttitudeIndicatorPatcher.BelowZeroConfig.updateInterval < Time.time)
-            {
-                lastUpdateTime = Time.time;
-                shouldWeUpdateLadder = true;
-            }
-#endif
-
-
-#if SUBNAUTICA
-            if (!__instance.isPiloting)
-            {
-                AttitudeIndicator.killAttitudeIndicator();
-                AttitudeIndicatorPatcher.currentVehicle = VehicleType.None;
+                if (indicator)
+                {
+                    GameObject.Destroy(indicator);
+                    indicator = null;
+                }
                 return;
             }
-            if (__instance.currentMountedVehicle)
+            bool newIsEnabled = __instance.isPiloting && __instance.currentMountedVehicle && !__instance.currentMountedVehicle.name.Contains("Exosuit");
+            if (isEnabled != newIsEnabled)
             {
-                if (!__instance.currentMountedVehicle.name.Contains("Exosuit"))
+                if (newIsEnabled && AttitudeIndicatorPatcher.SubnauticaConfig.isAttitudeIndicatorOn)
                 {
-                    AttitudeIndicatorPatcher.currentVehicle = VehicleType.Seamoth;
-                    if (AttitudeIndicatorPatcher.SubnauticaConfig.SisAttitudeIndicatorOn)
+                    if (AttitudeIndicator.prefab is null)
                     {
-                        if (AttitudeIndicator.AttitudeIndicatorScreen == null)
-                        {
-                            AttitudeIndicator.createAttitudeIndicator(VehicleType.Seamoth);
-                        }
-                        AttitudeIndicator.updateAttitudeIndicator(VehicleType.Seamoth, shouldWeUpdateLadder);
+                        AttitudeIndicator.GetAssets();
                     }
-                    else if (AttitudeIndicator.AttitudeIndicatorScreen != null)
-                    {
-                        AttitudeIndicator.killAttitudeIndicator();
-                    }
+                    indicator = GameObject.Instantiate(AttitudeIndicator.prefab);
+                    indicator.AddComponent<AttitudeIndicator>().model = indicator;
                 }
-            }
-            else if (__instance.GetCurrentSub())
-            {
-                if (__instance.GetCurrentSub().name.Contains("Cyclops"))
+                else
                 {
-                    AttitudeIndicatorPatcher.currentVehicle = VehicleType.Cyclops;
-                    if (AttitudeIndicatorPatcher.SubnauticaConfig.CisAttitudeIndicatorOn)
+                    if (indicator)
                     {
-                        if (AttitudeIndicator.AttitudeIndicatorScreen == null)
-                        {
-                            AttitudeIndicator.createAttitudeIndicator(VehicleType.Cyclops);
-                        }
-                        AttitudeIndicator.updateAttitudeIndicator(VehicleType.Cyclops, shouldWeUpdateLadder);
-                    }
-                    else if (AttitudeIndicator.AttitudeIndicatorScreen != null)
-                    {
-                        AttitudeIndicator.killAttitudeIndicator();
+                        GameObject.Destroy(indicator);
+                        indicator = null;
                     }
                 }
             }
-#elif BELOWZERO
-            if (!(__instance.IsPilotingSeatruck() || __instance.inHovercraft))
-            {
-                AttitudeIndicator.killAttitudeIndicator();
-                AttitudeIndicatorPatcher.currentVehicle = VehicleType.None;
-                return;
-            }
-            if (__instance.IsPilotingSeatruck())
-            {
-                AttitudeIndicatorPatcher.currentVehicle = VehicleType.Seatruck;
-                if (AttitudeIndicatorPatcher.BelowZeroConfig.TisAttitudeIndicatorOn)
-                {
-                    if (AttitudeIndicator.AttitudeIndicatorScreen == null)
-                    {
-                        AttitudeIndicator.createAttitudeIndicator(VehicleType.Seatruck);
-                    }
-                    AttitudeIndicator.updateAttitudeIndicator(VehicleType.Seatruck, shouldWeUpdateLadder);
-                }
-                else if (AttitudeIndicator.AttitudeIndicatorScreen != null)
-                {
-                    AttitudeIndicator.killAttitudeIndicator();
-                }
-            }
-            else if (__instance.inHovercraft)
-            {
-                AttitudeIndicatorPatcher.currentVehicle = VehicleType.Snowfox;
-                if (AttitudeIndicatorPatcher.BelowZeroConfig.FisAttitudeIndicatorOn)
-                {
-                    if (AttitudeIndicator.AttitudeIndicatorScreen == null)
-                    {
-                        AttitudeIndicator.createAttitudeIndicator(VehicleType.Snowfox);
-                    }
-                    AttitudeIndicator.updateAttitudeIndicator(VehicleType.Snowfox, shouldWeUpdateLadder);
-                }
-                else if (AttitudeIndicator.AttitudeIndicatorScreen != null)
-                {
-                    AttitudeIndicator.killAttitudeIndicator();
-                }
-            }
-#endif
-            else if (AttitudeIndicator.AttitudeIndicatorScreen != null)
-            {
-                AttitudeIndicator.killAttitudeIndicator();
-            }
+            isEnabled = newIsEnabled;
         }
     }
 }

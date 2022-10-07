@@ -55,109 +55,84 @@ namespace AttitudeIndicator
     [Menu("Attitude Indicators")]
     public class SubnauticaConfig : ConfigFile
     {
-        List<GameObject> seamothOptions = new List<GameObject>();
-        List<GameObject> cyclopsOptions = new List<GameObject>();
-        
-        [Choice("Indicator Style"), OnChange(nameof(changeIndicatorStyle))]
-        public IndicatorStyle chosenStyle = IndicatorStyle.Standard;
-
-        private const string updateIntervalTooltip = "This defines the minimum number of seconds the indicator will wait between updates.";
-        [Slider("Update Interval", Min = 0, Max = 1, DefaultValue = 0, Step = 0.001f, Tooltip = updateIntervalTooltip)]
-        public float updateInterval = 0;
-
-        [Toggle("Enable Seamoth Attitude Indicator"), OnChange(nameof(setVisibilitySeamoth)), OnGameObjectCreated(nameof(setToggleActiveSeamoth))]
-        public bool SisAttitudeIndicatorOn = true;
-        [Slider("Position X", -0.13f, 0.13f, Step = 0.0001f), OnGameObjectCreated(nameof(grabGameObjectSeamoth))]
-        public float Sx = -0.0835f;
-        [Slider("Position Y", 0f, 0.13f, Step = 0.0001f), OnGameObjectCreated(nameof(grabGameObjectSeamoth))]
-        public float Sy = 0.0141f;
-        [Slider("Scale", 0.0016f, 0.009f, Step = 0.00001f), OnGameObjectCreated(nameof(grabGameObjectSeamoth))]
-        public float Sscale = 0.004f;
-
-        [Toggle("Enable Cyclops Attitude Indicator"), OnChange(nameof(setVisibilityCyclops)), OnGameObjectCreated(nameof(setToggleActiveCyclops))]
-        public bool CisAttitudeIndicatorOn = true;
-        [Slider("Position X", -0.13f, 0.13f, Step = 0.0001f), OnGameObjectCreated(nameof(grabGameObjectCyclops))]
-        public float Cx = 0.0919f;
-        [Slider("Position Y", 0f, 0.13f, Step = 0.0001f), OnGameObjectCreated(nameof(grabGameObjectCyclops))]
-        public float Cy = 0.0197f;
-        [Slider("Scale", 0.0016f, 0.009f, Step = 0.00001f), OnGameObjectCreated(nameof(grabGameObjectCyclops))]
-        public float Cscale = 0.0042f;
-
-        public void setVisibilitySeamoth(ToggleChangedEventArgs e)
+        public void KillIndicator(ToggleChangedEventArgs e)
         {
-            seamothOptions.RemoveAll(x => !x);
-            foreach(GameObject option in seamothOptions)
+            if (e.Value && Player.main.isPiloting && Player.main.currentMountedVehicle && !Player.main.currentMountedVehicle.name.Contains("Exosuit"))
             {
-                option.SetActive(e.Value);
-            }
-        }
-        public void setVisibilityCyclops(ToggleChangedEventArgs e)
-        {
-            cyclopsOptions.RemoveAll(x => !x);
-            foreach (GameObject option in cyclopsOptions)
-            {
-                option.SetActive(e.Value);
-            }
-        }
-
-        public void setToggleActiveSeamoth(GameObjectCreatedEventArgs e)
-        {
-            bool correctVehicle = AttitudeIndicatorPatcher.currentVehicle == VehicleType.Seamoth;
-            if(correctVehicle)
-            {
-                seamothOptions.RemoveAll(x => !x);
-                foreach (GameObject option in seamothOptions)
+                if (AttitudeIndicator.prefab is null)
                 {
-                    option.SetActive(SisAttitudeIndicatorOn);
+                    AttitudeIndicator.GetAssets();
                 }
+                PlayerUpdatePatcher2.indicator = GameObject.Instantiate(AttitudeIndicator.prefab);
+                PlayerUpdatePatcher2.indicator.AddComponent<AttitudeIndicator>().model = PlayerUpdatePatcher2.indicator;
             }
-            else
+            else if (!e.Value)
             {
-                e.GameObject.SetActive(false);
-                seamothOptions.RemoveAll(x => !x);
-                foreach (GameObject option in seamothOptions)
+                if (PlayerUpdatePatcher2.indicator)
                 {
-                    option.SetActive(false);
+                    GameObject.Destroy(PlayerUpdatePatcher2.indicator);
+                    PlayerUpdatePatcher2.indicator = null;
                 }
             }
         }
-        public void setToggleActiveCyclops(GameObjectCreatedEventArgs e)
-        {
-            bool correctVehicle = AttitudeIndicatorPatcher.currentVehicle == VehicleType.Cyclops;
-            if (correctVehicle)
-            {
-                cyclopsOptions.RemoveAll(x => !x);
-                foreach (GameObject option in cyclopsOptions)
-                {
-                    option.SetActive(CisAttitudeIndicatorOn);
-                }
-            }
-            else
-            {
-                e.GameObject.SetActive(false);
-                cyclopsOptions.RemoveAll(x => !x);
-                foreach (GameObject option in cyclopsOptions)
-                {
-                    option.SetActive(false);
-                }
-            }
-        }
+        [Toggle("Enable Seamoth Attitude Indicator"), OnChange(nameof(KillIndicator))]
+        public bool isAttitudeIndicatorOn = true;
 
-        public void grabGameObjectSeamoth(GameObjectCreatedEventArgs e)
-        {
-            seamothOptions.Add(e.GameObject);
-            e.GameObject.SetActive(AttitudeIndicatorPatcher.currentVehicle == VehicleType.Seamoth && SisAttitudeIndicatorOn);
-        }
-        public void grabGameObjectCyclops(GameObjectCreatedEventArgs e)
-        {
-            cyclopsOptions.Add(e.GameObject);
-            e.GameObject.SetActive(AttitudeIndicatorPatcher.currentVehicle == VehicleType.Cyclops && CisAttitudeIndicatorOn);
-        }
+        [Slider("Position X", -1, 1f, Step = 0.0001f)]
+        public float x = -0.4039f;
+        [Slider("Position Y", -1f, 1f, Step = 0.0001f)]
+        public float y = -0.2164f;
+        [Slider("Position Z", 0f, 1f, Step = 0.0001f)]
+        public float z = 0.6145f;
+        [Slider("Scale", 0f, 0.1853f, Step = 0.00001f)]
+        public float scale = 0.1102f;
 
-        public void changeIndicatorStyle(ChoiceChangedEventArgs e)
+        public enum autoposition
         {
-            AttitudeIndicator.killAttitudeIndicator();
-            AttitudeIndicator.initAttitudeIndicatorSprites((IndicatorStyle)e.Index);
+            bottomcenter,
+            bottomleft,
+            bottomright,
+            topleft,
+            topright
+                
+        }
+        [Choice("Auto-position"), OnChange(nameof(moveIndicator))]
+        public autoposition indicatorLocation = autoposition.bottomleft;
+        public void moveIndicator(ChoiceChangedEventArgs e)
+        {
+            switch ((autoposition)e.Index)
+            {
+                case autoposition.bottomleft:
+                    x = -.4097f;
+                    y = -.2164f;
+                    z = 0.6145f;
+                    scale = 0.1102f;
+                    break;
+                case autoposition.bottomcenter:
+                    x = 0f;
+                    y = -0.1268f;
+                    z = 0.3779f;
+                    scale = 0.06f;
+                    break;
+                case autoposition.bottomright:
+                    x = 0.4039f;
+                    y = -.2164f;
+                    z = 0.6145f;
+                    scale = 0.1102f;
+                    break;
+                case autoposition.topleft:
+                    x = -0.5371f;
+                    y = 0.3607f;
+                    z = 0.6145f;
+                    scale = 0.1232f;
+                    break;
+                case autoposition.topright:
+                    x = 0.5371f;
+                    y = 0.3607f;
+                    z = 0.6145f;
+                    scale = 0.1232f;
+                    break;
+            }
         }
     }
 #elif BELOWZERO
@@ -285,7 +260,6 @@ namespace AttitudeIndicator
 #if SUBNAUTICA
             SubnauticaConfig = OptionsPanelHandler.Main.RegisterModOptions<SubnauticaConfig>();
             var harmony = new Harmony("com.mikjaw.subnautica.attitudeindicator.mod");
-            AttitudeIndicator.initAttitudeIndicatorSprites(SubnauticaConfig.chosenStyle);
 #elif BELOWZERO
             BelowZeroConfig = OptionsPanelHandler.Main.RegisterModOptions<BelowZeroConfig>();
             var harmony = new Harmony("com.mikjaw.belowzero.attitudeindicator.mod");
