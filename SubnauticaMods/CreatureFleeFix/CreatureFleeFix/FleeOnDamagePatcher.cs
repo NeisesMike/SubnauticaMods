@@ -29,7 +29,7 @@ namespace CreatureFleeFix
 				}
 				Vector3 MoveVector = Vector3.Normalize(__instance.transform.position - DamageDealerPosition) * (__instance.minFleeDistance + damageInfo.damage / 30f);
 				Vector3 DestinationVector = MoveVector + __instance.transform.position;
-				Vector3 DestinationVectorOcean = new Vector3(DestinationVector.x, Mathf.Min(DestinationVector.y, Ocean.main.GetOceanLevel()), DestinationVector.z);
+				Vector3 DestinationVectorOcean = new Vector3(DestinationVector.x, Mathf.Min(DestinationVector.y, Ocean.GetOceanLevel()), DestinationVector.z);
 				__instance.moveTo = DestinationVectorOcean;
 				__instance.timeToFlee = Time.time + __instance.fleeDuration;
 			}

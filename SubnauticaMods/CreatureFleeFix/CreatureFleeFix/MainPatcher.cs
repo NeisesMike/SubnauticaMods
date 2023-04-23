@@ -5,28 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using HarmonyLib;
-using QModManager.API.ModLoading;
 using SMLHelper.V2.Utility;
+using BepInEx;
+using BepInEx.Logging;
+using BepInEx.Bootstrap;
 
 namespace CreatureFleeFix
 {
-    public static class Logger
+    [BepInPlugin("com.mikjaw.subnautica.creaturefleefix.mod", "CreatureFleeFix", "1.0")]
+    public class MainPatcher : BaseUnityPlugin
     {
-        public static void Log(string message)
-        {
-            UnityEngine.Debug.Log("[CreatureFleeFix] " + message);
-        }
-        public static void Output(string msg)
-        {
-            BasicText message = new BasicText(500, 0);
-            message.ShowMessage(msg, 5);
-        }
-    }
-    [QModCore]
-    public static class MainPatcher
-    {
-        [QModPatch]
-        public static void Patch()
+        public void Start()
         {
             var harmony = new Harmony("com.mikjaw.subnautica.creaturefleefix.mod");
             harmony.PatchAll();
