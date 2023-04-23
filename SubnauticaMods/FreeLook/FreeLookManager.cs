@@ -77,7 +77,7 @@ namespace FreeLook
             var type = Type.GetType("VehicleFramework.VehicleManager", false, false);
             if (type != null)
             {
-                Logger.Log("Found VehicleFramework. Compensating.");
+                //Logger.Log("Found VehicleFramework. Compensating.");
             }
         }
         public void Update()
@@ -167,11 +167,11 @@ namespace FreeLook
             setInVehicleVars(isPilotingUndockedVehicle);
 
             // For Mimes, print out a hint
-            if (isNewlyInVehicle && FreeLookPatcher.Config.isHintingEnabled)
+            if (isNewlyInVehicle && FreeLookPatcher.config.isHintingEnabled)
             {
                 isNewlyInVehicle = false;
                 BasicText message = new BasicText(500, 0);
-                message.ShowMessage("Hold " + FreeLookPatcher.Config.FreeLookKey.ToString() + " to Free Look.", 5);
+                message.ShowMessage("Hold " + FreeLookPatcher.config.FreeLookKey.ToString() + " to Free Look.", 5);
             }
 
             if (isPilotingUndockedVehicle)
@@ -180,9 +180,9 @@ namespace FreeLook
                 // TODO: abstract these constants away
                 bool triggerState = (Input.GetAxisRaw("ControllerAxis3") > 0) || (Input.GetAxisRaw("ControllerAxis3") < 0);
                 setTriggerStates(triggerState);
-                if ((Input.GetKey(FreeLookPatcher.Config.FreeLookKey) || triggerState))
+                if ((Input.GetKey(FreeLookPatcher.config.FreeLookKey) || triggerState))
                 {
-                    if (Input.GetKeyDown(FreeLookPatcher.Config.FreeLookKey) || isTriggerNewlyDown)
+                    if (Input.GetKeyDown(FreeLookPatcher.config.FreeLookKey) || isTriggerNewlyDown)
                     {
                         // If we just pressed the FreeLook button, take control of the camera.
                         BeginFreeLook();
@@ -190,7 +190,7 @@ namespace FreeLook
                     // if we're freelooking, control the camera
                     ExecuteFreeLook(vehicle);
                 }
-                else if (Input.GetKeyUp(FreeLookPatcher.Config.FreeLookKey) || isTriggerNewlyUp)
+                else if (Input.GetKeyUp(FreeLookPatcher.config.FreeLookKey) || isTriggerNewlyUp)
                 {
                     // If we just released the FreeLook button, flag camera for release
                     BeginReleaseCamera();
@@ -214,7 +214,7 @@ namespace FreeLook
             MoveCamera();
 
             // add locomotion back in
-            if (vehicle.transform.position.y < Ocean.main.GetOceanLevel() && vehicle.transform.position.y < vehicle.worldForces.waterDepth && !vehicle.precursorOutOfWater)
+            if (vehicle.transform.position.y < Ocean.GetOceanLevel() && vehicle.transform.position.y < vehicle.worldForces.waterDepth && !vehicle.precursorOutOfWater)
             {
                 Vector3 myDirection = Vector3.zero;
                 myDirection.z = Input.GetAxis("ControllerAxis1");
@@ -271,7 +271,7 @@ namespace FreeLook
             if (exo != null)
             {
                 startQuat = exo.transform.Find("exosuit_01/root/geoChildren/lArm_clav").transform.localRotation;
-                Logger.Log("startQuat " + startQuat.eulerAngles.ToString());
+                //Logger.Log("startQuat " + startQuat.eulerAngles.ToString());
                 resetArmStartTime = 0f;
             }
         }

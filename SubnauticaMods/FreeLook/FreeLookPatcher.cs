@@ -13,17 +13,12 @@ using LitJson;
 using System.Net.NetworkInformation;
 using SMLHelper.V2.Options.Attributes;
 using SMLHelper.V2.Json;
+using BepInEx;
+using BepInEx.Logging;
+using BepInEx.Bootstrap;
 
 namespace FreeLook
 {
-    public static class Logger
-    {
-        public static void Log(string message)
-        {
-            UnityEngine.Debug.Log("[FreeLook] " + message);
-        }
-    }
-
     [Menu("FreeLook Options")]
     public class MyConfig : ConfigFile
     {
@@ -34,13 +29,14 @@ namespace FreeLook
         public KeyCode FreeLookKey = KeyCode.LeftAlt;
     }
 
-    class FreeLookPatcher
+    [BepInPlugin("com.mikjaw.subnautica.freelook.mod", "FreeLook", "1.0")]
+    public class FreeLookPatcher : BaseUnityPlugin
     {
-        internal static MyConfig Config { get; private set; }
+        internal static MyConfig config { get; private set; }
         //public static Options Options = new Options();
-        public static void Patch()
+        public void Start()
         {
-            Config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
+            config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
             //OptionsPanelHandler.RegisterModOptions(Options);
             var harmony = new Harmony("com.mikjaw.subnautica.freelook.mod");
             harmony.PatchAll();
