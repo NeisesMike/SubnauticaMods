@@ -11,28 +11,20 @@ using System.Collections;
 using SMLHelper.V2.Options.Attributes;
 using SMLHelper.V2.Json;
 using SMLHelper.V2.Handlers;
+using BepInEx;
+using BepInEx.Logging;
+using BepInEx.Bootstrap;
 
 namespace SeamothEject
 {
-    public static class Logger
+    [BepInPlugin("com.mikjaw.subnautica.seamotheject.mod", "SeamothEject", "1.0")]
+    public class SeamothEjectPatcher : BaseUnityPlugin
     {
-        public static void Log(string message)
+        internal static MyConfig config { get; private set; }
+        public void Start()
         {
-            UnityEngine.Debug.Log("[SeamothEject] " + message);
-        }
-
-        public static void Log(string format, params object[] args)
-        {
-            UnityEngine.Debug.Log("[SeamothEject] " + string.Format(format, args));
-        }
-    }
-    public class SeamothEjectPatcher
-    {
-        internal static MyConfig Config { get; private set; }
-        public static void Patch()
-        {
-            Config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
-            var harmony = new Harmony("com.garyburke.subnautica.seamotheject.mod");
+            config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
+            var harmony = new Harmony("com.mikjaw.subnautica.seamotheject.mod");
             harmony.PatchAll();
         }
     }

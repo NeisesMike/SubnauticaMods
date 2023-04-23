@@ -2,22 +2,18 @@
 using HarmonyLib;
 using System.Reflection;
 using System.IO;
-using System.Reflection;
+using SMLHelper.V2.Options.Attributes;
+using SMLHelper.V2.Json;
+using SMLHelper.V2.Handlers;
+using BepInEx;
+using BepInEx.Logging;
+using BepInEx.Bootstrap;
+
 
 namespace StealthModule
-{
-    public static class Logger
-    {
-        public static void Log(string message)
-        {
-            UnityEngine.Debug.Log("[StealthModule] " + message);
-        }
-
-        public static void Log(string format, params object[] args)
-        {
-            UnityEngine.Debug.Log("[StealthModule] " + string.Format(format, args));
-        }
-
+{ 
+    public class SubLog
+    { 
         public static void Output(string msg)
         {
             Hint main = Hint.main;
@@ -36,8 +32,10 @@ namespace StealthModule
         }
     }
 
-    public class StealthModulePatcher
+    [BepInPlugin("com.mikjaw.subnautica.stealthmodule.mod", "StealthModule", "2.0")]
+    public class StealthModulePatcher : BaseUnityPlugin
     {
+        public static ManualLogSource logger { get; private set; }
         internal static StealthQuality stealthQuality = StealthQuality.None;
 
         internal static Atlas.Sprite stealthSpriteAtlas;
@@ -46,8 +44,13 @@ namespace StealthModule
         internal static SeamothStealthModule2 seamothStealthModule2 = new SeamothStealthModule2();
         internal static SeamothStealthModule3 seamothStealthModule3 = new SeamothStealthModule3();
 
-        public static void Patch()
+        internal static MyConfig config { get; private set; }
+
+        public void Start()
         {
+            logger = base.Logger;
+            config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
+
             string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             byte[] spriteBytes = System.IO.File.ReadAllBytes(Path.Combine(modPath, "assets/SeamothStealthModuleIcon.png"));
             Texture2D SpriteTexture = new Texture2D(128, 128);
@@ -63,11 +66,18 @@ namespace StealthModule
             var type = System.Type.GetType("VehicleFramework.ModVehicle, VehicleFramework", false, false);
             if (type != null)
             {
-                Logger.Log("patching mod vehicle");
+                logger.LogInfo("patching mod vehicle");
                 VehicleFrameworkHandler.PatchModVehicleModules(ref harmony);
             }
 
             harmony.PatchAll();
+        }
+
+        [Menu("Stealth Module Options")]
+        public class MyConfig : ConfigFile
+        {
+            [Toggle("Enable Leviathan Distance Indicator")]
+            public bool isDistanceIndicatorEnabled = true;
         }
     }
 

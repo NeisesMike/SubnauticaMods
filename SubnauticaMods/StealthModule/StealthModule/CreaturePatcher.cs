@@ -9,7 +9,7 @@ namespace StealthModule
     class CreaturePatcher
     {
 		[HarmonyPostfix]
-		public static void Postfix(Creature __instance, ref CreatureAction __result, List<CreatureAction> ___actions, CreatureAction ___prevBestAction,
+		public static void Postfix(Creature __instance, float time, ref CreatureAction __result, List<CreatureAction> ___actions, CreatureAction ___prevBestAction,
 			int ___indexLastActionChecked)
 		{
 			// Ensure the player is in a vehicle with a stealth module equipped
@@ -52,19 +52,19 @@ namespace StealthModule
             }
 
 			// report on nearby dangerous leviathans
-			if (distToPlayer < 150)
+			if (StealthModulePatcher.config.isDistanceIndicatorEnabled && distToPlayer < 150)
 			{
 				if (__instance.name.Contains("GhostLeviathan"))
 				{
-					Logger.Output("Ghost Leviathan Distance: " + distToPlayer);
+					SubLog.Output("Ghost Leviathan Distance: " + distToPlayer);
 				}
 				else if (__instance.name.Contains("ReaperLeviathan"))
 				{
-					Logger.Output("Reaper Leviathan Distance: " + distToPlayer);
+					SubLog.Output("Reaper Leviathan Distance: " + distToPlayer);
 				}
 				else if (__instance.name.Contains("SeaDragon"))
 				{
-					Logger.Output("Sea Dragon Leviathan Distance: " + distToPlayer);
+					SubLog.Output("Sea Dragon Leviathan Distance: " + distToPlayer);
 				}
 			}
 
@@ -108,20 +108,20 @@ namespace StealthModule
 							{
 								if (((AttackLastTarget)creatureAction).lastTarget.target.name == "Player")
 								{
-									Logger.Log(__instance.name + " is replacing " + creatureAction.GetType().Name + "(Player) with SwimRandom.");
+									StealthModulePatcher.logger.LogInfo(__instance.name + " is replacing " + creatureAction.GetType().Name + "(Player) with SwimRandom.");
 									creatureAction = new SwimRandom();
 								}
 							}
 						}
 						else
 						{
-							Logger.Log(__instance.name + " is replacing " + creatureAction.GetType().Name + " with SwimRandom.");
+							StealthModulePatcher.logger.LogInfo(__instance.name + " is replacing " + creatureAction.GetType().Name + " with SwimRandom.");
 							creatureAction = new SwimRandom();
 						}
 					}
 				}
 
-				num = creatureAction.Evaluate(__instance);
+				num = creatureAction.Evaluate(__instance, time);
 			}
 			___indexLastActionChecked++;
 			if (___indexLastActionChecked >= ___actions.Count)
@@ -149,20 +149,20 @@ namespace StealthModule
 						{
 							if (((AttackLastTarget)creatureAction2).lastTarget.target.name == "Player")
 							{
-								Logger.Log(__instance.name + " is replacing " + creatureAction2.GetType().Name + "(Player) with SwimRandom (2)");
+								StealthModulePatcher.logger.LogInfo(__instance.name + " is replacing " + creatureAction2.GetType().Name + "(Player) with SwimRandom (2)");
 								creatureAction2 = new SwimRandom();
 							}
 						}
 					}
 					else
 					{
-						Logger.Log(__instance.name + " is replacing " + creatureAction2.GetType().Name + " with SwimRandom (2)");
+						StealthModulePatcher.logger.LogInfo(__instance.name + " is replacing " + creatureAction2.GetType().Name + " with SwimRandom (2)");
 						creatureAction2 = new SwimRandom();
 					}
 				}
 			}
 
-			float num2 = creatureAction2.Evaluate(__instance);
+			float num2 = creatureAction2.Evaluate(__instance, time);
 
 			if (num2 > num && !global::Utils.NearlyEqual(num2, 0f, 1E-45f))
 			{

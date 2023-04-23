@@ -11,28 +11,21 @@ using System.Collections;
 using SMLHelper.V2.Options.Attributes;
 using SMLHelper.V2.Json;
 using SMLHelper.V2.Handlers;
+using BepInEx;
+using BepInEx.Logging;
+using BepInEx.Bootstrap;
 
 namespace EcoRegionScanner
 {
-    public static class Logger
+    public class EcoRegionScannerPatcher : BaseUnityPlugin
     {
-        public static void Log(string message)
-        {
-            UnityEngine.Debug.Log("[EcoRegionScanner] " + message);
-        }
+        public static ManualLogSource logger { get; set; }
+        internal static MyConfig config { get; private set; }
 
-        public static void Log(string format, params object[] args)
+        public void Start()
         {
-            UnityEngine.Debug.Log("[EcoRegionScanner] " + string.Format(format, args));
-        }
-    }
-    public class EcoRegionScannerPatcher
-    {
-        internal static MyConfig Config { get; private set; }
-
-        public static void Patch()
-        {
-            Config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
+            logger = base.Logger;
+            config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
             var harmony = new Harmony("com.mikjaw.subnautica.ecoregionscanner.mod");
             harmony.PatchAll();
         }

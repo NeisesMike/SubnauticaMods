@@ -20,10 +20,10 @@ namespace FreeRead
         [HarmonyPrefix]
         public static bool Prefix(Vehicle __instance)
         {
-            if (Input.GetKeyDown(FreeReadPatcher.Config.FreeReadKey))
+            if (Input.GetKeyDown(FreeReadPatcher.config.FreeReadKey))
             {
                 FreeReadPatcher.isCruising = true;
-                Player.main.GetPDA().Open(PDATab.None, null, null, -1f);
+                Player.main.GetPDA().Open();
             }
 
             // add locomotion back in

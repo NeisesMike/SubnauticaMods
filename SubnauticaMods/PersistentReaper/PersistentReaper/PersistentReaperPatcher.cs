@@ -12,32 +12,26 @@ using SMLHelper.V2.Options.Attributes;
 using SMLHelper.V2.Options;
 using SMLHelper.V2.Json;
 using SMLHelper.V2.Handlers;
+using BepInEx;
+using BepInEx.Logging;
+using BepInEx.Bootstrap;
 
 namespace PersistentReaper
 {
-    public static class Logger
+    [BepInPlugin("com.mikjaw.subnautica.persistentreapers.mod", "PersistentReapers", "2.0")]
+    public class PersistentReaperPatcher : BaseUnityPlugin
     {
-        public static void Log(string message)
-        {
-            UnityEngine.Debug.Log("[PersistentReapers] " + message);
-        }
+        public static ManualLogSource logger { get; private set; }
+        internal static MyConfig config { get; private set; }
 
-        public static void Log(string format, params object[] args)
+        public void Start()
         {
-            UnityEngine.Debug.Log("[PersistentReapers] " + string.Format(format, args));
-        }
-    }
-    public static class PersistentReaperPatcher
-    {
-        internal static MyConfig Config { get; private set; }
-
-        public static void Patch()
-        {
-            Config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
+            logger = base.Logger;
+            config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
             var harmony = new Harmony("com.mikjaw.subnautica.persistentreapers.mod");
             harmony.PatchAll();
-        }
     }
+}
 
     public enum ReaperBehaviors
     {

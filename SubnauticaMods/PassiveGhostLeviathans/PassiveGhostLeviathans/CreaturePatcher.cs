@@ -23,15 +23,15 @@ namespace PassiveGhostLeviathans
 	class CreatureUpdateBehaviourPatcher
 	{
 		[HarmonyPrefix]
-		public static bool Prefix(Creature __instance, float deltaTime, Animator ___traitsAnimator, ref CreatureAction ___lastAction,
-			CreatureAction ___prevBestAction, float ___flinch, float ___flinchFadeRate, List<CreatureAction> ___actions, ref int ___indexLastActionChecked,
-			ref int ___animAggressive, ref int ___animScared, ref int ___animTired, ref int ___animHappy, ref int ___animFlinch)
+		public static bool Prefix(Creature __instance, float time, float deltaTime, Animator ___traitsAnimator, ref CreatureAction ___lastAction,
+			CreatureAction ___prevBestAction,  List<CreatureAction> ___actions, ref int ___indexLastActionChecked,
+			ref int ___animAggressive, ref int ___animScared, ref int ___animTired, ref int ___animHappy)
 		{
 			TechType techType = CraftData.GetTechType(__instance.gameObject);
 			string myTechType = techType.AsString(true);
 
-			bool shouldWeManageAdult = myTechType == "ghostleviathan" && PassiveGhostLeviathansPatcher.Config.isGhostPassive;
-			bool shouldWeManageJuvenile = myTechType == "ghostleviathanjuvenile" && PassiveGhostLeviathansPatcher.Config.isJuvenileGhostPassive;
+			bool shouldWeManageAdult = myTechType == "ghostleviathan" && PassiveGhostLeviathansPatcher.config.isGhostPassive;
+			bool shouldWeManageJuvenile = myTechType == "ghostleviathanjuvenile" && PassiveGhostLeviathansPatcher.config.isJuvenileGhostPassive;
 			bool isThisCaseSomethingWeCareAbout = shouldWeManageAdult || shouldWeManageJuvenile;
 
 			if(!isThisCaseSomethingWeCareAbout)
@@ -63,7 +63,7 @@ namespace PassiveGhostLeviathans
 				{
 					mycreatureAction = ___prevBestAction;
 					ProfilingUtils.BeginSample("bestAction.Evaluate");
-					mynum = mycreatureAction.Evaluate(__instance);
+					mynum = mycreatureAction.Evaluate(__instance, time);
 					ProfilingUtils.EndSample(null);
 				}
 				myIndexLast++;
@@ -73,7 +73,7 @@ namespace PassiveGhostLeviathans
 				}
 				CreatureAction creatureAction2 = ___actions[myIndexLast];
 				ProfilingUtils.BeginSample("current.Evaluate");
-				float num2 = creatureAction2.Evaluate(__instance);
+				float num2 = creatureAction2.Evaluate(__instance, time);
 				ProfilingUtils.EndSample(null);
 				if (num2 > mynum && !Utils.NearlyEqual(num2, 0f, 1E-45f))
 				{
@@ -92,12 +92,12 @@ namespace PassiveGhostLeviathans
 			{
 				if (___prevBestAction)
 				{
-					___prevBestAction.StopPerform(__instance);
+					___prevBestAction.StopPerform(__instance, time);
 				}
 				if (creatureAction)
 				{
 					//Logger.Log(creatureAction.ToString());
-					creatureAction.StartPerform(__instance);
+					creatureAction.StartPerform(__instance, time);
 				}
 				___prevBestAction = creatureAction;
 			}
@@ -105,7 +105,7 @@ namespace PassiveGhostLeviathans
 			if (creatureAction)
 			{
 				ProfilingUtils.BeginSample("perform action");
-				creatureAction.Perform(__instance, deltaTime);
+				creatureAction.Perform(__instance, time, deltaTime);
 				ProfilingUtils.EndSample(null);
 			}
 			float num = DayNightUtils.Evaluate(1f, __instance.activity);
@@ -118,7 +118,6 @@ namespace PassiveGhostLeviathans
 			__instance.Scared.UpdateTrait(deltaTime);
 			__instance.Tired.UpdateTrait(deltaTime);
 			__instance.Happy.UpdateTrait(deltaTime);
-			___flinch = Mathf.Lerp(___flinch, 0f, ___flinchFadeRate * deltaTime);
 			ProfilingUtils.EndSample(null);
 			if (___traitsAnimator && ___traitsAnimator.isActiveAndEnabled)
 			{
@@ -126,7 +125,6 @@ namespace PassiveGhostLeviathans
 				___traitsAnimator.SetFloat(___animScared, __instance.Scared.Value);
 				___traitsAnimator.SetFloat(___animTired, __instance.Tired.Value);
 				___traitsAnimator.SetFloat(___animHappy, __instance.Happy.Value);
-				___traitsAnimator.SetFloat(___animFlinch, ___flinch);
 			}
 			ProfilingUtils.EndSample(null);
 			return false;
@@ -143,8 +141,8 @@ namespace PassiveGhostLeviathans
 			TechType techType = CraftData.GetTechType(__instance.gameObject);
 			string myTechType = techType.AsString(true);
 
-			bool shouldWeManageAdult = myTechType == "ghostleviathan" && PassiveGhostLeviathansPatcher.Config.isNoBiteDamage;
-			bool shouldWeManageJuvenile = myTechType == "ghostleviathanjuvenile" && PassiveGhostLeviathansPatcher.Config.isJuvenileNoBiteDamage;
+			bool shouldWeManageAdult = myTechType == "ghostleviathan" && PassiveGhostLeviathansPatcher.config.isNoBiteDamage;
+			bool shouldWeManageJuvenile = myTechType == "ghostleviathanjuvenile" && PassiveGhostLeviathansPatcher.config.isJuvenileNoBiteDamage;
 
 			if(shouldWeManageAdult || shouldWeManageJuvenile)
             {

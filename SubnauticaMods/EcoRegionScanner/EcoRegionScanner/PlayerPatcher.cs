@@ -37,7 +37,7 @@ namespace EcoRegionScanner
         [HarmonyPostfix]
         public static void Postfix()
         {
-            if (EcoRegionScannerPatcher.Config.isScannerActive)
+            if (EcoRegionScannerPatcher.config.isScannerActive)
             {
                 // get the current ecoregion coordinates as Int3
                 Int3 thisEcoRegion = EcoRegionScanner.getEcoRegion(Player.main.transform.position);
@@ -48,7 +48,7 @@ namespace EcoRegionScanner
             }
 
             // on keyboard input, output the dictionary to file
-            if(Input.GetKey(EcoRegionScannerPatcher.Config.printMapKey))
+            if(Input.GetKey(EcoRegionScannerPatcher.config.printMapKey))
             {
                 string[] dictStringArray = new string[1];
                 dictStringArray[0] = string.Join(Environment.NewLine, EcoRegionScanner.depthDictionary);
@@ -57,7 +57,7 @@ namespace EcoRegionScanner
                 File.WriteAllLines(Path.Combine(modPath, "DepthDictionary.txt"), dictStringArray);
             }
 
-            if(EcoRegionScannerPatcher.Config.isFastSeamoth)
+            if(EcoRegionScannerPatcher.config.isFastSeamoth)
             {
                 if(Player.main.GetVehicle() && Player.main.GetVehicle().controlSheme == Vehicle.ControlSheme.Submersible)
                 {

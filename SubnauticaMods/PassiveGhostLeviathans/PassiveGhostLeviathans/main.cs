@@ -11,28 +11,20 @@ using System.Collections;
 using SMLHelper.V2.Options.Attributes;
 using SMLHelper.V2.Json;
 using SMLHelper.V2.Handlers;
+using BepInEx;
+using BepInEx.Logging;
+using BepInEx.Bootstrap;
 
 namespace PassiveGhostLeviathans
 {
-    public static class Logger
+    [BepInPlugin("com.mikjaw.subnautica.freeread.mod", "FreeRead", "1.0")]
+    public class PassiveGhostLeviathansPatcher : BaseUnityPlugin
     {
-        public static void Log(string message)
-        {
-            UnityEngine.Debug.Log("[PassiveGhostLeviathans] " + message);
-        }
+        internal static MyConfig config { get; private set; }
 
-        public static void Log(string format, params object[] args)
+        public void Start()
         {
-            UnityEngine.Debug.Log("[PassiveGhostLeviathans] " + string.Format(format, args));
-        }
-    }
-    public class PassiveGhostLeviathansPatcher
-    {
-        internal static MyConfig Config { get; private set; }
-
-        public static void Patch()
-        {
-            Config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
+            config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
             var harmony = new Harmony("com.garyburke.subnautica.passiveghostleviathans.mod");
             harmony.PatchAll();
         }

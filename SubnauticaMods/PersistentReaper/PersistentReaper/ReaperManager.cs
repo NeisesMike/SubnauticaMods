@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace PersistentReaper
         private static System.Random manRand = new System.Random();
         private static int spawnRadius = 225;
         // grab reaper prefab
-        private static GameObject reaperPrefab = CraftData.GetPrefabForTechType(TechType.ReaperLeviathan, true);
+        public static GameObject reaperPrefab { get; set; }
 
         // updateInterval is measured in seconds
         private static float lastUpdateTime = Time.time;
@@ -105,7 +106,7 @@ namespace PersistentReaper
 
             // make Percy able to handle a punch or two
             // remember, Percy has 5000 health
-            if (PersistentReaperPatcher.Config.reaperBehaviors == ReaperBehaviors.Bloodthirsty || PersistentReaperPatcher.Config.reaperBehaviors == ReaperBehaviors.HumanHunter)
+            if (PersistentReaperPatcher.config.reaperBehaviors == ReaperBehaviors.Bloodthirsty || PersistentReaperPatcher.config.reaperBehaviors == ReaperBehaviors.HumanHunter)
             {
                 Percy.GetComponent<FleeOnDamage>().damageThreshold = 1000f;
             }
@@ -125,10 +126,11 @@ namespace PersistentReaper
                 areDictionariesBuilt = true;
             }
 
+
             // adjust the number of available reapers as necessary
-            if (reaperDict.Count != PersistentReaperPatcher.Config.numReapers)
+            if (reaperDict.Count != PersistentReaperPatcher.config.numReapers)
             {
-                int difference = reaperDict.Count - PersistentReaperPatcher.Config.numReapers;
+                int difference = reaperDict.Count - PersistentReaperPatcher.config.numReapers;
                 if (difference > 0)
                 {
                     for (int i = 0; i < difference; i++)
@@ -146,7 +148,7 @@ namespace PersistentReaper
             }
 
             // PersistentReaper.Update
-            if (lastUpdateTime + PersistentReaperPatcher.Config.updateInterval < Time.time)
+            if (lastUpdateTime + PersistentReaperPatcher.config.updateInterval < Time.time)
             {
                 lastUpdateTime = Time.time;
                 try
@@ -157,7 +159,7 @@ namespace PersistentReaper
                         // simulate his movement
                         if (!entry.Value)
                         {
-                            if (PersistentReaperPatcher.Config.reaperBehaviors == ReaperBehaviors.HumanHunter)
+                            if (PersistentReaperPatcher.config.reaperBehaviors == ReaperBehaviors.HumanHunter)
                             {
                                 moveWithScent(entry.Key);
                             }
@@ -396,12 +398,12 @@ namespace PersistentReaper
 
         public static Dictionary<Tuple<int, int>, int> getDepthDictionary()
         {
-            if (PersistentReaperPatcher.Config == null)
+            if (PersistentReaperPatcher.config == null)
             {
-                Logger.Log("Config not yet available. Will get the depth dictionary later.");
+                PersistentReaperPatcher.logger.LogWarning("Config not yet available. Will get the depth dictionary later.");
                 return new Dictionary<Tuple<int, int>, int>();
             }
-            return getDepthDictionary(PersistentReaperPatcher.Config.depthMapChoice);
+            return getDepthDictionary(PersistentReaperPatcher.config.depthMapChoice);
         }
 
         public static Dictionary<Tuple<int, int>, int> getDepthDictionary(DepthMap depthMapChoice)

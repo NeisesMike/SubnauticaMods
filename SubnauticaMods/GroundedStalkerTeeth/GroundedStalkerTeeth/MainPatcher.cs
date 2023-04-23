@@ -8,42 +8,21 @@ using UnityEngine;
 using HarmonyLib;
 using System.Runtime.CompilerServices;
 using System.Collections;
-using SMLHelper.V2.Options.Attributes;
-using SMLHelper.V2.Options;
-using SMLHelper.V2.Json;
-using SMLHelper.V2.Handlers;
-using QModManager.API.ModLoading;
-using SMLHelper.V2.Utility;
 using UWE;
 
+using BepInEx;
+using BepInEx.Logging;
+using BepInEx.Bootstrap;
 
 namespace GroundedItems
 {
-    public static class Logger
+    [BepInPlugin("com.mikjaw.subnautica.groundeditems.mod", "Grounded Items", "1.0")]
+    public class MainPatcher : BaseUnityPlugin
     {
-        public static void Log(string message)
+        public static ManualLogSource logger;
+        public void Start()
         {
-            UnityEngine.Debug.Log("[GroundedItems] " + message);
-        }
-
-        public static void Log(string format, params object[] args)
-        {
-            UnityEngine.Debug.Log("[GroundedItems] " + string.Format(format, args));
-        }
-
-        public static void Output(string msg)
-        {
-            BasicText message = new BasicText(500, 0);
-            message.ShowMessage(msg, 5);
-        }
-    }
-
-    [QModCore]
-    public static class MainPatcher
-    {
-        [QModPatch]
-        public static void Patch()
-        {
+            logger = base.Logger;
             var harmony = new Harmony("com.mikjaw.subnautica.groundeditems.mod");
             harmony.PatchAll();
             DepthManager.depth_dictionary = DepthManager.GetDepthDictionary();

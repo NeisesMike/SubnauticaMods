@@ -71,7 +71,7 @@ namespace SeamothEject
 
 
 			Vector3 position = Vector3.zero;
-			bool flag = findPosition(SeamothEjectPatcher.Config.myPlacement, ref position, __instance, ignoreObject);
+			bool flag = findPosition(SeamothEjectPatcher.config.myPlacement, ref position, __instance, ignoreObject);
 
 
 			// ensure we can find a place to exit, if at all possible
