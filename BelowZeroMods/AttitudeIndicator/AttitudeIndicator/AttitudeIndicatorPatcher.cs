@@ -15,6 +15,9 @@ using SMLHelper.V2.Options.Attributes;
 using SMLHelper.V2.Json;
 using SMLHelper.V2.Utility;
 using SMLHelper.V2.Patchers;
+using BepInEx;
+using BepInEx.Logging;
+using BepInEx.Bootstrap;
 
 namespace AttitudeIndicator
 {
@@ -55,7 +58,28 @@ namespace AttitudeIndicator
     [Menu("Attitude Indicators")]
     public class SubnauticaConfig : ConfigFile
     {
-        public void KillIndicator(ToggleChangedEventArgs e)
+        public enum autoposition
+        {
+            bottomcenter,
+            bottomleft,
+            bottomright,
+            topleft,
+            topright
+        }
+
+        [Toggle("Enable Seamoth Attitude Indicator"), OnChange(nameof(ToggleSeamothIndicator))]
+        public bool isSeamothAttitudeIndicatorOn = true;
+
+        [Slider("Position X", -1, 1f, Step = 0.0001f)]
+        public float x = -0.4039f;
+        [Slider("Position Y", -1f, 1f, Step = 0.0001f)]
+        public float y = -0.2164f;
+        [Slider("Position Z", 0f, 1f, Step = 0.0001f)]
+        public float z = 0.6145f;
+        [Slider("Scale", 0f, 0.1853f, Step = 0.00001f)]
+        public float scale = 0.1102f;
+
+        public void ToggleSeamothIndicator(ToggleChangedEventArgs e)
         {
             if (e.Value && Player.main.isPiloting && Player.main.currentMountedVehicle && !Player.main.currentMountedVehicle.name.Contains("Exosuit"))
             {
@@ -75,31 +99,17 @@ namespace AttitudeIndicator
                 }
             }
         }
-        [Toggle("Enable Seamoth Attitude Indicator"), OnChange(nameof(KillIndicator))]
-        public bool isAttitudeIndicatorOn = true;
+        [Toggle("Use Seamoth Auto-position")]
+        public bool useSeamothAutoPos = true;
 
-        [Slider("Position X", -1, 1f, Step = 0.0001f)]
-        public float x = -0.4039f;
-        [Slider("Position Y", -1f, 1f, Step = 0.0001f)]
-        public float y = -0.2164f;
-        [Slider("Position Z", 0f, 1f, Step = 0.0001f)]
-        public float z = 0.6145f;
-        [Slider("Scale", 0f, 0.1853f, Step = 0.00001f)]
-        public float scale = 0.1102f;
-
-        public enum autoposition
+        [Choice("Auto-position"), OnChange(nameof(moveSeamothIndicator))]
+        public autoposition seamothIndicatorLocation = autoposition.bottomleft;
+        public void moveSeamothIndicator(ChoiceChangedEventArgs e)
         {
-            bottomcenter,
-            bottomleft,
-            bottomright,
-            topleft,
-            topright
-                
-        }
-        [Choice("Auto-position"), OnChange(nameof(moveIndicator))]
-        public autoposition indicatorLocation = autoposition.bottomleft;
-        public void moveIndicator(ChoiceChangedEventArgs e)
-        {
+            if (!useSeamothAutoPos)
+            {
+                return;
+            }
             switch ((autoposition)e.Index)
             {
                 case autoposition.bottomleft:
@@ -134,6 +144,91 @@ namespace AttitudeIndicator
                     break;
             }
         }
+
+
+
+        [Toggle("Enable Cyclops Attitude Indicator"), OnChange(nameof(ToggleCyclopsIndicator))]
+        public bool isCyclopsAttitudeIndicatorOn = true;
+
+        [Slider("Cyclops Position X", -1, 1f, Step = 0.0001f)]
+        public float Cx = -0.4039f;
+        [Slider("Cyclops Position Y", -1f, 1f, Step = 0.0001f)]
+        public float Cy = -0.2164f;
+        [Slider("Cyclops Position Z", 0f, 1f, Step = 0.0001f)]
+        public float Cz = 0.6145f;
+        [Slider("Cyclops Scale", 0f, 0.1853f, Step = 0.00001f)]
+        public float Cscale = 0.1102f;
+
+        public void ToggleCyclopsIndicator(ToggleChangedEventArgs e)
+        {
+            if (e.Value && Player.main.isPiloting && Player.main.currentMountedVehicle && !Player.main.currentMountedVehicle.name.Contains("Exosuit"))
+            {
+                if (AttitudeIndicator.prefab is null)
+                {
+                    AttitudeIndicator.GetAssets();
+                }
+                PlayerUpdatePatcher2.indicator = GameObject.Instantiate(AttitudeIndicator.prefab);
+                PlayerUpdatePatcher2.indicator.AddComponent<AttitudeIndicator>().model = PlayerUpdatePatcher2.indicator;
+            }
+            else if (!e.Value)
+            {
+                if (PlayerUpdatePatcher2.indicator)
+                {
+                    GameObject.Destroy(PlayerUpdatePatcher2.indicator);
+                    PlayerUpdatePatcher2.indicator = null;
+                }
+            }
+        }
+        [Toggle("Use Cyclops Auto-position")]
+        public bool useCyclopsAutoPos = true;
+
+        [Choice("Auto-position"), OnChange(nameof(moveCyclopsIndicator))]
+        public autoposition cyclopsIndicatorLocation = autoposition.bottomleft;
+        public void moveCyclopsIndicator(ChoiceChangedEventArgs e)
+        {
+            if(!useCyclopsAutoPos)
+            {
+                return;
+            }
+            switch ((autoposition)e.Index)
+            {
+                case autoposition.bottomleft:
+                    Cx = -.4097f;
+                    Cy = -.2164f;
+                    Cz = 0.6145f;
+                    Cscale = 0.1102f;
+                    break;
+                case autoposition.bottomcenter:
+                    Cx = 0f;
+                    Cy = -0.1268f;
+                    Cz = 0.3779f;
+                    Cscale = 0.06f;
+                    break;
+                case autoposition.bottomright:
+                    Cx = 0.4039f;
+                    Cy = -.2164f;
+                    Cz = 0.6145f;
+                    Cscale = 0.1102f;
+                    break;
+                case autoposition.topleft:
+                    Cx = -0.5371f;
+                    Cy = 0.3607f;
+                    Cz = 0.6145f;
+                    Cscale = 0.1232f;
+                    break;
+                case autoposition.topright:
+                    Cx = 0.5371f;
+                    Cy = 0.3607f;
+                    Cz = 0.6145f;
+                    Cscale = 0.1232f;
+                    break;
+            }
+        }
+
+
+
+
+
     }
 #elif BELOWZERO
     [Menu("Attitude Indicators")]
@@ -246,7 +341,8 @@ namespace AttitudeIndicator
     }
 #endif
 
-    public class AttitudeIndicatorPatcher
+    [BepInPlugin("com.mikjaw.subnautica.attitudeindicator.mod", "AttitudeIndicator", "2.0")]
+    public class AttitudeIndicatorPatcher : BaseUnityPlugin
     {
 #if SUBNAUTICA
         internal static SubnauticaConfig SubnauticaConfig { get; private set; }
@@ -255,7 +351,7 @@ namespace AttitudeIndicator
 #endif
         internal static VehicleType currentVehicle;
 
-        public static void Patch()
+        public void Start()
         {
 #if SUBNAUTICA
             SubnauticaConfig = OptionsPanelHandler.Main.RegisterModOptions<SubnauticaConfig>();

@@ -24,10 +24,24 @@ namespace AttitudeIndicator
         public static GameObject indicator = null;
         public static bool isEnabled = false;
 
+        public static bool IsInSeamoth
+        {
+            get
+            {
+                return Player.main.isPiloting && Player.main.currentMountedVehicle && !Player.main.currentMountedVehicle.name.Contains("Exosuit");
+            }
+        }
+        public static bool IsPilotCyclop
+        {
+            get
+            {
+                return Player.main.isPiloting && Player.main.GetCurrentSub() && Player.main.GetCurrentSub().name.Contains("Cyclops");
+            }
+        }
         [HarmonyPostfix]
         public static void Postfix(Player __instance)
         {
-            if (!AttitudeIndicatorPatcher.SubnauticaConfig.isAttitudeIndicatorOn)
+            if (!AttitudeIndicatorPatcher.SubnauticaConfig.isCyclopsAttitudeIndicatorOn && !AttitudeIndicatorPatcher.SubnauticaConfig.isSeamothAttitudeIndicatorOn)
             {
                 if (indicator)
                 {
@@ -36,10 +50,13 @@ namespace AttitudeIndicator
                 }
                 return;
             }
-            bool newIsEnabled = __instance.isPiloting && __instance.currentMountedVehicle && !__instance.currentMountedVehicle.name.Contains("Exosuit");
+
+            bool newIsEnabled = IsInSeamoth || IsPilotCyclop;
+
             if (isEnabled != newIsEnabled)
             {
-                if (newIsEnabled && AttitudeIndicatorPatcher.SubnauticaConfig.isAttitudeIndicatorOn)
+                if(IsInSeamoth && AttitudeIndicatorPatcher.SubnauticaConfig.isSeamothAttitudeIndicatorOn
+                    || IsPilotCyclop && AttitudeIndicatorPatcher.SubnauticaConfig.isCyclopsAttitudeIndicatorOn)
                 {
                     if (AttitudeIndicator.prefab is null)
                     {
@@ -47,6 +64,14 @@ namespace AttitudeIndicator
                     }
                     indicator = GameObject.Instantiate(AttitudeIndicator.prefab);
                     indicator.AddComponent<AttitudeIndicator>().model = indicator;
+                    if(IsInSeamoth)
+                    {
+                        AttitudeIndicatorPatcher.currentVehicle = VehicleType.Seamoth;
+                    }
+                    else if(IsPilotCyclop)
+                    {
+                        AttitudeIndicatorPatcher.currentVehicle = VehicleType.Cyclops;
+                    }
                 }
                 else
                 {

@@ -75,11 +75,22 @@ namespace AttitudeIndicator
 
         public void UpdatePosition()
         {
-            model.transform.localScale = Vector3.one * AttitudeIndicatorPatcher.SubnauticaConfig.scale;
-            model.transform.position = Player.main.transform.position
-                + Player.main.transform.forward * AttitudeIndicatorPatcher.SubnauticaConfig.z
-                + Player.main.transform.right * AttitudeIndicatorPatcher.SubnauticaConfig.x
-                + Player.main.transform.up * AttitudeIndicatorPatcher.SubnauticaConfig.y;
+            if (AttitudeIndicatorPatcher.currentVehicle == VehicleType.Seamoth)
+            {
+                model.transform.localScale = Vector3.one * AttitudeIndicatorPatcher.SubnauticaConfig.scale;
+                model.transform.position = Player.main.transform.position
+                    + Player.main.transform.forward * AttitudeIndicatorPatcher.SubnauticaConfig.z
+                    + Player.main.transform.right * AttitudeIndicatorPatcher.SubnauticaConfig.x
+                    + Player.main.transform.up * AttitudeIndicatorPatcher.SubnauticaConfig.y;
+            }
+            else if(AttitudeIndicatorPatcher.currentVehicle == VehicleType.Cyclops)
+            {
+                model.transform.localScale = Vector3.one * AttitudeIndicatorPatcher.SubnauticaConfig.Cscale;
+                model.transform.position = Player.main.transform.position
+                    + Player.main.transform.forward * AttitudeIndicatorPatcher.SubnauticaConfig.Cz
+                    + Player.main.transform.right * AttitudeIndicatorPatcher.SubnauticaConfig.Cx
+                    + Player.main.transform.up * AttitudeIndicatorPatcher.SubnauticaConfig.Cy;
+            }
         }
 
         public void UpdateRotations()
