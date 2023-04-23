@@ -8,21 +8,16 @@ using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Options;
 using UnityEngine;
 using HarmonyLib;
-using QModManager.API.ModLoading;
 using SMLHelper.V2.Utility;
+
+using BepInEx;
+using BepInEx.Logging;
+using BepInEx.Bootstrap;
 
 namespace RollControl
 {
-    public static class Logger
+    public static class SubLog
     {
-        public static void Log(string message)
-        {
-            UnityEngine.Debug.Log("[RollControl] " + message);
-        }
-        public static void Log(string format, params object[] args)
-        {
-            UnityEngine.Debug.Log("[RollControl] " + string.Format(format, args));
-        }
         public static void Output(string msg)
         {
             BasicText message = new BasicText(500, 0);
@@ -51,15 +46,16 @@ namespace RollControl
         public bool IsScubaRollDefaultEnabled = true;
     }
 
-    [QModCore]
-    public static class RollControlPatcher
+    [BepInPlugin("com.mikjaw.subnautica.rollcontrol.mod", "RollControl", "1.0")]
+    public class RollControlPatcher : BaseUnityPlugin
     {
-        internal static MyConfig Config { get; private set; }
+        public static ManualLogSource logger { get; set; }
+        internal static MyConfig config { get; private set; }
 
-        [QModPatch]
-        public static void Patch()
+        public void Start()
         {
-            Config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
+            logger = base.Logger;
+            config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
             var harmony = new Harmony("com.mikjaw.subnautica.rollcontrol.mod");
             harmony.PatchAll();
         }

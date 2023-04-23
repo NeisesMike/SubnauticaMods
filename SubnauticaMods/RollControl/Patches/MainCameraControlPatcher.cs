@@ -14,7 +14,7 @@ using System.Reflection.Emit;
 namespace RollControl
 {
     [HarmonyPatch(typeof(MainCameraControl))]
-    [HarmonyPatch("Update")]
+    [HarmonyPatch("OnUpdate")]
     class MainCameraControlUpdatePatcher
     {
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
@@ -34,7 +34,7 @@ namespace RollControl
                     && codes[i].operand.ToString().Contains("set_localEulerAngles")
                    )
                 { 
-                    codes[i] = CodeInstruction.Call(typeof(ScubaRollController), "MaybeSetLocalEuler");
+                    codes[i] = CodeInstruction.Call(typeof(ScubaRollController), nameof(ScubaRollController.MaybeSetLocalEuler));
                 }
                 newCodes[i] = codes[i];
             }

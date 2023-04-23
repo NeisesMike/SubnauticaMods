@@ -22,13 +22,11 @@ namespace RollControl
         {
             __instance.gameObject.EnsureComponent<ScubaRollController>();
             ScubaRollController.player = __instance;
-            ScubaRollController.isRollEnabled = RollControlPatcher.Config.IsScubaRollDefaultEnabled;
-            /*
-            if(RollControlPatcher.Config.IsScubaRollDefaultEnabled)
+            ScubaRollController.isRollEnabled = RollControlPatcher.config.IsScubaRollDefaultEnabled;
+            if(RollControlPatcher.config.IsScubaRollDefaultEnabled)
             {
                 Player.main.StartCoroutine(DetermineWhetherWeStartBySwimming());
             }
-            */
         }
 
         [HarmonyPrefix]
