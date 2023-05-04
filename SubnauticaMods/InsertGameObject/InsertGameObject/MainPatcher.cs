@@ -17,8 +17,13 @@ using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Bootstrap;
 
+#if BELOWZERO
+using QModManager.API.ModLoading;
+#endif
+
 namespace InsertGameObject
 {
+#if SUBNAUTICA
     [BepInPlugin("com.mikjaw.subnautica.insertgameobject.mod", "InsertGameObject", "1.0")]
     public class MainPatcher : BaseUnityPlugin
     {
@@ -31,6 +36,24 @@ namespace InsertGameObject
             harmony.PatchAll();
         }
     }
+#endif
+
+#if BELOWZERO
+    [QModCore]
+    public class MainPatcher
+    {
+        internal static InsertGameObjectConfig config { get; private set; }
+
+        [QModPatch]
+        public static void Patch()
+        {
+            config = OptionsPanelHandler.Main.RegisterModOptions<InsertGameObjectConfig>();
+            var harmony = new Harmony("com.mikjaw.subnautica.freeread.mod");
+            harmony.PatchAll();
+        }
+    }
+#endif
+
     [Menu("InsertGameObject Options")]
     public class InsertGameObjectConfig : ConfigFile
     {

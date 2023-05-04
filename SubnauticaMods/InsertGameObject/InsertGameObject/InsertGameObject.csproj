@@ -30,21 +30,54 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Subnautica|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Subnautica\</OutputPath>
+    <DefineConstants>SUBNAUTICA</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'BelowZero|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\BelowZero\</OutputPath>
+    <DefineConstants>BELOWZERO</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\core\0Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass_publicized">
+    <Reference Include="Assembly-CSharp-firstpass_publicized" Condition="$(Configuration)==Subnautica">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\publicized_assemblies\Assembly-CSharp-firstpass_publicized.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp_publicized">
+    <Reference Include="Assembly-CSharp_publicized" Condition="$(Configuration)==Subnautica">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
     </Reference>
-    <Reference Include="BepInEx">
+    <Reference Include="BepInEx" Condition="$(Configuration)==Subnautica">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
-    <Reference Include="SMLHelper">
+    <Reference Include="SMLHelper" Condition="$(Configuration)==Subnautica">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\QMods\Modding Helper\SMLHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass_publicized" Condition="$(Configuration)==BelowZero">
+      <HintPath>D:\SteamLibrary\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\publicized_assemblies\Assembly-CSharp-firstpass_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp_publicized" Condition="$(Configuration)==BelowZero">
+      <HintPath>D:\SteamLibrary\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx" Condition="$(Configuration)==BelowZero">
+      <HintPath>D:\SteamLibrary\steamapps\common\SubnauticaZero\BepInEx\core\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="SMLHelper" Condition="$(Configuration)==BelowZero">
+      <HintPath>D:\SteamLibrary\steamapps\common\SubnauticaZero\QMods\SMLHelper_BZ\SMLHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="QModInstaller" Condition="$(Configuration)==BelowZero">
+      <HintPath>D:\SteamLibrary\steamapps\common\SubnauticaZero\BepInEx\plugins\QModManager\QModInstaller.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -93,10 +126,18 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy  $(TargetPath) "C:\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\plugins\$(SolutionName)\" /y
-
+    <PostBuildEvent>if $(Configuration)==Subnautica (
+xcopy  $(TargetPath) "C:\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\plugins\$(SolutionName)\" /y
 robocopy "C:\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\plugins\$(SolutionName)\ " "C:\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\uploadables\$(SolutionName)\BepInEx\plugins\$(SolutionName)\ " /MIR /XF "__folder_managed_by_vortex" || if %25errorlevel%25 leq 1 exit 0
-
-// Robocopy exit code 1 indicates successful file copying, so treat exit codes 0 and 1 as successful outcomes with "|| if %25errorlevel%25 leq 1 exit 0".</PostBuildEvent>
+// Robocopy exit code 1 indicates successful file copying, so treat exit codes 0 and 1 as successful outcomes with "|| if %25errorlevel%25 leq 1 exit 0".
+) else if $(Configuration)==BelowZero (
+xcopy  $(TargetPath) "D:\SteamLibrary\steamapps\common\SubnauticaZero\QMods\$(SolutionName)\" /y
+exit 0
+)</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>echo Configuration: $(Configuration)
+echo OutputPath: $(OutputPath)
+echo AssemblyName: $(AssemblyName)</PreBuildEvent>
   </PropertyGroup>
 </Project>
