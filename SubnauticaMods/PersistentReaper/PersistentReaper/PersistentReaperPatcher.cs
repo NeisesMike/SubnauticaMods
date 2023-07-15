@@ -108,9 +108,26 @@ namespace PersistentReaper
                 sb[__instance3Loc.z] = 'X';
                 map[__instance3Loc.x] = sb.ToString();
             }
-
+            
+            markPlayerOnMap(map);
+            
             string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             File.WriteAllLines(Path.Combine(modPath, "ReaperMap.txt"), map);
+        }
+
+        // Marks the player's position region cell on the print map.
+        private static void markPlayerOnMap(string[] map)
+        {
+            if (Player.main == null)
+            {
+                // in case of printing a map on the main menu
+                return; 
+            }
+            
+            Int3 playerLoc = ReaperManager.getEcoRegion(Player.main.transform.position);
+            StringBuilder sb = new StringBuilder(map[playerLoc.x]);
+            sb[playerLoc.z] = 'P';
+            map[playerLoc.x] = sb.ToString();
         }
     }
 }
