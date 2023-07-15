@@ -88,7 +88,16 @@ namespace PersistentReaper
             }
             reaperDict[percy] = null;
         }
-
+        
+        public static void despawnAllReapers()
+        {
+            List<ReaperBehavior> myKeys = new List<ReaperBehavior>(reaperDict.Keys);
+            foreach (ReaperBehavior percy in myKeys)
+            {
+                despawnThisReaper(percy);
+            }
+        }
+        
         public static void spawnThisReaper(ReaperBehavior thisReaper)
         {
             Vector3 spawnLocation = getRegionPosition(thisReaper.currentRegion);
