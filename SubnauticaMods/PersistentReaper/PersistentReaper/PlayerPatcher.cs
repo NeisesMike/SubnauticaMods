@@ -70,4 +70,30 @@ namespace PersistentReaper
             }
         }
     }
+
+    [HarmonyPatch(typeof(Player), nameof(Player.OnDestroy))]
+    public class PlayerOnDestroyPatcher
+    {
+        [HarmonyPostfix]
+        public static void Postfix()
+        {
+            // remove all reaper when player quit to main menu
+            // ensure correct behavior between multiple save/load sessions without quiting the game
+            ReaperManager.removeAllReapers();
+        }
+    }
+    
+    [HarmonyPatch(typeof(Player), nameof(Player.OnKill))]
+    public class PlayerOnKillPatcher
+    {
+        [HarmonyPostfix]
+        public static void Postfix()
+        {
+            if (PersistentReaperPatcher.config.shouldRandomOnPlayerDead)
+            {
+                // remove all reapers when player die, make it initilize random position again when player start
+                ReaperManager.removeAllReapers();
+            }
+        }
+    }
 }

@@ -9,15 +9,8 @@ namespace PersistentReaper
         [HarmonyPostfix]
         public static void PreFix()
         {
-            FixCachedReaper();
             ReaperManager.SavePersistentReapers();
-        }
-        
-        [HarmonyPostfix]
-        public static void PostFix()
-        {
-            // despawned reapers from prefix, should be spawned back if it's close enogh to the player
-            // so we don't need to spawn them here.
+            FixCachedReaper();
         }
         
         // There is a problem with spawned Mod Reapers being saved to Cached Reaper.
@@ -38,7 +31,7 @@ namespace PersistentReaper
         private static void FixCachedReaper()
         {
             // prevent our spawned reapers to be saved in a game cached
-            // for now, just remove them before saving
+            // for now, just remove them before saving, then they should be spawned back automatically by reaper update  
             ReaperManager.despawnAllReapers();
         }
     }

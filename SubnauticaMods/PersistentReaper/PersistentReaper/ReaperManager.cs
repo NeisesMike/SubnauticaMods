@@ -86,6 +86,20 @@ namespace PersistentReaper
             }
             reaperDict.Remove(reaperDict.Keys.First());
         }
+        
+        public static void removeAllReapers()
+        {
+            
+            if (ReaperManager.reaperDict != null)
+            {
+                int numCurrentReapers = ReaperManager.reaperDict.Count;
+                for (int i = 0; i < numCurrentReapers; i++)
+                {
+                    ReaperManager.removeOneReaper();
+                }
+            }
+        }
+        
         public static void despawnThisReaper(ReaperBehavior percy)
         {
             if (reaperDict[percy])
@@ -103,7 +117,7 @@ namespace PersistentReaper
                 despawnThisReaper(percy);
             }
         }
-        
+
         public static void spawnThisReaper(ReaperBehavior thisReaper)
         {
             Vector3 spawnLocation = getRegionPosition(thisReaper.currentRegion);
@@ -492,6 +506,10 @@ namespace PersistentReaper
             
             foreach (KeyValuePair<ReaperBehavior, GameObject> entry in ReaperManager.reaperDict)
             {
+                if (PersistentReaperPatcher.config.shouldOnlySaveSpawned && !entry.Value)
+                {
+                    continue;
+                }
                 Int3 region = entry.Key.currentRegion;
                 reaperPositions.Add($"{region.x},{region.y},{region.z}");
             }
@@ -499,9 +517,9 @@ namespace PersistentReaper
             File.WriteAllLines(savePath, reaperPositions);
         }
         
-        // NOTE: the behavior when the number of reapers in the mod setting is inconsistent due to changes made at the main menu.
-        // If the number of reapers from the mod setting is greater than the number saved, the mod will initialize more
-        // However, if it's fewer, some of them will be removed starting with the first dictionary entry.  
+        // if saved reapers are fewer than number of reaper setting, the rest will be spawn randomly
+        // if they are more, some of them will be removed
+        // this behavior is upto how reaper is updated in updateReapers()
         public static void LoadPersistentReapers()
         {
             string loadPath = Path.Combine(SaveLoadManager.GetTemporarySavePath(), "PersistentReaperSave.txt");
