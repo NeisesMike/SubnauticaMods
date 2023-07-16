@@ -18,7 +18,7 @@ namespace PersistentReaper
         public static void Postfix(Player __instance)
         {
             __instance.StartCoroutine(GetReaperPrefab(TechType.ReaperLeviathan));
-            return;
+            ReaperManager.LoadPersistentReapers();
         }
 
         public static IEnumerator GetReaperPrefab(TechType thisTT)

@@ -56,10 +56,15 @@ namespace PersistentReaper
 
         public static void initOneReaper()
         {
-            ReaperBehavior percyBehavior = new ReaperBehavior();
-
             // place Percy in a "random" EcoRegion
             Int3 regionIndex = getRandomRegion();
+            initOneReaper(regionIndex);
+        }
+        
+        public static void initOneReaper(Int3 regionIndex)
+        {
+            ReaperBehavior percyBehavior = new ReaperBehavior();
+
             if (regionIndex != Int3.negativeOne)
             {
                 percyBehavior.currentRegion = regionIndex;
@@ -72,6 +77,7 @@ namespace PersistentReaper
             // store this Percy in the reaperList
             reaperDict.Add(percyBehavior, null);
         }
+        
         public static void removeOneReaper()
         {
             if (reaperDict[reaperDict.Keys.First()])
@@ -477,6 +483,46 @@ namespace PersistentReaper
 
             // return
             return new Tuple<int, int, int>(xDigits, yDigits, zDigits);
+        }
+        
+        public static void SavePersistentReapers()
+        {
+            string savePath = Path.Combine(SaveLoadManager.GetTemporarySavePath(), "PersistentReaperSave.txt");
+            List<string> reaperPositions = new List<string>();
+            
+            foreach (KeyValuePair<ReaperBehavior, GameObject> entry in ReaperManager.reaperDict)
+            {
+                Int3 region = entry.Key.currentRegion;
+                reaperPositions.Add($"{region.x},{region.y},{region.z}");
+            }
+            
+            File.WriteAllLines(savePath, reaperPositions);
+        }
+        
+        // NOTE: the behavior when the number of reapers in the mod setting is inconsistent due to changes made at the main menu.
+        // If the number of reapers from the mod setting is greater than the number saved, the mod will initialize more
+        // However, if it's fewer, some of them will be removed starting with the first dictionary entry.  
+        public static void LoadPersistentReapers()
+        {
+            string loadPath = Path.Combine(SaveLoadManager.GetTemporarySavePath(), "PersistentReaperSave.txt");
+    
+            if (File.Exists(loadPath))
+            {
+                string[] lines = File.ReadAllLines(loadPath);
+                
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    string[] xyz = lines[i].Split(',');
+                    int x, y, z;
+                    if (xyz.Length == 3 && 
+                        Int32.TryParse(xyz[0], out x) && 
+                        Int32.TryParse(xyz[1], out y) && 
+                        Int32.TryParse(xyz[2], out z))
+                    {
+                        ReaperManager.initOneReaper(new Int3(x, y, z));
+                    }
+                }
+            }
         }
     }
 }

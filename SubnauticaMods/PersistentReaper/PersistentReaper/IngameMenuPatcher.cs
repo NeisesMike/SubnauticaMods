@@ -10,6 +10,7 @@ namespace PersistentReaper
         public static void PreFix()
         {
             FixCachedReaper();
+            ReaperManager.SavePersistentReapers();
         }
         
         [HarmonyPostfix]
