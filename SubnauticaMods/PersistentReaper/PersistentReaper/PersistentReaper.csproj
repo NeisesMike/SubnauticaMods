@@ -79,6 +79,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IngameMenuPatcher.cs" />
     <Compile Include="LargeWorldEntityPatcher.cs" />
     <Compile Include="PersistentReaperPatcher.cs" />
     <Compile Include="PlayerPatcher.cs" />

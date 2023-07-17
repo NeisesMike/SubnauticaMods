@@ -56,10 +56,15 @@ namespace PersistentReaper
 
         public static void initOneReaper()
         {
-            ReaperBehavior percyBehavior = new ReaperBehavior();
-
             // place Percy in a "random" EcoRegion
             Int3 regionIndex = getRandomRegion();
+            initOneReaper(regionIndex);
+        }
+        
+        public static void initOneReaper(Int3 regionIndex)
+        {
+            ReaperBehavior percyBehavior = new ReaperBehavior();
+
             if (regionIndex != Int3.negativeOne)
             {
                 percyBehavior.currentRegion = regionIndex;
@@ -72,6 +77,7 @@ namespace PersistentReaper
             // store this Percy in the reaperList
             reaperDict.Add(percyBehavior, null);
         }
+        
         public static void removeOneReaper()
         {
             if (reaperDict[reaperDict.Keys.First()])
@@ -80,6 +86,20 @@ namespace PersistentReaper
             }
             reaperDict.Remove(reaperDict.Keys.First());
         }
+        
+        public static void removeAllReapers()
+        {
+            
+            if (ReaperManager.reaperDict != null)
+            {
+                int numCurrentReapers = ReaperManager.reaperDict.Count;
+                for (int i = 0; i < numCurrentReapers; i++)
+                {
+                    ReaperManager.removeOneReaper();
+                }
+            }
+        }
+        
         public static void despawnThisReaper(ReaperBehavior percy)
         {
             if (reaperDict[percy])
@@ -87,6 +107,15 @@ namespace PersistentReaper
                 UnityEngine.Object.Destroy(reaperDict[percy]);
             }
             reaperDict[percy] = null;
+        }
+        
+        public static void despawnAllReapers()
+        {
+            List<ReaperBehavior> myKeys = new List<ReaperBehavior>(reaperDict.Keys);
+            foreach (ReaperBehavior percy in myKeys)
+            {
+                despawnThisReaper(percy);
+            }
         }
 
         public static void spawnThisReaper(ReaperBehavior thisReaper)
@@ -468,6 +497,50 @@ namespace PersistentReaper
 
             // return
             return new Tuple<int, int, int>(xDigits, yDigits, zDigits);
+        }
+        
+        public static void SavePersistentReapers()
+        {
+            string savePath = Path.Combine(SaveLoadManager.GetTemporarySavePath(), "PersistentReaperSave.txt");
+            List<string> reaperPositions = new List<string>();
+            
+            foreach (KeyValuePair<ReaperBehavior, GameObject> entry in ReaperManager.reaperDict)
+            {
+                if (PersistentReaperPatcher.config.shouldOnlySaveSpawned && !entry.Value)
+                {
+                    continue;
+                }
+                Int3 region = entry.Key.currentRegion;
+                reaperPositions.Add($"{region.x},{region.y},{region.z}");
+            }
+            
+            File.WriteAllLines(savePath, reaperPositions);
+        }
+        
+        // if saved reapers are fewer than number of reaper setting, the rest will be spawn randomly
+        // if they are more, some of them will be removed
+        // this behavior is upto how reaper is updated in updateReapers()
+        public static void LoadPersistentReapers()
+        {
+            string loadPath = Path.Combine(SaveLoadManager.GetTemporarySavePath(), "PersistentReaperSave.txt");
+    
+            if (File.Exists(loadPath))
+            {
+                string[] lines = File.ReadAllLines(loadPath);
+                
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    string[] xyz = lines[i].Split(',');
+                    int x, y, z;
+                    if (xyz.Length == 3 && 
+                        Int32.TryParse(xyz[0], out x) && 
+                        Int32.TryParse(xyz[1], out y) && 
+                        Int32.TryParse(xyz[2], out z))
+                    {
+                        ReaperManager.initOneReaper(new Int3(x, y, z));
+                    }
+                }
+            }
         }
     }
 }

@@ -51,18 +51,13 @@ namespace PersistentReaper
     {
         [Toggle("Toggle Persistent Reapers"), OnChange(nameof(killAllReapers))]
         public bool areReapersActive = true;
-        public void killAllReapers()
-        {
-            if (ReaperManager.reaperDict != null)
-            {
-                int numCurrentReapers = ReaperManager.reaperDict.Count;
-                for (int i = 0; i < numCurrentReapers; i++)
-                {
-                    ReaperManager.removeOneReaper();
-                }
-            }
-        }
-
+        
+        [Toggle("Toggle Save Only Spawned Reapers", Tooltip = "Ignore simulated reaper, save only those already spawned in the game(near players), make others simulated reaper start at random postion everytime game started")]
+        public bool shouldOnlySaveSpawned = true;
+        
+        [Toggle("Toggle Random Reaper On Player Dead")]
+        public bool shouldRandomOnPlayerDead = true;
+        
         [Slider("Number of Persistent Reapers", Min = 0, Max = 250, Step = 5, DefaultValue = 50)]
         public int numReapers = 50;
 
@@ -75,7 +70,12 @@ namespace PersistentReaper
 
         [Choice("Depth Map"), OnChange(nameof(setDepthMap))]
         public DepthMap depthMapChoice = DepthMap.NoShallowReapers;
-
+        
+        public void killAllReapers()
+        {
+            ReaperManager.removeAllReapers();
+        }
+        
         public void setDepthMap(ChoiceChangedEventArgs e)
         {
             ReaperManager.depthDictionary = ReaperManager.getDepthDictionary(depthMapChoice);
@@ -108,9 +108,26 @@ namespace PersistentReaper
                 sb[__instance3Loc.z] = 'X';
                 map[__instance3Loc.x] = sb.ToString();
             }
-
+            
+            markPlayerOnMap(map);
+            
             string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             File.WriteAllLines(Path.Combine(modPath, "ReaperMap.txt"), map);
+        }
+
+        // Marks the player's position region cell on the print map.
+        private static void markPlayerOnMap(string[] map)
+        {
+            if (Player.main == null)
+            {
+                // in case of printing a map on the main menu
+                return; 
+            }
+            
+            Int3 playerLoc = ReaperManager.getEcoRegion(Player.main.transform.position);
+            StringBuilder sb = new StringBuilder(map[playerLoc.x]);
+            sb[playerLoc.z] = 'P';
+            map[playerLoc.x] = sb.ToString();
         }
     }
 }
