@@ -170,6 +170,9 @@ namespace RollControl
                 {
                     // transition into a scuba roll control state
                     ResetForStartRoll(null);
+
+                    // remind the user that scuba roll is enabled, show them the toggle key
+                    SubLog.Output("Scuba Roll is ON. Toggle with " + RollControlPatcher.config.ToggleRollKey);
                 }
                 if (swimstate == SwimState.RunFall)
                 {

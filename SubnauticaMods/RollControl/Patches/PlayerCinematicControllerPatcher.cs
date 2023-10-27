@@ -8,17 +8,15 @@ namespace RollControl
     {
         public static GameObject cinematicPlayerRotationDummy = null;
         public static Transform endTransform = null;
-        private static bool shouldWeResumeRolling = false;
 
         [HarmonyPrefix]
         [HarmonyPatch("StartCinematicMode")]
         public static bool StartCinematicModePrefix(PlayerCinematicController __instance, Player setplayer)
         {
-            endTransform = __instance.endTransform;
             if (ScubaRollController.IsActuallyScubaRolling)
             {
-                shouldWeResumeRolling = true;
-                __instance.endTransform = null;
+                //Don't want to do this if we're just getting out of our vehicle via moonpool
+                endTransform = __instance.endTransform;
                 ScubaRollController.ResetForEndRoll();
             }
             return true;
@@ -27,22 +25,17 @@ namespace RollControl
         [HarmonyPatch("OnPlayerCinematicModeEnd")]
         public static bool OnPlayerCinematicModeEndPrefix(PlayerCinematicController __instance)
         {
-            if (shouldWeResumeRolling)
-            {
-                cinematicPlayerRotationDummy = new GameObject("RollControlCinematicPlayerRotationDummy");
-                cinematicPlayerRotationDummy.transform.rotation = Player.main.transform.rotation;
-            }
             return true;
         }
         [HarmonyPostfix]
         [HarmonyPatch("OnPlayerCinematicModeEnd")]
         public static void OnPlayerCinematicModeEndPostfix(PlayerCinematicController __instance)
         {
-            if (shouldWeResumeRolling)
+            if (endTransform)
             {
-                ScubaRollController.ResetForStartRoll(cinematicPlayerRotationDummy);
+                Player.main.transform.rotation = endTransform.rotation;
+                endTransform = null;
             }
-            endTransform = null;
         }
     }
 }
