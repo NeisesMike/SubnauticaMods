@@ -89,10 +89,10 @@ namespace StealthModule
 			{
 				creatureAction = ___prevBestAction;
 
-				// check if this action is violent
+				// check if this action is violent or aggressive
 				string actionName1 = creatureAction.GetType().Name;
 				// || actionName1 == "MoveTowardsTarget" 
-				if (actionName1 == "AttackLastTarget" || actionName1 == "AttackCyclops" || actionName1 == "EMPAttack" || actionName1 == "MushroomAttack")
+				if (actionName1.Contains("Attack") || actionName1.Contains("Aggressive"))
 				{
 					// check whether we're in range of the player
 					if(distToPlayer < myMaxRange)
@@ -133,7 +133,7 @@ namespace StealthModule
 
 			// check if this action is violent
 			string actionName2 = creatureAction2.GetType().Name;
-			if (actionName2 == "AttackLastTarget" || actionName2 == "AttackCyclops" || actionName2 == "EMPAttack" || actionName2 == "MushroomAttack")
+			if (actionName2.Contains("Attack") || actionName2.Contains("Aggressive"))
 			{
 				// check whether we're in range of the player
 				if (distToPlayer < myMaxRange)
