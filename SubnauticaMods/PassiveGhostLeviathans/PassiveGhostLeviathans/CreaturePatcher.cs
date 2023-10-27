@@ -12,10 +12,8 @@ using System.Collections;
 namespace PassiveGhostLeviathans
 {
 	/*
-	 * I honestly have no recall of how this works.
-	 * I thought it was simply setting aggression to zero, but no
-	 * Then I thought it was replacing aggressive actions with non-aggressive actions, but that doesn't seem to be it
-	 * Does this work?
+	 * This works by removing aggressive actions from the action list before iterating through the action list to find the best possible action.
+	 * ChooseBestAction is the function of interest. The surrounding function is largely the same.
 	 * 
 	 */
 	[HarmonyPatch(typeof(Creature))]
@@ -24,7 +22,7 @@ namespace PassiveGhostLeviathans
 	{
 		[HarmonyPrefix]
 		public static bool Prefix(Creature __instance, float time, float deltaTime, Animator ___traitsAnimator, ref CreatureAction ___lastAction,
-			CreatureAction ___prevBestAction,  List<CreatureAction> ___actions, ref int ___indexLastActionChecked,
+			CreatureAction ___prevBestAction, List<CreatureAction> ___actions, ref int ___indexLastActionChecked,
 			ref int ___animAggressive, ref int ___animScared, ref int ___animTired, ref int ___animHappy)
 		{
 			TechType techType = CraftData.GetTechType(__instance.gameObject);
@@ -34,10 +32,10 @@ namespace PassiveGhostLeviathans
 			bool shouldWeManageJuvenile = myTechType == "ghostleviathanjuvenile" && PassiveGhostLeviathansPatcher.config.isJuvenileGhostPassive;
 			bool isThisCaseSomethingWeCareAbout = shouldWeManageAdult || shouldWeManageJuvenile;
 
-			if(!isThisCaseSomethingWeCareAbout)
-            {
+			if (!isThisCaseSomethingWeCareAbout)
+			{
 				return true;
-            }
+			}
 
 			int myIndexLast = ___indexLastActionChecked;
 
@@ -57,30 +55,57 @@ namespace PassiveGhostLeviathans
 					return null;
 				}
 				ProfilingUtils.BeginSample("Creature.ChooseBestAction");
+
 				float mynum = 0f;
-				CreatureAction mycreatureAction = null;
+				CreatureAction CBAAction1 = null;
 				if (___prevBestAction != null)
 				{
-					mycreatureAction = ___prevBestAction;
+					CBAAction1 = ___prevBestAction;
 					ProfilingUtils.BeginSample("bestAction.Evaluate");
-					mynum = mycreatureAction.Evaluate(__instance, time);
+					mynum = CBAAction1.Evaluate(__instance, time);
 					ProfilingUtils.EndSample(null);
 				}
+
 				myIndexLast++;
 				if (myIndexLast >= ___actions.Count)
 				{
+					// This condition is always taken.
+					// After ScanActions or whatever, the ___indexLastActionChecked is set to the index of the final action.
+					// So when we increment it, it's literally always going to be greater than or equal to the actions.count
 					myIndexLast = 0;
 				}
-				CreatureAction creatureAction2 = ___actions[myIndexLast];
-				ProfilingUtils.BeginSample("current.Evaluate");
-				float num2 = creatureAction2.Evaluate(__instance, time);
-				ProfilingUtils.EndSample(null);
-				if (num2 > mynum && !Utils.NearlyEqual(num2, 0f, 1E-45f))
+
+				/*
+				*(SwimRandom)
+				*(StayAtLeashPosition)
+				*(FleeOnDamage)
+				*(AttackLastTarget)
+				*(AttackCyclops)
+				*(AvoidTerrain)
+				 */
+				int num2 = 0;
+				List<CreatureAction> passive_actions = new List<CreatureAction>();
+				passive_actions.AddRange(___actions);
+				passive_actions.RemoveAll(t => t.ToString().Contains("AttackLastTarget") || t.ToString().Contains("AttackCyclops"));
+
+				for (int i = 0; i < passive_actions.Count; i++)
 				{
-					mycreatureAction = creatureAction2;
+					CreatureAction iterCreatureAction = passive_actions[i];
+					if (!(iterCreatureAction == ___prevBestAction) && (i == num2 || iterCreatureAction.NeedsToBeChecked(time)))
+					{
+						iterCreatureAction.timeLastChecked = time;
+						if (iterCreatureAction.GetMaxEvaluatePriority() > mynum)
+						{
+							float num3 = iterCreatureAction.Evaluate(__instance, time);
+							if (num3 > mynum)
+							{
+								mynum = num3;
+								CBAAction1 = iterCreatureAction;
+							}
+						}
+					}
 				}
-				ProfilingUtils.EndSample(null);
-				return mycreatureAction;
+				return CBAAction1;
 			}
 
 			___indexLastActionChecked = myIndexLast;
@@ -96,7 +121,6 @@ namespace PassiveGhostLeviathans
 				}
 				if (creatureAction)
 				{
-					//Logger.Log(creatureAction.ToString());
 					creatureAction.StartPerform(__instance, time);
 				}
 				___prevBestAction = creatureAction;
