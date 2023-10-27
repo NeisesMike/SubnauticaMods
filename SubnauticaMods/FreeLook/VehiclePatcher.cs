@@ -24,5 +24,18 @@ namespace FreeLook
             }
             return true;
         }
+        [HarmonyPrefix]
+        [HarmonyPatch("FixedUpdate")]
+        public static bool FixedUpdatePrefix(Vehicle __instance)
+        {
+            foreach (var player in __instance.GetComponentsInChildren<Player>())
+            {
+                if (player.GetVehicle() == __instance && player.IsPiloting() && player.mode == Player.Mode.LockedPiloting && player.GetComponent<FreeLookManager>().isFreeLooking)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

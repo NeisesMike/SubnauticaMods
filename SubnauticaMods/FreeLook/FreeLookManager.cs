@@ -218,12 +218,12 @@ namespace FreeLook
             if (vehicle.transform.position.y < Ocean.GetOceanLevel() && vehicle.transform.position.y < vehicle.worldForces.waterDepth && !vehicle.precursorOutOfWater)
             {
                 Vector3 myDirection = Vector3.zero;
-                myDirection.z = Input.GetAxis("ControllerAxis1");
-                myDirection.x = -Input.GetAxis("ControllerAxis2");
-                myDirection.y =
-                     GameInput.GetButtonHeld(GameInput.Button.MoveUp) ?
-                    (GameInput.GetButtonHeld(GameInput.Button.MoveDown) ? 0 : 1) :
-                    (GameInput.GetButtonHeld(GameInput.Button.MoveDown) ? -1 : 0);
+                myDirection.z += GameInput.GetAnalogValueForButton(GameInput.Button.MoveRight);
+                myDirection.z -= GameInput.GetAnalogValueForButton(GameInput.Button.MoveLeft);
+                myDirection.x -= GameInput.GetAnalogValueForButton(GameInput.Button.MoveBackward);
+                myDirection.x += GameInput.GetAnalogValueForButton(GameInput.Button.MoveForward);
+                myDirection.y += GameInput.GetAnalogValueForButton(GameInput.Button.MoveUp);
+                myDirection.y -= GameInput.GetAnalogValueForButton(GameInput.Button.MoveDown);
 
                 Vector3 thisMovementVector = vehicle.transform.forward * myDirection.x +
                                              vehicle.transform.right * myDirection.z +
@@ -308,9 +308,10 @@ namespace FreeLook
             Vector2 myLookDelta = GameInput.GetLookDelta();
             if (myLookDelta == Vector2.zero)
             {
-                // TODO: abstract this shit away
-                myLookDelta.x = Input.GetAxis("ControllerAxis4");
-                myLookDelta.y = -Input.GetAxis("ControllerAxis5");
+                myLookDelta.x -= GameInput.GetAnalogValueForButton(GameInput.Button.LookLeft);
+                myLookDelta.x += GameInput.GetAnalogValueForButton(GameInput.Button.LookRight);
+                myLookDelta.y += GameInput.GetAnalogValueForButton(GameInput.Button.LookUp);
+                myLookDelta.y -= GameInput.GetAnalogValueForButton(GameInput.Button.LookDown);
             }
             mcc.rotationX += myLookDelta.x;
             mcc.rotationY += myLookDelta.y;
