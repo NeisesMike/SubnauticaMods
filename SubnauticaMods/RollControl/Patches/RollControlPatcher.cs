@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SMLHelper.V2.Options.Attributes;
-using SMLHelper.V2.Json;
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Options;
+using Nautilus.Options.Attributes;
+using Nautilus.Json;
+using Nautilus.Handlers;
+using Nautilus.Options;
 using UnityEngine;
 using HarmonyLib;
-using SMLHelper.V2.Utility;
+using Nautilus.Utility;
 
 using BepInEx;
 using BepInEx.Logging;
@@ -20,7 +20,7 @@ namespace RollControl
     {
         public static void Output(string msg)
         {
-            BasicText message = new BasicText(500, 0);
+            BasicText message = new BasicText(500, -75);
             message.ShowMessage(msg, 5);
         }
     }
@@ -46,7 +46,8 @@ namespace RollControl
         public bool IsScubaRollDefaultEnabled = true;
     }
 
-    [BepInPlugin("com.mikjaw.subnautica.rollcontrol.mod", "RollControl", "1.0")]
+    [BepInPlugin("com.mikjaw.subnautica.rollcontrol.mod", "RollControl", "5.1")]
+    [BepInDependency("com.snmodding.nautilus")]
     public class RollControlPatcher : BaseUnityPlugin
     {
         public static ManualLogSource logger { get; set; }
@@ -55,7 +56,7 @@ namespace RollControl
         public void Start()
         {
             logger = base.Logger;
-            config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
+            config = OptionsPanelHandler.RegisterModOptions<MyConfig>();
             var harmony = new Harmony("com.mikjaw.subnautica.rollcontrol.mod");
             harmony.PatchAll();
         }

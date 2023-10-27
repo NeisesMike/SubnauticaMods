@@ -8,24 +8,33 @@ using UnityEngine;
 using HarmonyLib;
 using System.Runtime.CompilerServices;
 using System.Collections;
-using SMLHelper.V2.Options.Attributes;
-using SMLHelper.V2.Json;
-using SMLHelper.V2.Handlers;
+using Nautilus.Options.Attributes;
+using Nautilus.Json;
+using Nautilus.Handlers;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Bootstrap;
 
 namespace PassiveGhostLeviathans
 {
-    [BepInPlugin("com.mikjaw.subnautica.freeread.mod", "FreeRead", "1.0")]
+    public static class Logger
+    {
+        public static void Log(string message)
+        {
+            UnityEngine.Debug.Log("[PassiveGhostLeviathans] " + message);
+        }
+    }
+
+    [BepInPlugin("com.mikjaw.subnautica.passiveghostleviathans.mod", "PassiveGhostLeviathans", "2.0.1")]
+    [BepInDependency("com.snmodding.nautilus")]
     public class PassiveGhostLeviathansPatcher : BaseUnityPlugin
     {
         internal static MyConfig config { get; private set; }
 
         public void Start()
         {
-            config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
-            var harmony = new Harmony("com.garyburke.subnautica.passiveghostleviathans.mod");
+            config = OptionsPanelHandler.RegisterModOptions<MyConfig>();
+            var harmony = new Harmony("com.mikjaw.subnautica.passiveghostleviathans.mod");
             harmony.PatchAll();
         }
     }

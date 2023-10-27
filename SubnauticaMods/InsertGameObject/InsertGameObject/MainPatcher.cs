@@ -8,11 +8,11 @@ using UnityEngine;
 using HarmonyLib;
 using System.Runtime.CompilerServices;
 using System.Collections;
-using SMLHelper.V2.Options.Attributes;
-using SMLHelper.V2.Options;
-using SMLHelper.V2.Json;
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Utility;
+using Nautilus.Options.Attributes;
+using Nautilus.Options;
+using Nautilus.Json;
+using Nautilus.Handlers;
+using Nautilus.Utility;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Bootstrap;
@@ -24,13 +24,14 @@ using QModManager.API.ModLoading;
 namespace InsertGameObject
 {
 #if SUBNAUTICA
-    [BepInPlugin("com.mikjaw.subnautica.insertgameobject.mod", "InsertGameObject", "1.0")]
+    [BepInPlugin("com.mikjaw.subnautica.insertgameobject.mod", "InsertGameObject", "1.0.1")]
+    [BepInDependency("com.snmodding.nautilus")]
     public class MainPatcher : BaseUnityPlugin
     {
         internal static InsertGameObjectConfig config { get; private set; }
         public void Start()
         {
-            config = OptionsPanelHandler.Main.RegisterModOptions<InsertGameObjectConfig>();
+            config = OptionsPanelHandler.RegisterModOptions<InsertGameObjectConfig>();
             InsertGameObject.Logger.MyLog = base.Logger;
             var harmony = new Harmony("com.mikjaw.subnautica.insertgameobject.mod");
             harmony.PatchAll();
@@ -48,7 +49,7 @@ namespace InsertGameObject
         public static void Patch()
         {
             config = OptionsPanelHandler.Main.RegisterModOptions<InsertGameObjectConfig>();
-            var harmony = new Harmony("com.mikjaw.subnautica.freeread.mod");
+            var harmony = new Harmony("com.mikjaw.subnautica.insertgameobject.mod");
             harmony.PatchAll();
         }
     }

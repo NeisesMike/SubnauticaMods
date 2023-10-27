@@ -8,15 +8,18 @@ using UnityEngine;
 using HarmonyLib;
 using System.Runtime.CompilerServices;
 using System.Collections;
-using SMLHelper.V2.Options.Attributes;
-using SMLHelper.V2.Json;
-using SMLHelper.V2.Handlers;
+using Nautilus.Options.Attributes;
+using Nautilus.Json;
+using Nautilus.Handlers;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Bootstrap;
 
 namespace EcoRegionScanner
 {
+    [BepInPlugin("com.mikjaw.subnautica.depthscanner.mod", "DepthScanner", "2.0.1")]
+    [BepInDependency("com.snmodding.nautilus")]
+
     public class EcoRegionScannerPatcher : BaseUnityPlugin
     {
         public static ManualLogSource logger { get; set; }
@@ -25,13 +28,13 @@ namespace EcoRegionScanner
         public void Start()
         {
             logger = base.Logger;
-            config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
-            var harmony = new Harmony("com.mikjaw.subnautica.ecoregionscanner.mod");
+            config = OptionsPanelHandler.RegisterModOptions<MyConfig>();
+            var harmony = new Harmony("com.mikjaw.subnautica.depthscanner.mod");
             harmony.PatchAll();
         }
     }
 
-    [Menu("EcoRegion Scanner Options")]
+    [Menu("Depth Scanner Options")]
     public class MyConfig : ConfigFile
     {
         [Toggle("Toggle Scanner")]

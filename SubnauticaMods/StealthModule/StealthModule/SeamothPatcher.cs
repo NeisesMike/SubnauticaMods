@@ -27,15 +27,15 @@ namespace StealthModule
             Dictionary<TechType, StealthQuality> dictionary = new Dictionary<TechType, StealthQuality>
             {
                 {
-                    StealthModulePatcher.seamothStealthModule1.TechType,
+                    StealthModulePatcher.seamoth1,
                     StealthQuality.Low
                 },
                 {
-                    StealthModulePatcher.seamothStealthModule2.TechType,
+                    StealthModulePatcher.seamoth2,
                     StealthQuality.Medium
                 },
                 {
-                    StealthModulePatcher.seamothStealthModule3.TechType,
+                    StealthModulePatcher.seamoth3,
                     StealthQuality.High
                 }
             };

@@ -6,9 +6,9 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using HarmonyLib;
-using SMLHelper.V2.Options;
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Utility;
+using Nautilus.Options;
+using Nautilus.Handlers;
+using Nautilus.Utility;
 using System.Net.NetworkInformation;
 
 namespace FreeRead

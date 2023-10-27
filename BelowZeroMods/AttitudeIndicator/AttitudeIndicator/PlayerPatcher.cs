@@ -6,14 +6,14 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using HarmonyLib;
-using SMLHelper.V2.Options;
-using SMLHelper.V2.Handlers;
+using Nautilus.Options;
+using Nautilus.Handlers;
 using LitJson;
 using System.Runtime.CompilerServices;
 using System.Collections;
-using SMLHelper.V2.Options.Attributes;
-using SMLHelper.V2.Json;
-using SMLHelper.V2.Utility;
+using Nautilus.Options.Attributes;
+using Nautilus.Json;
+using Nautilus.Utility;
 
 namespace AttitudeIndicator
 {

@@ -6,19 +6,27 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using HarmonyLib;
-using SMLHelper.V2.Options;
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Utility;
+using Nautilus.Options;
+using Nautilus.Handlers;
+using Nautilus.Utility;
 using LitJson;
 using System.Net.NetworkInformation;
-using SMLHelper.V2.Options.Attributes;
-using SMLHelper.V2.Json;
+using Nautilus.Options.Attributes;
+using Nautilus.Json;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Bootstrap;
 
 namespace FreeLook
 {
+    public static class Logger
+    {
+        internal static ManualLogSource MyLog { get; set; }
+        public static void Log(string message)
+        {
+            MyLog.LogInfo("[FreeLook] " + message);
+        }
+    }
     [Menu("FreeLook Options")]
     public class MyConfig : ConfigFile
     {
@@ -29,14 +37,19 @@ namespace FreeLook
         public KeyCode FreeLookKey = KeyCode.LeftAlt;
     }
 
-    [BepInPlugin("com.mikjaw.subnautica.freelook.mod", "FreeLook", "1.0")]
+    [BepInPlugin("com.mikjaw.subnautica.freelook.mod", "FreeLook", "2.0.1")]
+    [BepInDependency("com.snmodding.nautilus")]
     public class FreeLookPatcher : BaseUnityPlugin
     {
         internal static MyConfig config { get; private set; }
         //public static Options Options = new Options();
+        public void Awake()
+        {
+            FreeLook.Logger.MyLog = base.Logger;
+        }
         public void Start()
         {
-            config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
+            config = OptionsPanelHandler.RegisterModOptions<MyConfig>();
             //OptionsPanelHandler.RegisterModOptions(Options);
             var harmony = new Harmony("com.mikjaw.subnautica.freelook.mod");
             harmony.PatchAll();

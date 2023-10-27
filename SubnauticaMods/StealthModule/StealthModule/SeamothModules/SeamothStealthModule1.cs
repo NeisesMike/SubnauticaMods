@@ -1,12 +1,13 @@
-using SMLHelper.V2.Assets;
-using SMLHelper.V2.Crafting;
-using SMLHelper.V2.Handlers;
+using Nautilus.Assets;
+using Nautilus.Crafting;
+using Nautilus.Handlers;
+using Nautilus.Assets.Gadgets;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace StealthModule
 {
-    public class SeamothStealthModule1: Equipable
+    public class SeamothStealthModule1: EquipmentGadget
     {
         public SeamothStealthModule1() : base(
             classId: "SeamothStealthModule1",

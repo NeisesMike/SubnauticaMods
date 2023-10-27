@@ -6,15 +6,15 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using HarmonyLib;
-using SMLHelper.V2.Options;
-using SMLHelper.V2.Handlers;
+using Nautilus.Options;
+using Nautilus.Handlers;
 using LitJson;
 using System.Runtime.CompilerServices;
 using System.Collections;
-using SMLHelper.V2.Options.Attributes;
-using SMLHelper.V2.Json;
-using SMLHelper.V2.Utility;
-using SMLHelper.V2.Patchers;
+using Nautilus.Options.Attributes;
+using Nautilus.Json;
+using Nautilus.Utility;
+using Nautilus.Patchers;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Bootstrap;
@@ -104,7 +104,7 @@ namespace AttitudeIndicator
 
         [Choice("Auto-position"), OnChange(nameof(moveSeamothIndicator))]
         public autoposition seamothIndicatorLocation = autoposition.bottomleft;
-        public void moveSeamothIndicator(ChoiceChangedEventArgs e)
+        public void moveSeamothIndicator(ChoiceChangedEventArgs<autoposition> e)
         {
             if (!useSeamothAutoPos)
             {
@@ -184,7 +184,7 @@ namespace AttitudeIndicator
 
         [Choice("Auto-position"), OnChange(nameof(moveCyclopsIndicator))]
         public autoposition cyclopsIndicatorLocation = autoposition.bottomleft;
-        public void moveCyclopsIndicator(ChoiceChangedEventArgs e)
+        public void moveCyclopsIndicator(ChoiceChangedEventArgs<autoposition> e)
         {
             if(!useCyclopsAutoPos)
             {
@@ -341,7 +341,8 @@ namespace AttitudeIndicator
     }
 #endif
 
-    [BepInPlugin("com.mikjaw.subnautica.attitudeindicator.mod", "AttitudeIndicator", "2.0")]
+    [BepInPlugin("com.mikjaw.subnautica.attitudeindicator.mod", "AttitudeIndicator", "3.0.1")]
+    [BepInDependency("com.snmodding.nautilus")]
     public class AttitudeIndicatorPatcher : BaseUnityPlugin
     {
 #if SUBNAUTICA
@@ -354,7 +355,7 @@ namespace AttitudeIndicator
         public void Start()
         {
 #if SUBNAUTICA
-            SubnauticaConfig = OptionsPanelHandler.Main.RegisterModOptions<SubnauticaConfig>();
+            SubnauticaConfig = OptionsPanelHandler.RegisterModOptions<SubnauticaConfig>();
             var harmony = new Harmony("com.mikjaw.subnautica.attitudeindicator.mod");
 #elif BELOWZERO
             BelowZeroConfig = OptionsPanelHandler.Main.RegisterModOptions<BelowZeroConfig>();

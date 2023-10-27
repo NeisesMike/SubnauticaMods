@@ -1,9 +1,10 @@
-using SMLHelper.V2.Assets;
-using SMLHelper.V2.Crafting;
-using SMLHelper.V2.Handlers;
+using Nautilus.Assets;
+using Nautilus.Crafting;
+using Nautilus.Handlers;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Nautilus.Assets.Gadgets;
+using Nautilus.Assets.PrefabTemplates;
 namespace StealthModule
 {
     public class ModVehicleStealthModule1 : Equipable

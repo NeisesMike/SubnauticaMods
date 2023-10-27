@@ -8,17 +8,18 @@ using UnityEngine;
 using HarmonyLib;
 using System.Runtime.CompilerServices;
 using System.Collections;
-using SMLHelper.V2.Options.Attributes;
-using SMLHelper.V2.Options;
-using SMLHelper.V2.Json;
-using SMLHelper.V2.Handlers;
+using Nautilus.Options.Attributes;
+using Nautilus.Options;
+using Nautilus.Json;
+using Nautilus.Handlers;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Bootstrap;
 
 namespace PersistentReaper
 {
-    [BepInPlugin("com.mikjaw.subnautica.persistentreapers.mod", "PersistentReapers", "2.0")]
+    [BepInPlugin("com.mikjaw.subnautica.persistentreapers.mod", "PersistentReapers", "2.0.1")]
+    [BepInDependency("com.snmodding.nautilus")]
     public class PersistentReaperPatcher : BaseUnityPlugin
     {
         public static ManualLogSource logger { get; private set; }
@@ -27,7 +28,7 @@ namespace PersistentReaper
         public void Start()
         {
             logger = base.Logger;
-            config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
+            config = OptionsPanelHandler.RegisterModOptions<MyConfig>();
             var harmony = new Harmony("com.mikjaw.subnautica.persistentreapers.mod");
             harmony.PatchAll();
     }
@@ -76,9 +77,9 @@ namespace PersistentReaper
         [Choice("Depth Map"), OnChange(nameof(setDepthMap))]
         public DepthMap depthMapChoice = DepthMap.NoShallowReapers;
 
-        public void setDepthMap(ChoiceChangedEventArgs e)
+        public void setDepthMap(ChoiceChangedEventArgs<DepthMap> e)
         {
-            ReaperManager.depthDictionary = ReaperManager.getDepthDictionary(depthMapChoice);
+            ReaperManager.depthDictionary = ReaperManager.getDepthDictionary(e.Value);
             killAllReapers();
         }
 
@@ -86,7 +87,11 @@ namespace PersistentReaper
         [Slider("Reaper Update Interval (seconds)", Min = 1f, Max = 10f, Step = 0.25f, DefaultValue = 1f, Tooltip = updateIntervalTooltip)]
         public float updateInterval = 1f;
 
-        [Button("Print Reaper Map")]
+        //[Button("Print Reaper Map")]
+        public const string printReaperMapTooltip = "wiggle this in either direction to print the reaper map. Sorry for the weird interface.";
+        [Slider("Print Reaper Map", Min = 0, Max = 1, Step = 1, DefaultValue = 0, Tooltip = printReaperMapTooltip),OnChange(nameof(printReaperMap)) ]
+        public int printdummy = 50;
+
         public static void printReaperMap()
         {
             string[] map = new string[256];

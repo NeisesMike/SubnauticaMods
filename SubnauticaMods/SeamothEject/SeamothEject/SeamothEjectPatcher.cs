@@ -8,22 +8,23 @@ using UnityEngine;
 using HarmonyLib;
 using System.Runtime.CompilerServices;
 using System.Collections;
-using SMLHelper.V2.Options.Attributes;
-using SMLHelper.V2.Json;
-using SMLHelper.V2.Handlers;
+using Nautilus.Options.Attributes;
+using Nautilus.Json;
+using Nautilus.Handlers;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Bootstrap;
 
 namespace SeamothEject
 {
-    [BepInPlugin("com.mikjaw.subnautica.seamotheject.mod", "SeamothEject", "1.0")]
+    [BepInPlugin("com.mikjaw.subnautica.seamotheject.mod", "SeamothEject", "2.0.1")]
+    [BepInDependency("com.snmodding.nautilus")]
     public class SeamothEjectPatcher : BaseUnityPlugin
     {
         internal static MyConfig config { get; private set; }
         public void Start()
         {
-            config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
+            config = OptionsPanelHandler.RegisterModOptions<MyConfig>();
             var harmony = new Harmony("com.mikjaw.subnautica.seamotheject.mod");
             harmony.PatchAll();
         }

@@ -21,15 +21,15 @@ namespace StealthModule
             Dictionary<TechType, StealthQuality> dictionary = new Dictionary<TechType, StealthQuality>
             {
                 {
-                    VehicleFrameworkHandler.modVehicleStealthModule1.TechType,
+                    VehicleFrameworkHandler.mv1,
                     StealthQuality.Low
                 },
                 {
-                    VehicleFrameworkHandler.modVehicleStealthModule2.TechType,
+                    VehicleFrameworkHandler.mv2,
                     StealthQuality.Medium
                 },
                 {
-                    VehicleFrameworkHandler.modVehicleStealthModule3.TechType,
+                    VehicleFrameworkHandler.mv3,
                     StealthQuality.High
                 }
             };
