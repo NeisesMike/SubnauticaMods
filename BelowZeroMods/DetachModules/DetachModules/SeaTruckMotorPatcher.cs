@@ -34,7 +34,6 @@ namespace SeatruckHotkeys
 
 		public static void exitDirectlyToWater(SeaTruckMotor inputMotor, ref bool piloting, ref bool ikenabled)
 		{
-			bool flag = false;
 			Vector3 value;
 			bool flag3;
 			bool flag2 = inputMotor.truckSegment.FindExitPoint(out value, out flag3, SeaTruckAnimation.Animation.ExitPilot);
