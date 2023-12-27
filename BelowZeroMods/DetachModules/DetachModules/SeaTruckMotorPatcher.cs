@@ -46,39 +46,29 @@ namespace SeatruckHotkeys
 			else
 			{
 				Player.main.ExitLockedMode(false, false, null);
-				if (!flag2)
-				{
-					ErrorMessage.AddError(Language.main.Get("ExitFailedNoSpace"));
-					inputMotor.truckSegment.Exit(null, false);
-				}
-				else
-				{
-					inputMotor.truckSegment.Exit(new Vector3?(value), flag3);
-				}
+				inputMotor.truckSegment.Exit(new Vector3?(value), flag3);
+
 				if (!flag3)
 				{
 					inputMotor.seatruckanimation.currentAnimation = SeaTruckAnimation.Animation.ExitPilot;
 				}
 				else
 				{
-					Player.main.armsController.SetTrigger("seatruck_exit");
+					//Arms controller needs a trigger ID set
+					//Player.main.armsController.SetTrigger("seatruck_exit");
 					inputMotor.animator.SetTrigger("seatruck_exit");
 				}
-				flag = true;
-			}
-			if (flag)
-			{
-				piloting = false;
-				Player.main.inSeatruckPilotingChair = false;
-				uGUI.main.quickSlots.SetTarget(null);
-				if (inputMotor.stopPilotSound)
-				{
-					Utils.PlayFMODAsset(inputMotor.stopPilotSound, Player.main.transform, 20f);
-				}
-				ikenabled = false;
-				Player.main.armsController.SetWorldIKTarget(null, null);
-			}
-		}
+                piloting = false;
+                Player.main.inSeatruckPilotingChair = false;
+                uGUI.main.quickSlots.SetTarget(null);
+                if (inputMotor.stopPilotSound)
+                {
+                    Utils.PlayFMODAsset(inputMotor.stopPilotSound, Player.main.transform, 20f);
+                }
+                ikenabled = false;
+                Player.main.armsController.SetWorldIKTarget(null, null);
+            }
+        }
 
 
 		[HarmonyPostfix]
