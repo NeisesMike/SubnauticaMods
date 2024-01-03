@@ -76,7 +76,7 @@ namespace SeatruckHotkeys
     {
         private const string MyGuid = "com.mikjaw.subnautica.seatruckhotkeys.mod";
         private const string PluginName = "Seatruck Hotkeys";
-        private const string VersionString = "1.3.2";
+        private const string VersionString = "1.3.3";
 		
         private static readonly Harmony Harmony = new Harmony(MyGuid);
         private static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
