@@ -46,12 +46,12 @@ namespace SeatruckHotkeys
         [Toggle("Enable Quick Detach")]
         public bool isDetachEnabled = true;
         [Keybind("Detach Modules Button")]
-        public KeyCode detachModulesKey = KeyCode.V;
+        public KeyCode detachModulesKey = KeyCode.R;
 
         [Toggle("Enable Direct Exit")]
         public bool isDirectExitEnabled = true;
         [Keybind("Direct Exit Button")]
-        public KeyCode directExitKey = KeyCode.R;
+        public KeyCode directExitKey = KeyCode.V;
 
         [Toggle("Enable Enter-to-Piloting"), OnChange(nameof(setDirectEntry)), OnGameObjectCreated(nameof(initDirectEntry))]
         public bool isDirectEntryEnabled = true;
@@ -76,7 +76,7 @@ namespace SeatruckHotkeys
     {
         private const string MyGuid = "com.mikjaw.subnautica.seatruckhotkeys.mod";
         private const string PluginName = "Seatruck Hotkeys";
-        private const string VersionString = "1.3.3";
+        private const string VersionString = "1.3.4";
 		
         private static readonly Harmony Harmony = new Harmony(MyGuid);
         private static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
