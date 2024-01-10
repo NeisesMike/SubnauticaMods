@@ -1,9 +1,13 @@
 ﻿using UnityEngine;
 using HarmonyLib;
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Options.Attributes;
-using SMLHelper.V2.Json;
-using SMLHelper.V2.Options;
+using BepInEx;
+using BepInEx.Logging;
+using Nautilus.Handlers;
+using Nautilus.Options.Attributes;
+using Nautilus.Json;
+using Nautilus.Options;
+using System.Runtime.CompilerServices;
+using System.Reflection;
 
 namespace SeatruckHotkeys
 {
@@ -38,15 +42,16 @@ namespace SeatruckHotkeys
     [Menu("Seatruck Hotkeys")]
     public class MyConfig : ConfigFile
     {
+        public MyConfig() : base("seatruck_hotkeys", "") { }
         [Toggle("Enable Quick Detach")]
         public bool isDetachEnabled = true;
         [Keybind("Detach Modules Button")]
-        public KeyCode detachModulesKey = KeyCode.V;
+        public KeyCode detachModulesKey = KeyCode.R;
 
         [Toggle("Enable Direct Exit")]
         public bool isDirectExitEnabled = true;
         [Keybind("Direct Exit Button")]
-        public KeyCode directExitKey = KeyCode.R;
+        public KeyCode directExitKey = KeyCode.V;
 
         [Toggle("Enable Enter-to-Piloting"), OnChange(nameof(setDirectEntry)), OnGameObjectCreated(nameof(initDirectEntry))]
         public bool isDirectEntryEnabled = true;
@@ -65,15 +70,29 @@ namespace SeatruckHotkeys
         }
     }
 
-    public class SeatruckHotkeysPatcher
+    [BepInPlugin(MyGuid, PluginName, VersionString)]
+    [BepInDependency("com.snmodding.nautilus")]
+    public class SeatruckHotkeysPatcher : BaseUnityPlugin
     {
-        internal static MyConfig Config { get; private set; }
+        private const string MyGuid = "com.mikjaw.subnautica.seatruckhotkeys.mod";
+        private const string PluginName = "Seatruck Hotkeys";
+        private const string VersionString = "1.3.4";
+		
+        private static readonly Harmony Harmony = new Harmony(MyGuid);
+        private static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
+        public static ManualLogSource Log { get; private set;}
+		
+        internal static new MyConfig Config { get; private set; }
+		
+		
 
-        public static void Patch()
+        private void Awake()
         {
-            Config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
-            var harmony = new Harmony("com.mikjaw.subnautica.seatruckhotkeys.mod");
-            harmony.PatchAll();
+            Log = base.Logger;
+            Config = OptionsPanelHandler.RegisterModOptions<MyConfig>();
+
+            Harmony.CreateAndPatchAll(Assembly, MyGuid);
+            Log.LogInfo(PluginName + " " + VersionString + " " + "loaded.");
         }
     }
 }

@@ -34,51 +34,43 @@ namespace SeatruckHotkeys
 
 		public static void exitDirectlyToWater(SeaTruckMotor inputMotor, ref bool piloting, ref bool ikenabled)
 		{
-			bool flag = false;
-			Vector3 value;
-			bool flag3;
-			bool flag2 = inputMotor.truckSegment.FindExitPoint(out value, out flag3, SeaTruckAnimation.Animation.ExitPilot);
-			flag3 = (!inputMotor.truckSegment.IsWalkable() || flag3);
-			if (!flag2)
+			Vector3 exitPoint;
+			//True if the seatruck is unwalkable or FindExitPoint requires it.
+			bool skipAnimations;
+			bool sufficientRoomToExit = inputMotor.truckSegment.FindExitPoint(out exitPoint, out skipAnimations, SeaTruckAnimation.Animation.ExitPilot);
+			skipAnimations = (!inputMotor.truckSegment.IsWalkable() || skipAnimations);
+			if (!sufficientRoomToExit)
 			{
 				ErrorMessage.AddError(Language.main.Get("ExitFailedNoSpace"));
 			}
 			else
 			{
 				Player.main.ExitLockedMode(false, false, null);
-				if (!flag2)
-				{
-					ErrorMessage.AddError(Language.main.Get("ExitFailedNoSpace"));
-					inputMotor.truckSegment.Exit(null, false);
-				}
-				else
-				{
-					inputMotor.truckSegment.Exit(new Vector3?(value), flag3);
-				}
-				if (!flag3)
+				inputMotor.truckSegment.Exit(new Vector3?(exitPoint), skipAnimations);
+
+				if (!skipAnimations)
 				{
 					inputMotor.seatruckanimation.currentAnimation = SeaTruckAnimation.Animation.ExitPilot;
 				}
 				else
 				{
-					Player.main.armsController.SetTrigger("seatruck_exit");
-					inputMotor.animator.SetTrigger("seatruck_exit");
+					//Skip animations
+					//Arms controller needs a trigger ID set
+					//Player.main.armsController.SetTrigger("seatruck_exit");
+					Player.main.playerAnimator.SetTrigger("seatruck_exit");
+                    inputMotor.animator.SetTrigger("seatruck_exit");
 				}
-				flag = true;
-			}
-			if (flag)
-			{
-				piloting = false;
-				Player.main.inSeatruckPilotingChair = false;
-				uGUI.main.quickSlots.SetTarget(null);
-				if (inputMotor.stopPilotSound)
-				{
-					Utils.PlayFMODAsset(inputMotor.stopPilotSound, Player.main.transform, 20f);
-				}
-				ikenabled = false;
-				Player.main.armsController.SetWorldIKTarget(null, null);
-			}
-		}
+                piloting = false;
+                Player.main.inSeatruckPilotingChair = false;
+                uGUI.main.quickSlots.SetTarget(null);
+                if (inputMotor.stopPilotSound)
+                {
+                    Utils.PlayFMODAsset(inputMotor.stopPilotSound, Player.main.transform, 20f);
+                }
+                ikenabled = false;
+                Player.main.armsController.SetWorldIKTarget(null, null);
+            }
+        }
 
 
 		[HarmonyPostfix]
