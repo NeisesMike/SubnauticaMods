@@ -16,6 +16,45 @@ namespace SeatruckHotkeys
     [HarmonyPatch("Update")]
     class SeaTruckMotorPatcher
     {
+		[HarmonyPostfix]
+        public static void Postfix(SeaTruckMotor __instance, ref bool ____piloting, ref bool ____ikenabled)
+		{
+			Tuple<bool,bool> directives = HandleHotkeys();
+			SeaTruckSegment mainSegment = GetFirstSegment(__instance.GetComponentInParent<SeaTruckSegment>());
+			bool isOurMotor = Vector3.Distance(Player.main.transform.position, __instance.transform.position) < 2;
+			if (!isOurMotor || !Player.main.IsPilotingSeatruck() )
+            {
+				return;
+            }
+			if (__instance.waitForAnimation && __instance.seatruckanimation != null && __instance.seatruckanimation.currentAnimation > SeaTruckAnimation.Animation.Idle)
+			{
+				return;
+			}
+
+			// direct exit hotkey
+			if (SeatruckHotkeysPatcher.Config.isDirectExitEnabled && directives.Item1)
+			{
+				exitDirectlyToWater(__instance, ref ____piloting, ref ____ikenabled);
+			}
+
+			// detach hotkey
+			if (SeatruckHotkeysPatcher.Config.isDetachEnabled && directives.Item2 && mainSegment.isRearConnected)
+			{
+				SeaTruckAnimation oldAnimation = mainSegment.seatruckanimation;
+				mainSegment.seatruckanimation = null;
+				mainSegment.OnClickDetachLever(null);
+				mainSegment.seatruckanimation = oldAnimation;
+				Logger.Output("Modules Disconnected!");
+			}
+		}
+
+		public static Tuple<bool, bool> HandleHotkeys()
+		{
+			bool shouldDirectExit = Input.GetKeyDown(SeatruckHotkeysPatcher.Config.directExitKey);
+			bool shouldDetach = Input.GetKeyDown(SeatruckHotkeysPatcher.Config.detachModulesKey);
+			return new Tuple<bool, bool>(shouldDirectExit, shouldDetach);
+		}
+
 		public static SeaTruckSegment GetFirstSegment(SeaTruckSegment mySegment)
 		{
 			SeaTruckSegment result = null;
@@ -34,85 +73,47 @@ namespace SeatruckHotkeys
 
 		public static void exitDirectlyToWater(SeaTruckMotor inputMotor, ref bool piloting, ref bool ikenabled)
 		{
-			bool flag = false;
-			Vector3 value;
-			bool flag3;
-			bool flag2 = inputMotor.truckSegment.FindExitPoint(out value, out flag3, SeaTruckAnimation.Animation.ExitPilot);
-			flag3 = (!inputMotor.truckSegment.IsWalkable() || flag3);
-			if (!flag2)
+			Vector3 exitPosition;
+			bool willSkipAnimation;
+			bool foundExitPoint = inputMotor.truckSegment.FindExitPoint(out exitPosition, out willSkipAnimation, SeaTruckAnimation.Animation.ExitPilot);
+			if (!foundExitPoint)
 			{
 				ErrorMessage.AddError(Language.main.Get("ExitFailedNoSpace"));
+				return;
+			}
+			willSkipAnimation = (!inputMotor.truckSegment.IsWalkable() || willSkipAnimation);
+			Player.main.ExitLockedMode(false, false, null);
+
+			if (!foundExitPoint)
+			{
+				ErrorMessage.AddError(Language.main.Get("ExitFailedNoSpace"));
+				inputMotor.truckSegment.Exit(null, false, false, null, null);
 			}
 			else
 			{
-				Player.main.ExitLockedMode(false, false, null);
-				if (!flag2)
-				{
-					ErrorMessage.AddError(Language.main.Get("ExitFailedNoSpace"));
-					inputMotor.truckSegment.Exit(null, false);
-				}
-				else
-				{
-					inputMotor.truckSegment.Exit(new Vector3?(value), flag3);
-				}
-				if (!flag3)
-				{
-					inputMotor.seatruckanimation.currentAnimation = SeaTruckAnimation.Animation.ExitPilot;
-				}
-				else
-				{
-					Player.main.armsController.SetTrigger("seatruck_exit");
-					inputMotor.animator.SetTrigger("seatruck_exit");
-				}
-				flag = true;
+				inputMotor.truckSegment.Exit(new Vector3?(exitPosition), skipAnimations: willSkipAnimation);
 			}
-			if (flag)
+			if (!willSkipAnimation)
 			{
-				piloting = false;
-				Player.main.inSeatruckPilotingChair = false;
-				uGUI.main.quickSlots.SetTarget(null);
-				if (inputMotor.stopPilotSound)
-				{
-					Utils.PlayFMODAsset(inputMotor.stopPilotSound, Player.main.transform, 20f);
-				}
-				ikenabled = false;
-				Player.main.armsController.SetWorldIKTarget(null, null);
+				inputMotor.seatruckanimation.currentAnimation = SeaTruckAnimation.Animation.ExitPilot;
 			}
-		}
-
-
-		[HarmonyPostfix]
-        public static void Postfix(SeaTruckMotor __instance, ref bool ____piloting, ref bool ____ikenabled)
-		{
-
-			SeaTruckSegment mainSegment = GetFirstSegment(__instance.GetComponentInParent<SeaTruckSegment>());
-			bool isOurMotor = Vector3.Distance(Player.main.transform.position, __instance.transform.position) < 2;
-
-			if (!isOurMotor || !Player.main.IsPilotingSeatruck() )
-            {
-				return;
-            }
-
-			// detach hotkey
-			if (SeatruckHotkeysPatcher.Config.isDetachEnabled && Input.GetKey(SeatruckHotkeysPatcher.Config.detachModulesKey) && mainSegment.isRearConnected)
+			else
 			{
-				SeaTruckAnimation oldAnimation = mainSegment.seatruckanimation;
-				mainSegment.seatruckanimation = null;
-				mainSegment.OnClickDetachLever(null);
-				mainSegment.seatruckanimation = oldAnimation;
-				Logger.Output("Modules Disconnected!"); 
+				Player.main.armsController.SetTrigger(AnimatorHashID.seatruck_exit);
+				inputMotor.animator.SetTrigger("seatruck_exit");
 			}
 
-			if (__instance.waitForAnimation && __instance.seatruckanimation != null && __instance.seatruckanimation.currentAnimation > SeaTruckAnimation.Animation.Idle)
+			piloting = false;
+			inputMotor.UpdateIKEnabledState();
+			Player.main.inSeatruckPilotingChair = false;
+			uGUI.main.quickSlots.SetTarget(null);
+			if (inputMotor.stopPilotSound)
 			{
-				return;
+				Utils.PlayFMODAsset(inputMotor.stopPilotSound, Player.main.transform, 20f);
 			}
-
-			// direct exit hotkey
-			if (SeatruckHotkeysPatcher.Config.isDirectExitEnabled && Input.GetKey(SeatruckHotkeysPatcher.Config.directExitKey))
-            {
-				exitDirectlyToWater(__instance, ref ____piloting, ref ____ikenabled);
-            }
+			inputMotor.UpdateIKEnabledState();
+			//ikenabled = false;
+			Player.main.armsController.SetWorldIKTarget(null, null);
 		}
 	}
 }

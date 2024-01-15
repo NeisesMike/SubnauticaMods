@@ -36,7 +36,7 @@ namespace SeatruckHotkeys
             HandReticle.main.SetText(HandReticle.TextType.Hand, ___player ? "ExitSeaTruck" : entryString, true, GameInput.Button.LeftHand);
             HandReticle.main.SetText(HandReticle.TextType.HandSubscript, string.Empty, false, GameInput.Button.None);
 
-            if (Input.GetKey(SeatruckHotkeysPatcher.Config.directEntryKey) && __instance.isMainCab)
+            if (Input.GetKeyDown(SeatruckHotkeysPatcher.Config.directEntryKey) && __instance.isMainCab)
             {
                 __instance.motor.StartPiloting();
                 __instance.seatruckanimation.currentAnimation = SeaTruckAnimation.Animation.EnterPilot;
