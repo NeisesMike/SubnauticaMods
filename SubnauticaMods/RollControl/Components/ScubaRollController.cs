@@ -172,14 +172,33 @@ namespace RollControl
                     ResetForStartRoll(null);
 
                     // remind the user that scuba roll is enabled, show them the toggle key
-                    SubLog.Output("Scuba Roll is ON. Toggle with " + RollControlPatcher.config.ToggleRollKey);
+                    Logger.Output("Scuba Roll is ON. Toggle with " + RollControlPatcher.config.ToggleRollKey);
+                    SetupForScubaRollOnceAtStart();
                 }
                 if (swimstate == SwimState.RunFall)
                 {
                     // transition into a normal camera state
                     ResetForEndRoll();
+
+                    SetupEndingScubaRollOnceAtExit();
                 }
             }
+        }
+        public void SetupForScubaRollOnceAtStart()
+        {
+            player.rigidBody.freezeRotation = false;
+            player.GetComponent<Collider>().material.frictionCombine = PhysicMaterialCombine.Minimum;
+            player.GetComponent<Collider>().material.dynamicFriction = 0;
+            player.GetComponent<Collider>().material.staticFriction = 0;
+            player.rigidBody.angularDrag = 7.5f; // By default, it's 15
+            player.rigidBody.inertiaTensor = Vector3.one;
+        }
+        public void SetupEndingScubaRollOnceAtExit()
+        {
+            player.rigidBody.freezeRotation = true;
+            player.GetComponent<Collider>().material.frictionCombine = PhysicMaterialCombine.Average;
+            player.GetComponent<Collider>().material.dynamicFriction = 0.6f;
+            player.GetComponent<Collider>().material.staticFriction = 0.6f;
         }
         private SwimState DetermineSwimState()
         {
@@ -207,11 +226,13 @@ namespace RollControl
                     {
                         isRollEnabled = false;
                         ResetForEndRoll();
+                        SetupEndingScubaRollOnceAtExit();
                     }
                     else
                     {
                         ResetForStartRoll(null);
                         isRollEnabled = true;
+                        SetupForScubaRollOnceAtStart();
                     }
                 }
             }
@@ -244,9 +265,6 @@ namespace RollControl
             */
             if (IsActuallyScubaRolling && AvatarInputHandler.main.IsEnabled())
             {
-                player.rigidBody.freezeRotation = false;
-                player.rigidBody.angularDrag = 7.5f; // By default, it's 15
-                player.rigidBody.inertiaTensor = Vector3.one;
                 CamControl.transform.localRotation = Quaternion.identity;
                 PhysicsMouseLook();
                 SetupScubaRoll();
@@ -354,6 +372,38 @@ namespace RollControl
             {
                 camTrans.localEulerAngles = input;
             }
+        }
+
+        public void OnCollisionEnter(Collision col)
+        {
+            if (!IsActuallyScubaRolling || !AvatarInputHandler.main.IsEnabled())
+            {
+                return;
+            }
+            player.rigidBody.freezeRotation = true;
+        }
+        public void OnCollisionStay(Collision col)
+        {
+            if (!IsActuallyScubaRolling || !AvatarInputHandler.main.IsEnabled())
+            {
+                return;
+            }
+            if (col.impulse == Vector3.zero)
+            {
+                player.rigidBody.freezeRotation = false;
+            }
+            else
+            {
+                player.rigidBody.freezeRotation = true;
+            }
+        }
+        public void OnCollisionExit(Collision col)
+        {
+            if (!IsActuallyScubaRolling || !AvatarInputHandler.main.IsEnabled())
+            {
+                return;
+            }
+            player.rigidBody.freezeRotation = false;
         }
     }
 }

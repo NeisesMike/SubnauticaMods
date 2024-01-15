@@ -16,12 +16,17 @@ using BepInEx.Bootstrap;
 
 namespace RollControl
 {
-    public static class SubLog
+    public static class Logger
     {
         public static void Output(string msg)
         {
             BasicText message = new BasicText(500, -75);
             message.ShowMessage(msg, 5);
+        }
+        internal static ManualLogSource MyLog { get; set; }
+        public static void Log(string message)
+        {
+            MyLog.LogInfo("[RollControl] " + message);
         }
     }
 
@@ -50,12 +55,11 @@ namespace RollControl
     [BepInDependency("com.snmodding.nautilus")]
     public class RollControlPatcher : BaseUnityPlugin
     {
-        public static ManualLogSource logger { get; set; }
         internal static MyConfig config { get; private set; }
 
         public void Start()
         {
-            logger = base.Logger;
+            RollControl.Logger.MyLog = base.Logger;
             config = OptionsPanelHandler.RegisterModOptions<MyConfig>();
             var harmony = new Harmony("com.mikjaw.subnautica.rollcontrol.mod");
             harmony.PatchAll();
