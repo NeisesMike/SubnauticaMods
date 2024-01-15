@@ -37,7 +37,7 @@ namespace FreeLook
         public KeyCode FreeLookKey = KeyCode.LeftAlt;
     }
 
-    [BepInPlugin("com.mikjaw.subnautica.freelook.mod", "FreeLook", "2.0.1")]
+    [BepInPlugin("com.mikjaw.subnautica.freelook.mod", "FreeLook", "2.0.3")]
     [BepInDependency("com.snmodding.nautilus")]
     public class FreeLookPatcher : BaseUnityPlugin
     {

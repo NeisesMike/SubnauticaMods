@@ -24,5 +24,12 @@ namespace FreeLook
             __instance.gameObject.EnsureComponent<FreeLookManager>();
             return true;
         }
+        [HarmonyPrefix]
+        [HarmonyPatch("UpdateRotation")]
+        public static bool UpdateRotation(Player __instance)
+        {
+            //Logger.Log("firing");
+            return true;
+        }
     }
 }

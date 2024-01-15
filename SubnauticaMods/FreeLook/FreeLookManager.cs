@@ -64,14 +64,14 @@ namespace FreeLook
         // this controls whether update will be used to "snap back" the cursor to center
         public bool resetCameraFlag = false;
 
-        public bool wasInVehicleLastFrame = false;
+        public bool wasFreelyPilotingLastFrame = false;
         public bool isNewlyInVehicle = false;
         public bool isNewlyOutVehicle = false;
 
         public bool wasTriggerDownLastFrame = false;
         public bool isTriggerNewlyDown = false;
         public bool isTriggerNewlyUp = false;
-
+        public bool m_IsDocking = false;
         public void Start()
         {
             // check for the existence of The Vehicle Framework
@@ -88,14 +88,15 @@ namespace FreeLook
                 player.playerAnimator.GetBool("moonpool_launchright") ||
                 player.playerAnimator.GetBool("moonpool_launchleft") ||
                 player.playerAnimator.GetBool("moonpool_exolaunchleft") ||
-                player.playerAnimator.GetBool("moonpool_exolaunchright"))
+                player.playerAnimator.GetBool("moonpool_exolaunchright") ||
+                m_IsDocking)
             {
                 mcc.cinematicMode = true;
                 return;
             }
             void setInVehicleVars(bool inVehicleThisFrame)
             {
-                if (wasInVehicleLastFrame)
+                if (wasFreelyPilotingLastFrame)
                 {
                     isNewlyInVehicle = false;
                     if (inVehicleThisFrame)
@@ -123,7 +124,7 @@ namespace FreeLook
                         isNewlyInVehicle = false;
                     }
                 }
-                wasInVehicleLastFrame = inVehicleThisFrame;
+                wasFreelyPilotingLastFrame = inVehicleThisFrame;
             }
             void setTriggerStates(bool triggerState)
             {
@@ -155,17 +156,52 @@ namespace FreeLook
                 }
                 wasTriggerDownLastFrame = triggerState;
             }
-            bool isPilotingUndockedVehicle = player.GetVehicle() != null && !player.GetVehicle().docked && player.IsPiloting();
+            bool IsFreelyPiloting = player.GetVehicle() != null && !player.GetVehicle().docked && player.IsPiloting();
 
-            if ((!isPilotingUndockedVehicle && wasInVehicleLastFrame) || (player.GetVehicle() != null && player.GetVehicle().docked))
+            bool isUndocking = player.GetVehicle() != null && player.GetVehicle().docked;
+            bool isDocking = (player.GetVehicle() == null) && wasFreelyPilotingLastFrame && player.cinematicModeActive;
+            // isDocking also matches on normal vehicle exit...
+
+            bool docked = player.GetVehicle() != null && player.GetVehicle().docked;
+            bool piloting = player.IsPiloting();
+            bool exited = !IsFreelyPiloting && wasFreelyPilotingLastFrame;
+
+            // if we "just got out," give up the camera right away
+            if (exited || isDocking)
             {
-                // if we just got out, give up the camera right away
-                CameraRelinquish();
-                setInVehicleVars(isPilotingUndockedVehicle);
+                // During Undocking:
+                // This case happens HERE
+                /*
+                    isPilotingUndockedVehicle == FALSE
+                    wasInVehicleLastFrame == FALSE
+                    player.GetVehicle() == TRUE
+                    player.GetVehicle().docked == TRUE
+                    player.IsPiloting() == FALSE
+                */
+                // During Docking:
+                // This case happens HERE
+                /*
+                    isPilotingUndockedVehicle == FALSE
+                    wasInVehicleLastFrame == TRUE
+                    player.GetVehicle() == NULL
+                    player.GetVehicle().docked == ?!? (no vehicle)
+                    player.IsPiloting() == FALSE
+                */
+                // During Regular FreeLooking, after you release the button, and the camera finally snaps back:
+                // This case happens LATER IN UPDATE, during ResetCameraRotation
+                /*
+                    wasInVehicleLastFrame == TRUE
+                    player.GetVehicle() == TRUE
+                    player.GetVehicle().docked == FALSE
+                    player.IsPiloting() == TRUE
+                */
+                Logger.Log("!special!");
+                CameraRelinquish(isDocking);
+                setInVehicleVars(IsFreelyPiloting);
                 return;
             }
 
-            setInVehicleVars(isPilotingUndockedVehicle);
+            setInVehicleVars(IsFreelyPiloting);
 
             // For Mimes, print out a hint
             if (isNewlyInVehicle && FreeLookPatcher.config.isHintingEnabled)
@@ -175,7 +211,7 @@ namespace FreeLook
                 message.ShowMessage("Hold " + FreeLookPatcher.config.FreeLookKey.ToString() + " to Free Look.", 5);
             }
 
-            if (isPilotingUndockedVehicle)
+            if (IsFreelyPiloting)
             {
                 vehicle = player.GetVehicle();
                 // TODO: abstract these constants away
@@ -294,13 +330,18 @@ namespace FreeLook
                 resetArmStartTime += 4 * Time.deltaTime;
             }
 
+            // if we're not docking or undocking, and
             // if we're close enough to center, snap back and stop executing
-            double threshold = 1;
-            if (Mathf.Abs(mcc.rotationX) < threshold && Mathf.Abs(mcc.rotationY) < threshold)
+            bool isUndocking = player.GetVehicle() != null && player.GetVehicle().docked;
+            bool isDocking = (player.GetVehicle() == null) && wasFreelyPilotingLastFrame;
             {
-                mcc.ResetCamera();
-                CameraRelinquish();
-                resetCameraFlag = false;
+                double threshold = 1;
+                if (Mathf.Abs(mcc.rotationX) < threshold && Mathf.Abs(mcc.rotationY) < threshold)
+                {
+                    mcc.ResetCamera();
+                    CameraRelinquish(false);
+                    resetCameraFlag = false;
+                }
             }
         }
         internal void MoveCamera()
@@ -319,20 +360,38 @@ namespace FreeLook
             mcc.rotationY = Mathf.Clamp(mcc.rotationY, -80, 80);
             mcc.transform.localEulerAngles = new Vector3(-mcc.rotationY, mcc.rotationX, 0f);
         }
-        internal void CameraRelinquish()
+        internal void CameraRelinquish(bool isDocking)
         {
+            if (isDocking)
+            {
+                Logger.Log("Just started docking.");
+                mcc.transform.localEulerAngles = Vector3.zero;
+                player.cinematicModeActive = true;
+                m_IsDocking = true;
+                resetCameraFlag = false;
+            }
             IEnumerator RelinquishCameraAfterAnimationEnds()
             {
+                //resetCameraFlag = false;
+                //mcc.cinematicMode = false;
+                //mcc.cinematicMode = isDocking;
                 while (player.playerAnimator.GetBool("cyclops_dock") ||
                        player.playerAnimator.GetBool("moonpool_dock") ||
                        player.playerAnimator.GetBool("exosuit_dock") ||
                        player.playerAnimator.GetBool("moonpool_exodock"))
                 {
+                    Logger.Log("waiting");
                     yield return null;
+                }
+                Logger.Log("doing");
+                if(m_IsDocking)
+                {
+                    m_IsDocking = false;
+                    player.cinematicModeActive = false;
                 }
                 resetCameraFlag = false;
                 mcc.cinematicMode = false;
-                
+
                 Exosuit exo = vehicle as Exosuit;
                 if (exo != null)
                 {
