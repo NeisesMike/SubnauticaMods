@@ -32,13 +32,13 @@ namespace SeatruckHotkeys
 			}
 
 			// direct exit hotkey
-			if (SeatruckHotkeysPatcher.Config.isDirectExitEnabled && directives.Item1)
+			if (SeatruckHotkeysPatcher.SHConfig.isDirectExitEnabled && directives.Item1)
 			{
 				exitDirectlyToWater(__instance, ref ____piloting, ref ____ikenabled);
 			}
 
 			// detach hotkey
-			if (SeatruckHotkeysPatcher.Config.isDetachEnabled && directives.Item2 && mainSegment.isRearConnected)
+			if (SeatruckHotkeysPatcher.SHConfig.isDetachEnabled && directives.Item2 && mainSegment.isRearConnected)
 			{
 				SeaTruckAnimation oldAnimation = mainSegment.seatruckanimation;
 				mainSegment.seatruckanimation = null;
@@ -50,8 +50,8 @@ namespace SeatruckHotkeys
 
 		public static Tuple<bool, bool> HandleHotkeys()
 		{
-			bool shouldDirectExit = Input.GetKeyDown(SeatruckHotkeysPatcher.Config.directExitKey);
-			bool shouldDetach = Input.GetKeyDown(SeatruckHotkeysPatcher.Config.detachModulesKey);
+			bool shouldDirectExit = Input.GetKeyDown(SeatruckHotkeysPatcher.SHConfig.directExitKey);
+			bool shouldDetach = Input.GetKeyDown(SeatruckHotkeysPatcher.SHConfig.detachModulesKey);
 			return new Tuple<bool, bool>(shouldDirectExit, shouldDetach);
 		}
 

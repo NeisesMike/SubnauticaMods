@@ -8,7 +8,6 @@ using UnityEngine;
 using HarmonyLib;
 using Nautilus.Options;
 using Nautilus.Handlers;
-using LitJson;
 using System.Runtime.CompilerServices;
 using System.Collections;
 using Nautilus.Options.Attributes;
@@ -32,6 +31,7 @@ namespace AttitudeIndicator
     public class AttitudeIndicator : MonoBehaviour
     {
         public static GameObject prefab = null;
+        public VehicleType type = VehicleType.None;
         public GameObject model;
         public GameObject aircraft;
         public GameObject chassi;
@@ -45,7 +45,7 @@ namespace AttitudeIndicator
             var myLoadedAssetBundle = AssetBundle.LoadFromFile(Path.Combine(modPath, "assets/attitudeindicator"));
             if (myLoadedAssetBundle == null)
             {
-                Logger.Log("Failed to load AssetBundle!");
+                AILogger.Log("Failed to load AssetBundle!");
                 return;
             }
 
@@ -75,7 +75,8 @@ namespace AttitudeIndicator
 
         public void UpdatePosition()
         {
-            if (AttitudeIndicatorPatcher.currentVehicle == VehicleType.Seamoth)
+#if SUBNAUTICA
+            void PositionSeamothAI()
             {
                 model.transform.localScale = Vector3.one * AttitudeIndicatorPatcher.SubnauticaConfig.scale;
                 model.transform.position = Player.main.transform.position
@@ -83,7 +84,7 @@ namespace AttitudeIndicator
                     + Player.main.transform.right * AttitudeIndicatorPatcher.SubnauticaConfig.x
                     + Player.main.transform.up * AttitudeIndicatorPatcher.SubnauticaConfig.y;
             }
-            else if(AttitudeIndicatorPatcher.currentVehicle == VehicleType.Cyclops)
+            void PositionCyclopsAI()
             {
                 model.transform.localScale = Vector3.one * AttitudeIndicatorPatcher.SubnauticaConfig.Cscale;
                 model.transform.position = Player.main.transform.position
@@ -91,6 +92,46 @@ namespace AttitudeIndicator
                     + Player.main.transform.right * AttitudeIndicatorPatcher.SubnauticaConfig.Cx
                     + Player.main.transform.up * AttitudeIndicatorPatcher.SubnauticaConfig.Cy;
             }
+#elif BELOWZERO
+            void PositionSnowfoxAI()
+            {
+                model.transform.localScale = Vector3.one * AttitudeIndicatorPatcher.SubnauticaConfig.Fscale;
+                model.transform.position = Player.main.transform.position
+                    + Player.main.transform.forward * AttitudeIndicatorPatcher.SubnauticaConfig.Fz
+                    + Player.main.transform.right * AttitudeIndicatorPatcher.SubnauticaConfig.Fx
+                    + Player.main.transform.up * AttitudeIndicatorPatcher.SubnauticaConfig.Fy;
+            }
+            void PositionSeatruckAI()
+            {
+                model.transform.localScale = Vector3.one * AttitudeIndicatorPatcher.SubnauticaConfig.Tscale;
+                model.transform.position = Player.main.transform.position
+                    + Player.main.transform.forward * AttitudeIndicatorPatcher.SubnauticaConfig.Tz
+                    + Player.main.transform.right * AttitudeIndicatorPatcher.SubnauticaConfig.Tx
+                    + Player.main.transform.up * AttitudeIndicatorPatcher.SubnauticaConfig.Ty;
+            }
+#endif
+            switch (type)
+            {
+#if SUBNAUTICA
+                case VehicleType.Seamoth:
+                    PositionSeamothAI();
+                    break;
+                case VehicleType.Cyclops:
+                    PositionCyclopsAI();
+                    break;
+#elif BELOWZERO
+                case VehicleType.Snowfox:
+                    PositionSnowfoxAI();
+                    break;
+                case VehicleType.Seatruck:
+                    PositionSeatruckAI();
+                    break;
+#endif
+                default:
+                    AILogger.Log("ERROR: this AI had no vehicle type");
+                    break;
+            }
+
         }
 
         public void UpdateRotations()

@@ -6,14 +6,8 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using HarmonyLib;
-using SMLHelper.V2.Options;
-using SMLHelper.V2.Handlers;
-using LitJson;
 using System.Runtime.CompilerServices;
 using System.Collections;
-using SMLHelper.V2.Options.Attributes;
-using SMLHelper.V2.Json;
-using SMLHelper.V2.Utility;
 
 namespace RollControlZero
 {
@@ -24,9 +18,9 @@ namespace RollControlZero
         [HarmonyPostfix]
         public static void Postfix(Player __instance)
         {
-            if (Input.GetKeyDown(RollControlPatcher.Config.rollToggleKey))
+            if (Input.GetKeyDown(RollControlPatcher.RCConfig.rollToggleKey))
             {
-                RollControlPatcher.Config.isSeatruckRollOn = !RollControlPatcher.Config.isSeatruckRollOn;
+                RollControlPatcher.RCConfig.isSeatruckRollOn = !RollControlPatcher.RCConfig.isSeatruckRollOn;
             }
             /*
             if (Input.GetKeyDown(Options.scubaRollToggleKey))
@@ -38,7 +32,7 @@ namespace RollControlZero
 
             if (__instance.IsPilotingSeatruck())
             {
-                if (RollControlPatcher.Config.isHUD)
+                if (RollControlPatcher.RCConfig.isHUD)
                 {
                     Hint main = Hint.main;
                     if (main == null)
@@ -48,16 +42,16 @@ namespace RollControlZero
                     uGUI_PopupMessage message = main.message;
                     message.ox = 60f;
                     message.oy = 0f;
-                    message.anchor = RollControlPatcher.Config.HUDAnchor;
+                    message.anchor = RollControlPatcher.RCConfig.HUDAnchor;
                     message.SetBackgroundColor(new Color(1f, 1f, 1f, 1f));
                     double myPitch = Math.Truncate(__instance.transform.eulerAngles.x);
                     double myYaw = Math.Truncate(__instance.transform.eulerAngles.y);
                     double myRoll = Math.Truncate(__instance.transform.eulerAngles.z);
                     string myMessage = "Pitch: " + myPitch + "\nRoll: " + myRoll + "\nYaw:" + myYaw;
-                    message.SetText(myMessage, RollControlPatcher.Config.HUDAnchor);
+                    message.SetText(myMessage, RollControlPatcher.RCConfig.HUDAnchor);
                     message.Show(3f, 0f, 0.25f, 0.25f, null);
                 }
-                if (RollControlPatcher.Config.isSeatruckRollOn)
+                if (RollControlPatcher.RCConfig.isSeatruckRollOn)
                 {
                     SeatruckRoll();
                 }
@@ -76,14 +70,14 @@ namespace RollControlZero
         public static void SeatruckRoll()
         {
             SeaTruckMotor seaTruckMotor = Player.main.GetComponentInParent<SeaTruckMotor>();
-            float rollFactor = RollControlPatcher.Config.seatruckRollSpeed / 100.0f;
+            float rollFactor = RollControlPatcher.RCConfig.seatruckRollSpeed / 100.0f;
 
             // add roll handlers
-            if (Input.GetKey(RollControlPatcher.Config.rollToPortKey))
+            if (Input.GetKey(RollControlPatcher.RCConfig.rollToPortKey))
             {
                 seaTruckMotor.useRigidbody.AddTorque(seaTruckMotor.transform.forward * rollFactor, ForceMode.VelocityChange);
             }
-            if (Input.GetKey(RollControlPatcher.Config.rollToStarboardKey))
+            if (Input.GetKey(RollControlPatcher.RCConfig.rollToStarboardKey))
             {
                 seaTruckMotor.useRigidbody.AddTorque(seaTruckMotor.transform.forward * -rollFactor, ForceMode.VelocityChange);
             }
@@ -97,16 +91,8 @@ namespace RollControlZero
 
             if (roll)
             {
-                if (false)//Options.scubaRollUnlimited)
-                {
-                    MainCameraControl.main.minimumY = -10000f;
-                    MainCameraControl.main.maximumY = 10000f;
-                }
-                else
-                {
-                    MainCameraControl.main.minimumY = -80f;
-                    MainCameraControl.main.maximumY = 80f;
-                }
+                MainCameraControl.main.minimumY = -80f;
+                MainCameraControl.main.maximumY = 80f;
 
                 // this is the same angular drag as the Seamoth's: 4
                 myPlayer.rigidBody.angularDrag = 4;
@@ -127,13 +113,13 @@ namespace RollControlZero
             }
 
             // add roll handlers
-            bool portUp = Input.GetKeyUp(RollControlPatcher.Config.rollToPortKey);
-            bool portHeld = Input.GetKey(RollControlPatcher.Config.rollToPortKey);
-            bool portDown = Input.GetKeyDown(RollControlPatcher.Config.rollToPortKey);
+            bool portUp = Input.GetKeyUp(RollControlPatcher.RCConfig.rollToPortKey);
+            bool portHeld = Input.GetKey(RollControlPatcher.RCConfig.rollToPortKey);
+            bool portDown = Input.GetKeyDown(RollControlPatcher.RCConfig.rollToPortKey);
 
-            bool starUp = Input.GetKeyUp(RollControlPatcher.Config.rollToPortKey);
-            bool starHeld = Input.GetKey(RollControlPatcher.Config.rollToPortKey);
-            bool starDown = Input.GetKeyDown(RollControlPatcher.Config.rollToPortKey);
+            bool starUp = Input.GetKeyUp(RollControlPatcher.RCConfig.rollToPortKey);
+            bool starHeld = Input.GetKey(RollControlPatcher.RCConfig.rollToPortKey);
+            bool starDown = Input.GetKeyDown(RollControlPatcher.RCConfig.rollToPortKey);
 
             if (portDown || portHeld)
             {

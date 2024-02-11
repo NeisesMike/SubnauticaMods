@@ -28,15 +28,15 @@ namespace SeatruckHotkeys
 
             string entryString = "EnterSeaTruck";
 
-            if (__instance.isMainCab && SeatruckHotkeysPatcher.Config.isEntryHintingEnabled)
+            if (__instance.isMainCab && SeatruckHotkeysPatcher.SHConfig.isEntryHintingEnabled)
             {
-                entryString += "\nEnter-to-Piloting with " + SeatruckHotkeysPatcher.Config.directEntryKey.ToString();
+                entryString += "\nEnter-to-Piloting with " + SeatruckHotkeysPatcher.SHConfig.directEntryKey.ToString();
             }
 
             HandReticle.main.SetText(HandReticle.TextType.Hand, ___player ? "ExitSeaTruck" : entryString, true, GameInput.Button.LeftHand);
             HandReticle.main.SetText(HandReticle.TextType.HandSubscript, string.Empty, false, GameInput.Button.None);
 
-            if (Input.GetKeyDown(SeatruckHotkeysPatcher.Config.directEntryKey) && __instance.isMainCab)
+            if (Input.GetKeyDown(SeatruckHotkeysPatcher.SHConfig.directEntryKey) && __instance.isMainCab)
             {
                 __instance.motor.StartPiloting();
                 __instance.seatruckanimation.currentAnimation = SeaTruckAnimation.Animation.EnterPilot;

@@ -3,7 +3,7 @@
 namespace GlowFix
 {
     [HarmonyPatch(typeof(SkyApplier))]
-    [HarmonyPatch("Initialize")]
+    [HarmonyPatch(nameof(SkyApplier.Start))]
     class SkyApplierPatcher
     {
 		[HarmonyPrefix]

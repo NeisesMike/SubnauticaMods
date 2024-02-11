@@ -8,7 +8,6 @@ using UnityEngine;
 using HarmonyLib;
 using SMLHelper.V2.Options;
 using SMLHelper.V2.Handlers;
-using LitJson;
 using System.Runtime.CompilerServices;
 
 namespace RollControlZero

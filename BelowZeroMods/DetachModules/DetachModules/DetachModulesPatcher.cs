@@ -1,33 +1,26 @@
 ﻿using UnityEngine;
 using HarmonyLib;
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Options.Attributes;
-using SMLHelper.V2.Json;
-using SMLHelper.V2.Options;
+using Nautilus.Options;
+using Nautilus.Handlers;
+using Nautilus.Json;
+using Nautilus.Options.Attributes;
+using Nautilus.Utility;
+using BepInEx;
+using BepInEx.Logging;
 
 namespace SeatruckHotkeys
 {
     public static class Logger
     {
+        internal static ManualLogSource MyLog { get; set; }
         public static void Log(string message)
         {
-            UnityEngine.Debug.Log("[SeatruckHotkeys] " + message);
+            MyLog.LogInfo(message);
         }
-        public static void Output(string msg)
+        public static void Output(string msg, int x = 500, int y = 0)
         {
-            Hint main = Hint.main;
-            if (main == null)
-            {
-                return;
-            }
-            uGUI_PopupMessage message = main.message;
-            message.ox = 60f;
-            message.oy = 0f;
-            message.anchor = TextAnchor.MiddleRight;
-            message.SetBackgroundColor(new Color(1f, 1f, 1f, 1f));
-            string myMessage = msg;
-            message.SetText(myMessage, TextAnchor.MiddleRight);
-            message.Show(3f, 0f, 0.25f, 0.25f, null);
+            BasicText message = new BasicText(x, y);
+            message.ShowMessage(msg, 4);
         }
     }
 
@@ -65,14 +58,16 @@ namespace SeatruckHotkeys
         }
     }
 
-    public class SeatruckHotkeysPatcher
+    [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID, Nautilus.PluginInfo.PLUGIN_VERSION)]
+    public class SeatruckHotkeysPatcher : BaseUnityPlugin
     {
-        internal static MyConfig Config { get; private set; }
+        internal static MyConfig SHConfig { get; private set; }
 
-        public static void Patch()
+        public void Start()
         {
-            Config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
-            var harmony = new Harmony("com.mikjaw.subnautica.seatruckhotkeys.mod");
+            SHConfig = OptionsPanelHandler.RegisterModOptions<MyConfig>();
+            var harmony = new Harmony(PluginInfo.PLUGIN_GUID); ;
             harmony.PatchAll();
         }
     }

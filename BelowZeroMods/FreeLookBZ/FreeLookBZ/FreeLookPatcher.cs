@@ -6,37 +6,28 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using HarmonyLib;
-using SMLHelper.V2.Options;
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Utility;
-using LitJson;
-using System.Net.NetworkInformation;
-using SMLHelper.V2.Json;
-using SMLHelper.V2.Options.Attributes;
+using Nautilus.Options;
+using Nautilus.Handlers;
+using Nautilus.Utility;
+using Nautilus.Json;
+using Nautilus.Options.Attributes;
+using BepInEx;
+using BepInEx.Logging;
+using BepInEx.Bootstrap;
 
 namespace FreeLook
 {
     public static class Logger
     {
+        internal static ManualLogSource MyLog { get; set; }
         public static void Log(string message)
         {
-            UnityEngine.Debug.Log("[FreeLookZero] " + message);
+            MyLog.LogInfo(message);
         }
-        public static void Output(string msg)
+        public static void Output(string msg, int x = 500, int y = 0)
         {
-            Hint main = Hint.main;
-            if (main == null)
-            {
-                return;
-            }
-            uGUI_PopupMessage message = main.message;
-            message.ox = 60f;
-            message.oy = 0f;
-            message.anchor = TextAnchor.MiddleRight;
-            message.SetBackgroundColor(new Color(1f, 1f, 1f, 1f));
-            string myMessage = msg;
-            message.SetText(myMessage, TextAnchor.MiddleRight);
-            message.Show(3f, 0f, 0.25f, 0.25f, null);
+            BasicText message = new BasicText(x, y);
+            message.ShowMessage(msg, 4);
         }
     }
 
@@ -49,16 +40,20 @@ namespace FreeLook
         public bool isHintingEnabled = true;
     }
 
-    class FreeLookPatcher
+    [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID, Nautilus.PluginInfo.PLUGIN_VERSION)]
+    class FreeLookPatcher : BaseUnityPlugin
     {
-        internal static MyConfig Config { get; private set; }
+        internal static MyConfig FLConfig { get; private set; }
         public static bool isFreeLooking;
-        public static void Patch()
+        public void Start()
         {
-            Config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
+            FreeLook.Logger.MyLog = base.Logger;
+
+            FLConfig = OptionsPanelHandler.RegisterModOptions<MyConfig>();
             isFreeLooking = false;
 
-            var harmony = new Harmony("com.garyburke.subnautica.freelookzero.mod");
+            var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
         }
     }

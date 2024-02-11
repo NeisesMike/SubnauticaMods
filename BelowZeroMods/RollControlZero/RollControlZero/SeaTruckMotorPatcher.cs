@@ -8,7 +8,6 @@ using UnityEngine;
 using HarmonyLib;
 using SMLHelper.V2.Options;
 using SMLHelper.V2.Handlers;
-using LitJson;
 using System.Runtime.CompilerServices;
 using System.Collections;
 
@@ -21,7 +20,7 @@ namespace RollControlZero
         [HarmonyPrefix]
         public static bool Prefix()
         {
-            if (RollControlPatcher.Config.isSeatruckRollOn)
+            if (RollControlPatcher.RCConfig.isSeatruckRollOn)
             {
                 return false;
             }

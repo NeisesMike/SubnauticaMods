@@ -6,13 +6,12 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using HarmonyLib;
-using SMLHelper.V2.Options;
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Utility;
-using LitJson;
+using Nautilus.Options;
+using Nautilus.Handlers;
+using Nautilus.Utility;
 using System.Net.NetworkInformation;
-using SMLHelper.V2.Json;
-using SMLHelper.V2.Options.Attributes;
+using Nautilus.Json;
+using Nautilus.Options.Attributes;
 
 namespace FreeLook
 {
@@ -25,7 +24,7 @@ namespace FreeLook
                 FMOD.Studio.PARAMETER_ID ___depthParamIndex, FMOD.Studio.PARAMETER_ID ___rpmParamIndex, FMOD.Studio.PARAMETER_ID ___turnParamIndex, FMOD.Studio.PARAMETER_ID ___upgradeParamIndex,
                 FMOD.Studio.PARAMETER_ID ___damagedParamIndex, Animator ___animator)
         {
-            return true;
+            return true; // TODO: what ?
             void UpdateDrag()
             {
                 if (__instance.useRigidbody)

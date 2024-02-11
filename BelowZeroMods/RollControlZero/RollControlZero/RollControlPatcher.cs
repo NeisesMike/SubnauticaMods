@@ -1,43 +1,26 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 using HarmonyLib;
-using SMLHelper.V2.Options;
-using SMLHelper.V2.Handlers;
-using LitJson;
-using System.Runtime.CompilerServices;
-using System.Collections;
-using SMLHelper.V2.Options.Attributes;
-using SMLHelper.V2.Json;
-using SMLHelper.V2.Utility;
+using Nautilus.Options;
+using Nautilus.Handlers;
+using Nautilus.Json;
+using Nautilus.Options.Attributes;
+using Nautilus.Utility;
+using BepInEx;
+using BepInEx.Logging;
 
 namespace RollControlZero
 {
     public static class Logger
     {
+        internal static ManualLogSource MyLog { get; set; }
         public static void Log(string message)
         {
-            UnityEngine.Debug.Log("[RollControlZero] " + message);
+            MyLog.LogInfo(message);
         }
-        public static void Output(string msg)
+        public static void Output(string msg, int x = 500, int y = 0)
         {
-            Hint main = Hint.main;
-            if (main == null)
-            {
-                return;
-            }
-            uGUI_PopupMessage message = main.message;
-            message.ox = 60f;
-            message.oy = 0f;
-            message.anchor = TextAnchor.MiddleRight;
-            message.SetBackgroundColor(new Color(1f, 1f, 1f, 1f));
-            string myMessage = msg;
-            message.SetText(myMessage, TextAnchor.MiddleRight);
-            message.Show(3f, 0f, 0.25f, 0.25f, null);
+            BasicText message = new BasicText(x, y);
+            message.ShowMessage(msg, 4);
         }
     }
 
@@ -60,17 +43,15 @@ namespace RollControlZero
         public TextAnchor HUDAnchor = TextAnchor.LowerRight;
     }
 
-    public class RollControlPatcher
+    [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID, Nautilus.PluginInfo.PLUGIN_VERSION)]
+    public class RollControlPatcher : BaseUnityPlugin
     {
-        internal static MyConfig Config { get; private set; }
-
-        //public static bool isScubaRollOn = false;
-        //public static RollManager myRollMan = new RollManager();
-
-        public static void Patch()
+        internal static MyConfig RCConfig { get; private set; }
+        public void Start()
         {
-            Config = OptionsPanelHandler.Main.RegisterModOptions<MyConfig>();
-            var harmony = new Harmony("com.mikjaw.subnautica.rollcontrolzero.mod");
+            RCConfig = OptionsPanelHandler.RegisterModOptions<MyConfig>();
+            var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
         }
     }

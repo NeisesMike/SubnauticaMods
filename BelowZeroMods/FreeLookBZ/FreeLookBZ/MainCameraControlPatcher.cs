@@ -10,6 +10,7 @@ namespace FreeLook
 {
     [HarmonyPatch(typeof(MainCameraControl))]
     [HarmonyPatch("Update")]
+    [HarmonyPatch(nameof(MainCameraControl.OnUpdate))]
     public class MainCameraControlUpdatePatcher
     {
         public static void moveCamera()
@@ -93,10 +94,10 @@ namespace FreeLook
             }
             releaseFlag = true;
 
-            if (isNewlyInVehicle && FreeLookPatcher.Config.isHintingEnabled)
+            if (isNewlyInVehicle && FreeLookPatcher.FLConfig.isHintingEnabled)
             {
                 isNewlyInVehicle = false;
-                Logger.Output("Press " + FreeLookPatcher.Config.FreeLookKey.ToString() + " to FreeLook.");
+                Logger.Output("Press " + FreeLookPatcher.FLConfig.FreeLookKey.ToString() + " to FreeLook.");
             }
 
             if (Player.main.motorMode == Player.MotorMode.Seaglide)
@@ -138,7 +139,7 @@ namespace FreeLook
                 FreeLookPatcher.isFreeLooking = false;
             }
 
-            if (Input.GetKeyDown(FreeLookPatcher.Config.FreeLookKey) || isTriggerNewlyDown)
+            if (Input.GetKeyDown(FreeLookPatcher.FLConfig.FreeLookKey) || isTriggerNewlyDown)
             {
                 FreeLookPatcher.isFreeLooking = true;
                 isTriggerNewlyDown = false;
@@ -149,12 +150,12 @@ namespace FreeLook
                 mainCam.lookAroundMode = false;
                 return false;
             }
-            else if (Input.GetKeyUp(FreeLookPatcher.Config.FreeLookKey) || isTriggerNewlyUp)
+            else if (Input.GetKeyUp(FreeLookPatcher.FLConfig.FreeLookKey) || isTriggerNewlyUp)
             {
                 isTriggerNewlyUp = false;
                 resetCameraFlag = true;
             }
-            if (!resetCameraFlag && (Input.GetKey(FreeLookPatcher.Config.FreeLookKey) || isTriggerDown))
+            if (!resetCameraFlag && (Input.GetKey(FreeLookPatcher.FLConfig.FreeLookKey) || isTriggerDown))
             {
                 resetCameraFlag = false;
                 moveCamera();
