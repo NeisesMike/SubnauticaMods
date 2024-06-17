@@ -215,7 +215,7 @@ namespace FreeLook
             {
                 vehicle = player.GetVehicle();
                 // TODO: abstract these constants away
-                bool triggerState = (Input.GetAxisRaw("ControllerAxis3") > 0) || (Input.GetAxisRaw("ControllerAxis3") < 0);
+                bool triggerState = (Input.GetAxisRaw("ControllerAxis3") > 0.2) || (Input.GetAxisRaw("ControllerAxis3") < 0.2);
                 setTriggerStates(triggerState);
                 if ((Input.GetKey(FreeLookPatcher.config.FreeLookKey) || triggerState))
                 {
