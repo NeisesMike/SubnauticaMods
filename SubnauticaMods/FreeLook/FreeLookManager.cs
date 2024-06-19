@@ -195,7 +195,6 @@ namespace FreeLook
                     player.GetVehicle().docked == FALSE
                     player.IsPiloting() == TRUE
                 */
-                Logger.Log("!special!");
                 CameraRelinquish(isDocking);
                 setInVehicleVars(IsFreelyPiloting);
                 return;
@@ -214,8 +213,8 @@ namespace FreeLook
             if (IsFreelyPiloting)
             {
                 vehicle = player.GetVehicle();
-                // TODO: abstract these constants away
-                bool triggerState = (Input.GetAxisRaw("ControllerAxis3") > 0.2) || (Input.GetAxisRaw("ControllerAxis3") < 0.2);
+                float deadzone = ((float)FreeLookPatcher.config.deadzone) / 100f;
+                bool triggerState = (Input.GetAxisRaw("ControllerAxis3") > deadzone) || (Input.GetAxisRaw("ControllerAxis3") < -deadzone);
                 setTriggerStates(triggerState);
                 if ((Input.GetKey(FreeLookPatcher.config.FreeLookKey) || triggerState))
                 {
@@ -308,7 +307,6 @@ namespace FreeLook
             if (exo != null)
             {
                 startQuat = exo.transform.Find("exosuit_01/root/geoChildren/lArm_clav").transform.localRotation;
-                //Logger.Log("startQuat " + startQuat.eulerAngles.ToString());
                 resetArmStartTime = 0f;
             }
         }
@@ -364,7 +362,6 @@ namespace FreeLook
         {
             if (isDocking)
             {
-                Logger.Log("Just started docking.");
                 mcc.transform.localEulerAngles = Vector3.zero;
                 player.cinematicModeActive = true;
                 m_IsDocking = true;
@@ -380,10 +377,8 @@ namespace FreeLook
                        player.playerAnimator.GetBool("exosuit_dock") ||
                        player.playerAnimator.GetBool("moonpool_exodock"))
                 {
-                    Logger.Log("waiting");
                     yield return null;
                 }
-                Logger.Log("doing");
                 if(m_IsDocking)
                 {
                     m_IsDocking = false;
