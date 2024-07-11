@@ -156,7 +156,7 @@ namespace FreeLook
                 }
                 wasTriggerDownLastFrame = triggerState;
             }
-            bool IsFreelyPiloting = player.GetVehicle() != null && !player.GetVehicle().docked && player.IsPiloting();
+            bool IsFreelyPiloting = player.GetVehicle() != null && !player.GetVehicle().docked && player.GetVehicle().GetPilotingMode();
 
             bool isUndocking = player.GetVehicle() != null && player.GetVehicle().docked;
             bool isDocking = (player.GetVehicle() == null) && wasFreelyPilotingLastFrame && player.cinematicModeActive;
