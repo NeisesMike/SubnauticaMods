@@ -43,12 +43,14 @@ namespace RollControl
         public double SubmarineRollSpeed = 30f;
         [Slider("Scuba Roll Speed", Min = 0f, Max = 100f, Step = 1f, DefaultValue = 75f)]
         public double ScubaRollSpeed = 75f;
-        [Slider("Scuba Look Sensitivity", Min = 0f, Max = 200f, Step = 1f, DefaultValue = 30f)]
-        public float ScubaLookSensitivity = 30f;
+        [Slider("Scuba Mouse Sensitivity", Min = 0f, Max = 200f, Step = 1f, DefaultValue = 30f, Tooltip = "How fast the camera rotates as you move the mouse")]
+        public float ScubaMouseSensitivity = 30f;
+        [Slider("Scuba Controller Sensitivity", Min = 0f, Max = 200f, Step = 1f, DefaultValue = 30f, Tooltip = "How fast the camera rotates as you tilt the analog stick")]
+        public float ScubaPadSensitivity = 15f;
         [Toggle("Enable Vehicle Roll by Default")]
-        public bool IsVehicleRollDefaultEnabled = true;
+        public bool IsVehicleRollDefaultEnabled = false;
         [Toggle("Enable Scuba Roll by Default")]
-        public bool IsScubaRollDefaultEnabled = true;
+        public bool IsScubaRollDefaultEnabled = false;
     }
 
     [BepInPlugin("com.mikjaw.subnautica.rollcontrol.mod", "RollControl", "5.1")]
@@ -56,13 +58,18 @@ namespace RollControl
     public class RollControlPatcher : BaseUnityPlugin
     {
         internal static MyConfig config { get; private set; }
-
+        public static bool ThereIsVehicleFramework = false;
         public void Start()
         {
             RollControl.Logger.MyLog = base.Logger;
             config = OptionsPanelHandler.RegisterModOptions<MyConfig>();
             var harmony = new Harmony("com.mikjaw.subnautica.rollcontrol.mod");
             harmony.PatchAll();
+            var type = Type.GetType("VehicleFramework.MainPatcher, VehicleFramework", false, false);
+            if (type != null)
+            {
+                ThereIsVehicleFramework = true;
+            }
         }
     }
 }

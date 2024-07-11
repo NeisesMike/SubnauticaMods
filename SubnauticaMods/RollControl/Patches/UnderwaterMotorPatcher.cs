@@ -39,7 +39,6 @@ namespace RollControl.Patches
             }
             for (int i = 3; i < codes.Count; i++)
             {
-
                 if (
                     codes[i - 3].opcode == OpCodes.Call
                     && codes[i - 3].operand.ToString().Contains("Min")
@@ -53,7 +52,6 @@ namespace RollControl.Patches
                     newCodes[i - 1].opcode = OpCodes.Nop;
                     codes[i].opcode = OpCodes.Nop;
                 }
-
                 if (
                     codes[i - 2].opcode == OpCodes.Ldind_R4
                     && codes[i - 1].opcode == OpCodes.Ldloc_3
@@ -63,12 +61,7 @@ namespace RollControl.Patches
                     // This stops our old Y from being added back in
                     newCodes[i - 1] = new CodeInstruction(OpCodes.Ldc_R4, 0f);
                 }
-
-
-
-
                 newCodes[i] = codes[i];
-
             }
             return newCodes.AsEnumerable();
         }

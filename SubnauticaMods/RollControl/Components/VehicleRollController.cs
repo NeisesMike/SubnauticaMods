@@ -12,10 +12,26 @@ namespace RollControl
         public Vehicle myVehicle;
         private bool isRollEnabled = RollControlPatcher.config.IsVehicleRollDefaultEnabled;
 
+        public bool IsPlayerInThisVehicle
+        {
+            get
+            {
+                if(RollControlPatcher.ThereIsVehicleFramework)
+                {
+                    return Player.main.currentMountedVehicle == myVehicle
+                        || VehicleFramework.VehicleTypes.Drone.mountedDrone == myVehicle;
+                }
+                else
+                {
+                    return Player.main.currentMountedVehicle == myVehicle;
+                }
+            }
+        }
+
         public void Update()
         {
             if (Input.GetKeyDown(RollControlPatcher.config.ToggleRollKey) &&
-                Player.main.currentMountedVehicle == myVehicle &&   
+                IsPlayerInThisVehicle &&   
                 AvatarInputHandler.main.IsEnabled() &&
                 (myVehicle as Exosuit) == null
                 )
@@ -27,15 +43,14 @@ namespace RollControl
 
         public void FixedUpdate()
         {
-            Exosuit maybeExosuit = myVehicle as Exosuit;
             bool isUnderwater = myVehicle.transform.position.y < Ocean.GetOceanLevel() && myVehicle.transform.position.y < myVehicle.worldForces.waterDepth && !myVehicle.precursorOutOfWater;
 
             if (isRollEnabled &&
-                isUnderwater && 
-                Player.main.currentMountedVehicle == myVehicle &&
+                isUnderwater &&
+                IsPlayerInThisVehicle &&
                 Player.main.mode == Player.Mode.LockedPiloting &&
                 AvatarInputHandler.main.IsEnabled() &&
-                maybeExosuit == null
+                myVehicle as Exosuit == null
                 )
             {
                 SubmarineRoll();

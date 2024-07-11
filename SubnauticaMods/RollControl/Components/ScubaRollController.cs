@@ -336,8 +336,18 @@ namespace RollControl
         public void PhysicsMouseLook()
         {
             Vector2 offset = GameInput.GetLookDelta();
-            player.rigidBody.AddTorque(RollControlPatcher.config.ScubaLookSensitivity / 100f * SCALING_FACTOR * player.transform.up * offset.x, ForceMode.VelocityChange);
-            player.rigidBody.AddTorque(RollControlPatcher.config.ScubaLookSensitivity / 100f * SCALING_FACTOR * player.transform.right * -offset.y, ForceMode.VelocityChange);
+            float scalar = 1;
+            if(GameInput.IsPrimaryDeviceGamepad())
+            {
+                scalar = RollControlPatcher.config.ScubaPadSensitivity;
+            }
+            else
+            {
+                scalar = RollControlPatcher.config.ScubaMouseSensitivity;
+            }
+            player.rigidBody.AddTorque(scalar / 100f * SCALING_FACTOR * player.transform.up * offset.x, ForceMode.VelocityChange);
+            player.rigidBody.AddTorque(scalar / 100f * SCALING_FACTOR * player.transform.right * -offset.y, ForceMode.VelocityChange);
+
         }
         public void SetupScubaRoll()
         {

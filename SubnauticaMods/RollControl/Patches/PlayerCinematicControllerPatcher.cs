@@ -8,7 +8,6 @@ namespace RollControl
     {
         public static GameObject cinematicPlayerRotationDummy = null;
         public static Transform endTransform = null;
-
         [HarmonyPrefix]
         [HarmonyPatch("StartCinematicMode")]
         public static bool StartCinematicModePrefix(PlayerCinematicController __instance, Player setplayer)
@@ -19,12 +18,6 @@ namespace RollControl
                 endTransform = __instance.endTransform;
                 ScubaRollController.ResetForEndRoll();
             }
-            return true;
-        }
-        [HarmonyPrefix]
-        [HarmonyPatch("OnPlayerCinematicModeEnd")]
-        public static bool OnPlayerCinematicModeEndPrefix(PlayerCinematicController __instance)
-        {
             return true;
         }
         [HarmonyPostfix]
