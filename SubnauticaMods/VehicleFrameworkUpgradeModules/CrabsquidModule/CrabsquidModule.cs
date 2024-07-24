@@ -1,19 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using UnityEngine;
-using System.Runtime.CompilerServices;
-using System.Collections;
-using Nautilus.Options.Attributes;
-using Nautilus.Options;
-using Nautilus.Json;
-using Nautilus.Handlers;
-using Nautilus.Utility;
 using BepInEx;
-using BepInEx.Logging;
 using VehicleFramework;
 using VehicleFramework.UpgradeModules;
 using HarmonyLib;
@@ -54,13 +43,8 @@ namespace CrabsquidModule
 
         public static Atlas.Sprite GetIcon()
         {
-            // grab the icon image
             string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            byte[] spriteBytes = System.IO.File.ReadAllBytes(Path.Combine(modPath, "CrabsquidModuleIcon.png"));
-            Texture2D SpriteTexture = new Texture2D(128, 128);
-            SpriteTexture.LoadImage(spriteBytes);
-            Sprite mySprite = Sprite.Create(SpriteTexture, new Rect(0.0f, 0.0f, SpriteTexture.width, SpriteTexture.height), new Vector2(0.5f, 0.5f), 100.0f);
-            return new Atlas.Sprite(mySprite);
+            return Nautilus.Utility.ImageUtils.LoadSpriteFromFile(Path.Combine(modPath, "CrabsquidModuleIcon.png"));
         }
 
     }
