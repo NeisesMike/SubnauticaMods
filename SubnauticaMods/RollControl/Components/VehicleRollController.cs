@@ -18,8 +18,18 @@ namespace RollControl
             {
                 if(RollControlPatcher.ThereIsVehicleFramework)
                 {
+                    var vehicleTypesType = Type.GetType("VehicleFramework.VehicleTypes, VehicleFramework", false, false);
+                    System.Reflection.PropertyInfo mountedDroneProperty;
+                    Type vehicleTypesDroneType;
+                    vehicleTypesDroneType = vehicleTypesType.GetNestedType("Drone");
+                    System.Object mountedDrone = null;
+                    if (vehicleTypesType != null && vehicleTypesDroneType != null)
+                    {
+                        mountedDroneProperty = vehicleTypesDroneType.GetProperty("mountedDrone");
+                        mountedDrone = mountedDroneProperty.GetValue(null);
+                    }
                     return Player.main.currentMountedVehicle == myVehicle
-                        || VehicleFramework.VehicleTypes.Drone.mountedDrone == myVehicle;
+                        || (mountedDrone != null && (object)mountedDrone == myVehicle);
                 }
                 else
                 {
