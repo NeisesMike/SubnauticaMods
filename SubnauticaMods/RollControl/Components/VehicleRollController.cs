@@ -16,20 +16,29 @@ namespace RollControl
         {
             get
             {
-                if(RollControlPatcher.ThereIsVehicleFramework)
+                if (RollControlPatcher.ThereIsVehicleFramework)
                 {
-                    var vehicleTypesType = Type.GetType("VehicleFramework.VehicleTypes, VehicleFramework", false, false);
-                    System.Reflection.PropertyInfo mountedDroneProperty;
-                    Type vehicleTypesDroneType;
-                    vehicleTypesDroneType = vehicleTypesType.GetNestedType("Drone");
-                    System.Object mountedDrone = null;
-                    if (vehicleTypesType != null && vehicleTypesDroneType != null)
+                    var vehicleTypesDroneType = Type.GetType("VehicleFramework.VehicleTypes.Drone, VehicleFramework", false, false);
+                    if (vehicleTypesDroneType == null)
                     {
-                        mountedDroneProperty = vehicleTypesDroneType.GetProperty("mountedDrone");
-                        mountedDrone = mountedDroneProperty.GetValue(null);
+                        Logger.Log("vehicletypestype drone was null");
+                        return false;
+                    }
+                    System.Object mountedDrone = null;
+                    if (vehicleTypesDroneType != null)
+                    {
+                        var memberInfo = vehicleTypesDroneType.GetMember("mountedDrone")[0];
+                        if (memberInfo is System.Reflection.PropertyInfo propertyInfo)
+                        {
+                            mountedDrone = propertyInfo.GetValue(null);
+                        }
+                        else if (memberInfo is System.Reflection.FieldInfo fieldInfo)
+                        {
+                            mountedDrone = fieldInfo.GetValue(null);
+                        }
                     }
                     return Player.main.currentMountedVehicle == myVehicle
-                        || (mountedDrone != null && (object)mountedDrone == myVehicle);
+                        || (mountedDrone != null && mountedDrone == (object)myVehicle);
                 }
                 else
                 {
