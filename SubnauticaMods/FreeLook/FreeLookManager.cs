@@ -31,7 +31,7 @@ namespace FreeLook
             {
                 if (_mcc == null)
                 {
-                    _mcc = player.GetComponentInChildren<MainCameraControl>();
+                    _mcc = MainCameraControl.main;
                 }
                 return _mcc;
             }
@@ -91,7 +91,10 @@ namespace FreeLook
                 player.playerAnimator.GetBool("moonpool_exolaunchright") ||
                 m_IsDocking)
             {
-                mcc.cinematicMode = true;
+                if (mcc.GetComponentInParent<Player>() != null)
+                {
+                    mcc.cinematicMode = true;
+                }
                 return;
             }
             void setInVehicleVars(bool inVehicleThisFrame)
@@ -277,7 +280,10 @@ namespace FreeLook
             isTriggerNewlyDown = false;
             resetCameraFlag = false;
             // invoke a camera vulnerability
-            mcc.cinematicMode = true;
+            if (mcc.GetComponentInParent<Player>() != null)
+            {
+                mcc.cinematicMode = true;
+            }
 
             // We must work with camRotation here for the case where the user is in the exosuit.
             // In this case, camRotation Y can take on values somewhere around [-80,80].
@@ -286,7 +292,10 @@ namespace FreeLook
             // so that our subsequent logic has the right origin
             mcc.rotationX = mcc.camRotationX;
             mcc.rotationY = mcc.camRotationY;
-            var camPivot = mcc.transform.Find("camOffset/pdaCamPivot").localRotation = Quaternion.identity;
+            if (mcc.GetComponentInParent<Player>() != null)
+            {
+                mcc.transform.Find("camOffset/pdaCamPivot").localRotation = Quaternion.identity;
+            }
 
             // exosuit test
             Exosuit exo = vehicle as Exosuit;
@@ -332,6 +341,7 @@ namespace FreeLook
             // if we're close enough to center, snap back and stop executing
             bool isUndocking = player.GetVehicle() != null && player.GetVehicle().docked;
             bool isDocking = (player.GetVehicle() == null) && wasFreelyPilotingLastFrame;
+            //if(!isUndocking && !isDocking)
             {
                 double threshold = 1;
                 if (Mathf.Abs(mcc.rotationX) < threshold && Mathf.Abs(mcc.rotationY) < threshold)
@@ -385,7 +395,10 @@ namespace FreeLook
                     player.cinematicModeActive = false;
                 }
                 resetCameraFlag = false;
-                mcc.cinematicMode = false;
+                if (mcc.GetComponentInParent<Player>() != null)
+                {
+                    mcc.cinematicMode = false;
+                }
 
                 Exosuit exo = vehicle as Exosuit;
                 if (exo != null)
