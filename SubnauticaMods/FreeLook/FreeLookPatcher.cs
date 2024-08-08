@@ -40,7 +40,7 @@ namespace FreeLook
         public int deadzone = 20;
     }
 
-    [BepInPlugin("com.mikjaw.subnautica.freelook.mod", "FreeLook", "2.0.3")]
+    [BepInPlugin("com.mikjaw.subnautica.freelook.mod", "FreeLook", "2.2.0")]
     [BepInDependency("com.snmodding.nautilus")]
     public class FreeLookPatcher : BaseUnityPlugin
     {
