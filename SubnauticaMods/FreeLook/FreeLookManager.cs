@@ -327,7 +327,7 @@ namespace FreeLook
         {
             mcc.rotationX = Mathf.SmoothDampAngle(mcc.rotationX, 0f, ref xVelocity, smoothTime);
             mcc.rotationY = Mathf.SmoothDampAngle(mcc.rotationY, 0f, ref yVelocity, smoothTime);
-            mcc.transform.localEulerAngles = new Vector3(-mcc.rotationY, mcc.rotationX, 0);
+            MainCamera.camera.transform.localEulerAngles = new Vector3(-mcc.rotationY, mcc.rotationX, 0f);
 
             Exosuit exo = vehicle as Exosuit;
             if (exo != null)
@@ -366,7 +366,7 @@ namespace FreeLook
             mcc.rotationY += myLookDelta.y;
             mcc.rotationX = Mathf.Clamp(mcc.rotationX, -100, 100);
             mcc.rotationY = Mathf.Clamp(mcc.rotationY, -80, 80);
-            mcc.transform.localEulerAngles = new Vector3(-mcc.rotationY, mcc.rotationX, 0f);
+            MainCamera.camera.transform.localEulerAngles = new Vector3(-mcc.rotationY, mcc.rotationX, 0f);
         }
         internal void CameraRelinquish(bool isDocking)
         {
