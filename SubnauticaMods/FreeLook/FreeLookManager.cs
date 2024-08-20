@@ -370,6 +370,7 @@ namespace FreeLook
         }
         internal void CameraRelinquish(bool isDocking)
         {
+            MainCamera.camera.transform.localEulerAngles = Vector3.zero;
             if (isDocking)
             {
                 mcc.transform.localEulerAngles = Vector3.zero;
