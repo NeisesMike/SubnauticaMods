@@ -9,14 +9,14 @@ namespace VFDrillArm
     public class VFDrillArm : ModVehicleArm
     {
         public override string ClassId => "DrillArmVF";
-        public override string DisplayName => "VF Drill Arm";
+        public override string DisplayName => "Drill Arm";
         public override List<VehicleFramework.Assets.Ingredient> Recipe => new List<VehicleFramework.Assets.Ingredient>()
                 {
                     new VehicleFramework.Assets.Ingredient(TechType.Titanium, 5),
                     new VehicleFramework.Assets.Ingredient(TechType.Lithium, 1),
                     new VehicleFramework.Assets.Ingredient(TechType.Diamond, 4)
                 };
-        public override string Description => "A drill-arm attachment for VF vehicles";
+        public override string Description => "A drill-arm attachment used for mining large ore veins";
         public override Atlas.Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("VFDrillArmIcon.png");
         public override string TabName => "MVCM";
         public override IEnumerator GetArmPrefab(IOut<GameObject> arm)
@@ -28,6 +28,9 @@ namespace VFDrillArm
         {
         }
         public override void OnRemoved(AddActionParams param)
+        {
+        }
+        public override void OnSelected(SelectableActionParams param)
         {
         }
         public override void OnArmSelected(ArmActionParams param)
