@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrabsquidModule", "Crabsqui
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DroneRange", "DroneRange\DroneRange.csproj", "{7CE0B554-1C41-4238-8ED4-BFAD5ACEE7D2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VFDrillArm", "ModVehicleArms\VFDrillArm.csproj", "{BBA54565-4D6E-4096-A940-81FBF0E39410}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{7CE0B554-1C41-4238-8ED4-BFAD5ACEE7D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CE0B554-1C41-4238-8ED4-BFAD5ACEE7D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CE0B554-1C41-4238-8ED4-BFAD5ACEE7D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBA54565-4D6E-4096-A940-81FBF0E39410}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBA54565-4D6E-4096-A940-81FBF0E39410}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBA54565-4D6E-4096-A940-81FBF0E39410}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBA54565-4D6E-4096-A940-81FBF0E39410}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
