@@ -1,51 +1,27 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Reflection;
-using BepInEx;
-using VehicleFramework;
-using VehicleFramework.UpgradeModules;
-using HarmonyLib;
+﻿using System.Collections.Generic;
+using VehicleFramework.UpgradeTypes;
 
 namespace CrabsquidModule
 {
-    [BepInPlugin("com.mikjaw.subnautica.crabsquidmodule.mod", "CrabsquidModule", "1.0")]
-    [BepInDependency("com.snmodding.nautilus")]
-    [BepInDependency("com.mikjaw.subnautica.vehicleframework.mod")]
-    public class MainPatcher : BaseUnityPlugin
+    public class CrabsquidModule : ModVehicleUpgrade
     {
-        public static float energyCost = 5f;
-        public static void AddCrabSquidProtection()
-        {
-            string classId = "CrabsquidModule";
-            string displayName = "Crabsquid Protection Module";
-            string description = "Equip to shrug off Crabsquid EMP at a small cost of energy.";
-            List<Tuple<TechType, int>> recipe = new List<Tuple<TechType, int>>()
+        public override string ClassId => "CrabsquidModule";
+        public override string DisplayName => "Crabsquid Protection Module";
+        public override List<VehicleFramework.Assets.Ingredient> Recipe => new List<VehicleFramework.Assets.Ingredient>()
                 {
-                    new Tuple<TechType, int>(TechType.PowerCell, 1),
-                    new Tuple<TechType, int>(TechType.ComputerChip, 1),
-                    new Tuple<TechType, int>(TechType.AdvancedWiringKit, 2),
-                    new Tuple<TechType, int>(TechType.Titanium, 1),
-            };
-            void OnAdded(ModVehicle mv, List<string> currentUpgrades, int slotId, bool added)
-            {
-                return;
-            }
-            ModuleManager.AddPassiveModule(recipe, classId, displayName, description, OnAdded, GetIcon(), "MVCM");
-        }
-
-        public void Start()
+                    new VehicleFramework.Assets.Ingredient(TechType.PowerCell, 1),
+                    new VehicleFramework.Assets.Ingredient(TechType.ComputerChip, 1),
+                    new VehicleFramework.Assets.Ingredient(TechType.AdvancedWiringKit, 2),
+                    new VehicleFramework.Assets.Ingredient(TechType.Titanium, 1)
+                };
+        public override string Description => "Equip to shrug off Crabsquid EMP at a small cost of energy.";
+        public override Atlas.Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("CrabsquidModuleIcon.png");
+        public override string TabName => "MVCM";
+        public override void OnAdded(AddActionParams param)
         {
-            AddCrabSquidProtection();
-            var harmony = new Harmony("com.mikjaw.subnautica.crabsquidmodule.mod");
-            harmony.PatchAll();
         }
-
-        public static Atlas.Sprite GetIcon()
+        public override void OnRemoved(AddActionParams param)
         {
-            string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            return Nautilus.Utility.ImageUtils.LoadSpriteFromFile(Path.Combine(modPath, "CrabsquidModuleIcon.png"));
         }
-
     }
 }

@@ -1,71 +1,36 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using System.Runtime.CompilerServices;
-using System.Collections;
-using Nautilus.Options.Attributes;
-using Nautilus.Options;
-using Nautilus.Json;
-using Nautilus.Handlers;
-using Nautilus.Utility;
-using BepInEx;
-using BepInEx.Logging;
-using VehicleFramework;
-using VehicleFramework.UpgradeModules;
+using VehicleFramework.UpgradeTypes;
+using VehicleFramework.Assets;
 
 namespace ImpulseSpeedBooster
 {
-    [BepInPlugin("com.mikjaw.subnautica.impulsespeedbooster.mod", "ImpulseSpeedBooster", "1.0")]
-    [BepInDependency("com.snmodding.nautilus")]
-    [BepInDependency("com.mikjaw.subnautica.vehicleframework.mod")]
-    public class MainPatcher : BaseUnityPlugin
+    public class ImpulseSpeedBooster : SelectableChargeableUpgrade
     {
-        public static float invincibilityDuration = 3f;
-        public static float maxCharge = 30f;
-        public static float energyCost = 5f;
-        public static void AddIonCapacitor()
-        {
-            string classId = "ImpulseSpeedBooster";
-            //string displayName = LocalizationManager.GetString(EnglishString.thing);
-            //   string description = LocalizationManager.GetString(EnglishString.Depththing);
-            string displayName = "Impulse Speed Booster";
-            string description = "Charge to unleash a swift propulsion burst, catapulting the sub forward with increased velocity.";
-            List<Tuple<TechType, int>> recipe = new List<Tuple<TechType, int>>()
+        public override string ClassId => "ImpulseSpeedBooster";
+        public override string DisplayName => "Impulse Speed Booster";
+        public override string Description => "Charge to unleash a swift propulsion burst, catapulting the sub forward with increased velocity.";
+        public override List<Ingredient> Recipe => new List<Ingredient>()
                 {
-                    new Tuple<TechType, int>(TechType.PowerCell, 2),
-                    new Tuple<TechType, int>(TechType.Magnetite, 2),
-                    new Tuple<TechType, int>(TechType.Lithium, 1),
-                    new Tuple<TechType, int>(TechType.ComputerChip, 1),
-                    new Tuple<TechType, int>(TechType.Titanium, 2)
+                    new Ingredient(TechType.PowerCell, 2),
+                    new Ingredient(TechType.Magnetite, 2),
+                    new Ingredient(TechType.Lithium, 1),
+                    new Ingredient(TechType.ComputerChip, 1),
+                    new Ingredient(TechType.Titanium, 2)
                 };
-            void OnSelected(ModVehicle mv, int slotId, float charge, float slotCharge)
-            {
-                FMODUWE.PlayOneShot("event:/sub/seamoth/pulse", mv.PilotSeats.First().Seat.transform.position, slotCharge);
-                mv.useRigidbody.AddForce(mv.transform.forward * charge * mv.useRigidbody.mass * 3, ForceMode.Impulse);
-            }
-            ModuleManager.AddSelectableChargeableModule(recipe, classId, displayName, description, OnSelected, maxCharge, energyCost, GetIcon(), "MVCM");
-        }
-
-        public void Start()
+        public override Atlas.Sprite Icon => SpriteHelper.GetSprite("ImpulseSpeedBoosterIcon.png");
+        public override void OnSelected(SelectableChargeableActionParams param)
         {
-
-            AddIonCapacitor();
+            FMODUWE.PlayOneShot("event:/sub/seamoth/pulse", param.mv.transform.position, param.slotCharge);
+            param.mv.useRigidbody.AddForce(param.mv.transform.forward * param.charge * param.mv.useRigidbody.mass * 3, ForceMode.Impulse);
         }
-
-        public static Atlas.Sprite GetIcon()
+        public override void OnAdded(AddActionParams param)
         {
-            // grab the icon image
-            string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            byte[] spriteBytes = System.IO.File.ReadAllBytes(Path.Combine(modPath, "ImpulseSpeedBoosterIcon.png"));
-            Texture2D SpriteTexture = new Texture2D(128, 128);
-            SpriteTexture.LoadImage(spriteBytes);
-            Sprite mySprite = Sprite.Create(SpriteTexture, new Rect(0.0f, 0.0f, SpriteTexture.width, SpriteTexture.height), new Vector2(0.5f, 0.5f), 100.0f);
-            return new Atlas.Sprite(mySprite);
         }
-
+        public override void OnRemoved(AddActionParams param)
+        {
+        }
+        public override float MaxCharge => 30f;
+        public override float EnergyCost => 5f;
     }
 }

@@ -60,11 +60,13 @@
     <Reference Include="UnityEngine_publicized">
       <HintPath>S:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\publicized_assemblies\UnityEngine_publicized.dll</HintPath>
     </Reference>
-    <Reference Include="VehicleFramework">
-      <HintPath>S:\SteamLibrary\steamapps\common\Subnautica\BepInEx\plugins\VehicleFramework\VehicleFramework.dll</HintPath>
+    <Reference Include="VehicleFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\plugins\VehicleFramework\VehicleFramework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MainPatcher.cs" />
     <Compile Include="SolarChargingModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VFSolarCharger.cs" />

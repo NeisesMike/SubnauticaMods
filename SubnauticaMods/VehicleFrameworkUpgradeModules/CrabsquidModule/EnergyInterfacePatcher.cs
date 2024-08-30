@@ -9,6 +9,7 @@ namespace CrabsquidModule
     [HarmonyPatch(typeof(EnergyInterface))]
     public static class EnergyInterfacePatcher
     {
+        public static float energyCost = 5f;
         [HarmonyPrefix]
         [HarmonyPatch(nameof(EnergyInterface.DisableElectronicsForTime))]
         public static bool DisableElectronicsForTimePrefix(EnergyInterface __instance)
@@ -30,7 +31,7 @@ namespace CrabsquidModule
                 yield break;
             }
             mutex = true;
-            eint.ConsumeEnergy(5f);
+            eint.ConsumeEnergy(energyCost);
             yield return new WaitForSeconds(1.0f);
             mutex = false;
         }
