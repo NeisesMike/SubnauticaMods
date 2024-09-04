@@ -71,54 +71,66 @@ namespace ThirdPerson
         }
         public void MoveCamera(ThirpyInputs inputs)
         {
-            AvatarInputHandler.main.gameObject.SetActive(true);
-            Player.main.GetComponent<PlayerController>().inputEnabled = mode != ThirpyMode.Scenic;
-            if (mode == ThirpyMode.Scenic)
+            switch(mode)
             {
-                AvatarInputHandler.main.gameObject.SetActive(false);
-                Vector2 lookVector = GameInput.GetLookDelta();
-                thirpyCamRoot.transform.localEulerAngles = new Vector3(
-                    thirpyCamRoot.transform.localEulerAngles.x - lookVector.y,
-                    thirpyCamRoot.transform.localEulerAngles.y + lookVector.x,
-                    thirpyCamRoot.transform.localEulerAngles.z
-                    );
-                thirpyCamRoot.transform.localPosition = Vector3.zero;
-                Vector3 desiredWorldPosition = thirpyCamRoot.transform.position - thirpyCamRoot.transform.forward * thirpyZoom;
-                thirpyCamRoot.transform.localPosition = thirpyCamRoot.transform.parent.InverseTransformPoint(desiredWorldPosition);
-                float zoomIn = GameInput.GetAnalogValueForButton(GameInput.Button.MoveForward);
-                float zoomInFine = GameInput.GetAnalogValueForButton(GameInput.Button.MoveRight);
-                float zoomOut = GameInput.GetAnalogValueForButton(GameInput.Button.MoveBackward);
-                float zoomOutFine = GameInput.GetAnalogValueForButton(GameInput.Button.MoveLeft);
-                thirpyZoom -= zoomIn * 0.25f;
-                thirpyZoom -= zoomInFine * 0.01f;
-                thirpyZoom += zoomOut * 0.25f;
-                thirpyZoom += zoomOutFine * 0.01f;
-            }
-            else if(mode == ThirpyMode.Thirpy)
-            {
-                thirpyCamRoot.transform.localPosition = Vector3.zero;
-                thirpyCamRoot.transform.localRotation = Quaternion.identity;
-                Transform body = MainCameraControl.main.viewModel;
-                PlayerCam.transform.Find("camOffset").localEulerAngles = new Vector3(
-                    0f,
-                    PlayerCam.transform.Find("camOffset").localEulerAngles.y,
-                    0f
-                    );
+                case ThirpyMode.Nothing:
+                    Player.main.GetComponent<PlayerController>().inputEnabled = MainCameraControl.main.enabled;
+                    break;
+                case ThirpyMode.Thirpy:
+                    AvatarInputHandler.main.gameObject.SetActive(true);
+                    if(Player.main.GetMode() == Player.Mode.Piloting && Player.main.GetCurrentSub().name.ToLower().Contains("cyclops"))
+                    {
+                        Player.main.GetComponent<PlayerController>().inputEnabled = false;
+                    }
+                    else
+                    {
+                        Player.main.GetComponent<PlayerController>().inputEnabled = true;
+                    }
+                    thirpyCamRoot.transform.localPosition = Vector3.zero;
+                    thirpyCamRoot.transform.localRotation = Quaternion.identity;
+                    Transform body = MainCameraControl.main.viewModel;
+                    PlayerCam.transform.Find("camOffset").localEulerAngles = new Vector3(
+                        0f,
+                        PlayerCam.transform.Find("camOffset").localEulerAngles.y,
+                        0f
+                        );
 
-                if(Player.main.GetVehicle() == null)
-                {
+                    if (Player.main.GetVehicle() == null)
+                    {
+                        Vector2 lookVector2 = GameInput.GetLookDelta();
+                        Pitch -= lookVector2.y * pitchFactor;
+                    }
+                    else
+                    {
+                        Pitch = 0.3f;
+                    }
+                    Vector3 desiredWorldPosition2 = body.position;
+                    desiredWorldPosition2 += -body.forward * thirpyZoom * Mathf.Cos(Pitch);
+                    desiredWorldPosition2 += body.up * thirpyZoom * Mathf.Sin(Pitch);
+                    thirpyCamRoot.transform.localPosition = thirpyCamRoot.transform.parent.InverseTransformPoint(desiredWorldPosition2);
+                    PlayerCam.transform.LookAt(Player.main.transform);
+                    break;
+                case ThirpyMode.Scenic:
+                    Player.main.GetComponent<PlayerController>().inputEnabled = false;
+                    AvatarInputHandler.main.gameObject.SetActive(false);
                     Vector2 lookVector = GameInput.GetLookDelta();
-                    Pitch -= lookVector.y * pitchFactor;
-                }
-                else
-                {
-                    Pitch = 0.3f;
-                }
-                Vector3 desiredWorldPosition = body.position;
-                desiredWorldPosition += -body.forward * thirpyZoom * Mathf.Cos(Pitch);
-                desiredWorldPosition += body.up * thirpyZoom * Mathf.Sin(Pitch);
-                thirpyCamRoot.transform.localPosition = thirpyCamRoot.transform.parent.InverseTransformPoint(desiredWorldPosition);
-                PlayerCam.transform.LookAt(Player.main.transform);
+                    thirpyCamRoot.transform.localEulerAngles = new Vector3(
+                        thirpyCamRoot.transform.localEulerAngles.x - lookVector.y,
+                        thirpyCamRoot.transform.localEulerAngles.y + lookVector.x,
+                        thirpyCamRoot.transform.localEulerAngles.z
+                        );
+                    thirpyCamRoot.transform.localPosition = Vector3.zero;
+                    Vector3 desiredWorldPosition = thirpyCamRoot.transform.position - thirpyCamRoot.transform.forward * thirpyZoom;
+                    thirpyCamRoot.transform.localPosition = thirpyCamRoot.transform.parent.InverseTransformPoint(desiredWorldPosition);
+                    float zoomIn = GameInput.GetAnalogValueForButton(GameInput.Button.MoveForward);
+                    float zoomInFine = GameInput.GetAnalogValueForButton(GameInput.Button.MoveRight);
+                    float zoomOut = GameInput.GetAnalogValueForButton(GameInput.Button.MoveBackward);
+                    float zoomOutFine = GameInput.GetAnalogValueForButton(GameInput.Button.MoveLeft);
+                    thirpyZoom -= zoomIn * 0.25f;
+                    thirpyZoom -= zoomInFine * 0.01f;
+                    thirpyZoom += zoomOut * 0.25f;
+                    thirpyZoom += zoomOutFine * 0.01f;
+                    break;
             }
         }
         public ThirpyInputs SetThirpyState(ThirpyInputs inputs)
