@@ -8,14 +8,13 @@ namespace VFDrillArm
 	public static class ExosuitDrillArmPatcher
 	{
 		public static ModVehicle drillingModVehicle = null;
-		public static bool TraceTargetPosition(GameObject ignoreObj, float maxDist, ref GameObject closestObj, ref Vector3 position)
+		public static bool TraceTargetPosition(GameObject ignoreObj, Vector3 origin, float maxDist, ref GameObject closestObj, ref Vector3 position)
 		{
-			bool result = false;
-			Vector3 position2 = ignoreObj.transform.position;
-			int num = UWE.Utils.RaycastIntoSharedBuffer(new Ray(position2, ignoreObj.transform.forward), maxDist, -2097153, QueryTriggerInteraction.UseGlobal);
+			bool result = false; ;
+			int num = UWE.Utils.RaycastIntoSharedBuffer(new Ray(origin, ignoreObj.transform.forward), maxDist, -2097153, QueryTriggerInteraction.UseGlobal);
 			if (num == 0)
 			{
-				num = UWE.Utils.SpherecastIntoSharedBuffer(position2, 0.7f, ignoreObj.transform.forward, maxDist, -2097153, QueryTriggerInteraction.UseGlobal);
+				num = UWE.Utils.SpherecastIntoSharedBuffer(origin, 0.7f, ignoreObj.transform.forward, maxDist, -2097153, QueryTriggerInteraction.UseGlobal);
 			}
 			closestObj = null;
 			float num2 = 0f;
@@ -47,7 +46,12 @@ namespace VFDrillArm
 				Vector3 zero = Vector3.zero;
 				GameObject gameObject = null;
 				__instance.drillTarget = null;
-				TraceTargetPosition(mv.gameObject, 5f, ref gameObject, ref zero);
+				Vector3 origin = mv.gameObject.transform.position;
+				if (mv.Arms.leftArmPlacement != null && mv.Arms.rightArmPlacement != null)
+				{
+					origin = Vector3.Lerp(mv.Arms.leftArmPlacement.position, mv.Arms.rightArmPlacement.position, 0.5f);
+				}
+				TraceTargetPosition(mv.gameObject, origin, 5f, ref gameObject, ref zero);
 				if (gameObject && __instance.drilling)
 				{
 					Drillable drillable = gameObject.FindAncestor<Drillable>();
