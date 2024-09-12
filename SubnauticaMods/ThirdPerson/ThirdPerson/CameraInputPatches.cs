@@ -61,7 +61,7 @@ namespace ThirdPerson
             {
                 if (Player.main.GetComponent<ThirdPersonCameraController>().mode == ThirpyMode.Thirpy)
                 {
-                    maxDistance += Player.main.GetComponent<ThirdPersonCameraController>().thirpyZoom;
+                    maxDistance += PerVehicleConfig.GetDistance();
                 }
             }
         }

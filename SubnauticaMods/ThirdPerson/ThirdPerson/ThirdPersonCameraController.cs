@@ -36,7 +36,6 @@ namespace ThirdPerson
         private float timeActivationInputsHeld = 0f;
         internal ThirpyMode mode;
         private GameObject thirpyCamRoot = null;
-        internal float thirpyZoom = 5.1f;
         internal float pitchFactor = 0.01f;
         private float _pitch = 0;
         private float Pitch
@@ -64,6 +63,7 @@ namespace ThirdPerson
             Component.DestroyImmediate(thirpyCamRoot.GetComponent<Renderer>());
             Component.DestroyImmediate(thirpyCamRoot.GetComponent<Collider>());
             thirpyCamRoot.transform.SetParent(Player.main.transform);
+            PerVehicleConfig.Load();
         }
         public void Update()
         {
@@ -105,8 +105,8 @@ namespace ThirdPerson
                         Pitch = 0.3f;
                     }
                     Vector3 desiredWorldPosition2 = body.position;
-                    desiredWorldPosition2 += -body.forward * thirpyZoom * Mathf.Cos(Pitch);
-                    desiredWorldPosition2 += body.up * thirpyZoom * Mathf.Sin(Pitch);
+                    desiredWorldPosition2 += -body.forward * PerVehicleConfig.GetDistance() * Mathf.Cos(Pitch);
+                    desiredWorldPosition2 += body.up * PerVehicleConfig.GetDistance() * Mathf.Sin(Pitch);
                     thirpyCamRoot.transform.localPosition = thirpyCamRoot.transform.parent.InverseTransformPoint(desiredWorldPosition2);
                     PlayerCam.transform.LookAt(Player.main.transform);
                     break;
@@ -120,16 +120,19 @@ namespace ThirdPerson
                         thirpyCamRoot.transform.localEulerAngles.z
                         );
                     thirpyCamRoot.transform.localPosition = Vector3.zero;
-                    Vector3 desiredWorldPosition = thirpyCamRoot.transform.position - thirpyCamRoot.transform.forward * thirpyZoom;
+                    Vector3 desiredWorldPosition = thirpyCamRoot.transform.position - thirpyCamRoot.transform.forward * PerVehicleConfig.GetDistance();
                     thirpyCamRoot.transform.localPosition = thirpyCamRoot.transform.parent.InverseTransformPoint(desiredWorldPosition);
                     float zoomIn = GameInput.GetAnalogValueForButton(GameInput.Button.MoveForward);
                     float zoomInFine = GameInput.GetAnalogValueForButton(GameInput.Button.MoveRight);
                     float zoomOut = GameInput.GetAnalogValueForButton(GameInput.Button.MoveBackward);
                     float zoomOutFine = GameInput.GetAnalogValueForButton(GameInput.Button.MoveLeft);
-                    thirpyZoom -= zoomIn * 0.25f;
-                    thirpyZoom -= zoomInFine * 0.01f;
-                    thirpyZoom += zoomOut * 0.25f;
-                    thirpyZoom += zoomOutFine * 0.01f;
+
+                    float currentZoom = PerVehicleConfig.GetDistance();
+                    currentZoom -= zoomIn * 0.25f;
+                    currentZoom -= zoomInFine * 0.01f;
+                    currentZoom += zoomOut * 0.25f;
+                    currentZoom += zoomOutFine * 0.01f;
+                    PerVehicleConfig.UpdateDistance(currentZoom);
                     break;
             }
         }
@@ -192,6 +195,7 @@ namespace ThirdPerson
                 case ThirpyMode.Scenic:
                     ActivateThirpyCam(true);
                     mode = ThirpyMode.Thirpy;
+                    PerVehicleConfig.Save();
                     break;
                 case ThirpyMode.Thirpy:
                     ActivateThirpyCam(true);
@@ -211,6 +215,7 @@ namespace ThirdPerson
                 case ThirpyMode.Scenic:
                     ActivateThirpyCam(true);
                     mode = ThirpyMode.Thirpy;
+                    PerVehicleConfig.Save();
                     break;
                 case ThirpyMode.Thirpy:
                     ActivateThirpyCam(false);
