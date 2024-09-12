@@ -40,7 +40,7 @@ namespace ThirdPerson
             string name;
             Vehicle myVehicle = Player.main.GetVehicle();
             SubRoot mySub = Player.main.currentSub;
-            if (myVehicle != null)
+            if (myVehicle != null && Player.main.mode == Player.Mode.LockedPiloting)
             {
                 name = myVehicle.ToString();
             }

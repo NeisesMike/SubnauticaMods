@@ -67,7 +67,19 @@ namespace ThirdPerson
         }
         public void Update()
         {
-            MoveCamera(SetThirpyState(ComputeDerivedInputs(CollectInputs())));
+            if (!UWE.FreezeTime.HasFreezers())
+            {
+                MoveCamera(SetThirpyState(ComputeDerivedInputs(CollectInputs())));
+            }
+            if(mode == ThirpyMode.Thirpy || mode == ThirpyMode.Scenic)
+            {
+                Player.main.SetHeadVisible(true);
+                Player.main.SetScubaMaskActive(false);
+            }
+            if(Player.main.cinematicModeActive && Player.main.mode != Player.Mode.Piloting)
+            {
+                Player.main.SetHeadVisible(false);
+            }
         }
         public void MoveCamera(ThirpyInputs inputs)
         {
@@ -95,7 +107,7 @@ namespace ThirdPerson
                         0f
                         );
 
-                    if (Player.main.GetVehicle() == null)
+                    if (Player.main.GetVehicle() == null || Player.main.mode == Player.Mode.Normal)
                     {
                         Vector2 lookVector2 = GameInput.GetLookDelta();
                         Pitch -= lookVector2.y * pitchFactor;
@@ -257,6 +269,13 @@ namespace ThirdPerson
             PlayerCam.SetParent(destination);
             PlayerCam.localPosition = Vector3.zero;
             PlayerCam.localRotation = Quaternion.identity;
+        }
+        public void UpdateCyclopsFreeze()
+        {
+            if(Player.main.currentSub.name.ToLower().Contains("cyclops"))
+            {
+                Player.main.currentSub.GetComponent<FreezeRigidbodyWhenFar>().freezeDist = 150f;
+            }
         }
     }
 }
