@@ -7,6 +7,7 @@ namespace VFDrillArm
 	[HarmonyPatch(typeof(ExosuitDrillArm))]
 	public static class ExosuitDrillArmPatcher
 	{
+		public static ModVehicle drillingModVehicle = null;
 		public static bool TraceTargetPosition(GameObject ignoreObj, float maxDist, ref GameObject closestObj, ref Vector3 position)
 		{
 			bool result = false;
@@ -35,6 +36,7 @@ namespace VFDrillArm
 		[HarmonyPatch(nameof(ExosuitDrillArm.OnHit))]
 		public static bool OnHitPrefix(ExosuitDrillArm __instance)
 		{
+			drillingModVehicle = null;
 			ModVehicle mv = UWE.Utils.GetComponentInHierarchy<ModVehicle>(__instance.gameObject);
 			if (mv == null)
 			{
@@ -75,6 +77,7 @@ namespace VFDrillArm
 						return false;
 					}
 					GameObject gameObject2;
+					drillingModVehicle = mv;
 					drillable.OnDrill(__instance.fxSpawnPoint.position, null, out gameObject2);
 					__instance.drillTarget = gameObject2;
 					if (__instance.fxControl.emitters[0].fxPS != null && !__instance.fxControl.emitters[0].fxPS.emission.enabled)
