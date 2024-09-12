@@ -5,7 +5,7 @@ namespace VFDrillArm
 {
     [BepInPlugin("com.mikjaw.subnautica.vfdrillarm.mod", "VFDrillArm", "1.0")]
     [BepInDependency("com.snmodding.nautilus")]
-    [BepInDependency("com.mikjaw.subnautica.vehicleframework.mod", MinimumDependencyVersion: "1.3.0")]
+    [BepInDependency("com.mikjaw.subnautica.vehicleframework.mod", MinimumDependencyVersion: "1.3.2")]
     public class MainPatcher : BaseUnityPlugin
     {
         public void Start()
