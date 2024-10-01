@@ -4,7 +4,7 @@ using VehicleFramework;
 
 namespace VFScannerArm
 {
-    public class ScannerArm : MonoBehaviour
+    public class ScannerArm : MonoBehaviour, VehicleFramework.IPlayerListener
     {
 		Transform GObjectsRoot => transform.Find("offset/model/Bone.002/Bone/Bone.001");
 		Transform ScreenOuter => GObjectsRoot.Find("ScreenOuter");
@@ -357,6 +357,23 @@ namespace VFScannerArm
 		}
 
 		public GameObject scanBeam;
+        void IPlayerListener.OnPlayerEntry()
+        {
+        }
+
+        void IPlayerListener.OnPlayerExit()
+		{
+			IsInUse = false;
+		}
+
+        void IPlayerListener.OnPilotBegin()
+        {
+        }
+
+        void IPlayerListener.OnPilotEnd()
+        {
+			IsInUse = false;
+        }
 		public FMOD_CustomLoopingEmitter scanSound;
 		public FMODAsset completeSound;
 		private ScannerTool.ScanState stateCurrent;
