@@ -299,60 +299,6 @@ namespace VFScannerArm
 				scanFX.RemoveOverlay();
 			}
 		}
-		private void HandleScreen(ScannerTool.ScreenState state, float progress = 0f)
-        {
-			bool flag = state == ScannerTool.ScreenState.Scanning;
-			screenDefault.SetActive(!flag);
-			screenProgress.SetActive(flag);
-			screenAnimator.Off();
-			switch (state)
-			{
-				case ScannerTool.ScreenState.Default:
-					screenDefaultText.text = Language.main.Get("ScannerScreenDefault");
-					screenDefaultText.color = new Color32(159, byte.MaxValue, byte.MaxValue, byte.MaxValue);
-					return;
-				case ScannerTool.ScreenState.Ready:
-					screenDefaultText.text = Language.main.Get("ScannerScreenReady");
-					screenDefaultText.color = new Color32(159, byte.MaxValue, byte.MaxValue, byte.MaxValue);
-					screenAnimator.pulse = true;
-					screenAnimator.pulseFrequency = 5f;
-					screenAnimator.pulseMin = 0.1f;
-					screenAnimator.pulseMax = 1f;
-					return;
-				case ScannerTool.ScreenState.Scanning:
-					screenProgressText.text = Language.main.Get("ScannerScreenScanning");
-					screenProgressText.color = new Color32(159, byte.MaxValue, byte.MaxValue, byte.MaxValue);
-					screenProgressImage.fillAmount = Mathf.Clamp01(progress);
-					screenProgressValueText.text = Mathf.RoundToInt(progress * 100f) + "%";
-					return;
-				case ScannerTool.ScreenState.Unpowered:
-					screenDefaultText.text = Language.main.Get("ScannerScreenUnpowered");
-					screenDefaultText.color = new Color32(byte.MaxValue, 0, 0, byte.MaxValue);
-					screenAnimator.pulse = true;
-					screenAnimator.pulseFrequency = 5f;
-					screenAnimator.pulseMin = 0.1f;
-					screenAnimator.pulseMax = 1f;
-					return;
-				case ScannerTool.ScreenState.NotInfected:
-					screenDefaultText.text = Language.main.Get("ScannerScreenNotInfected");
-					screenDefaultText.color = new Color(0f, 255f, 0f, 255f);
-					screenAnimator.pulse = true;
-					screenAnimator.pulseFrequency = 5f;
-					screenAnimator.pulseMin = 0.1f;
-					screenAnimator.pulseMax = 1f;
-					return;
-				case ScannerTool.ScreenState.Infected:
-					screenDefaultText.text = Language.main.Get("ScannerScreenInfected");
-					screenDefaultText.color = new Color(255f, 0f, 0f, 255f);
-					screenAnimator.pulse = true;
-					screenAnimator.pulseFrequency = 5f;
-					screenAnimator.pulseMin = 0.1f;
-					screenAnimator.pulseMax = 1f;
-					return;
-				default:
-					return;
-			}
-		}
 		private void UpdateScreen(ScannerTool.ScreenState state, float progress = 0f)
 		{
 			TMPro.TextMeshProUGUI textCanvas = transform.Find("model/Bone.002/Bone/Bone.001/ScreenOuter/ScreenInner/Text (TMP)").GetComponent<TMPro.TextMeshProUGUI>();
@@ -395,9 +341,6 @@ namespace VFScannerArm
 			scanSound = gameObject.EnsureComponent<FMOD_CustomLoopingEmitter>();
 			scanSound.asset = MainPatcher.originalScannerTool.scanSound.asset;
             completeSound = Instantiate(MainPatcher.originalScannerTool.completeSound);
-            screenDefault = GameObject.Instantiate(MainPatcher.originalScannerTool.screenDefault);
-            screenProgress = GameObject.Instantiate(MainPatcher.originalScannerTool.screenProgress);
-            screenAnimator = Instantiate(MainPatcher.originalScannerTool.screenAnimator);
 			scanOrganicTex = new Texture2D(MainPatcher.originalScannerTool.scanOrganicTex.width,
 				MainPatcher.originalScannerTool.scanOrganicTex.height,
 				MainPatcher.originalScannerTool.scanOrganicTex.format,
@@ -425,14 +368,5 @@ namespace VFScannerArm
 		public Color scanCircuitColor = Color.white;
 		public Color scanOrganicColor = Color.white;
 		public float powerConsumption = 0.2f;
-
-		public Animator animator; // todo
-		public GameObject screenDefault; // todo
-		public GameObject screenProgress; // todo
-		public TMPro.TextMeshProUGUI screenDefaultText; // todo
-		public TMPro.TextMeshProUGUI screenProgressText; // todo
-		public SimpleAnimation screenAnimator; // todo
-		public UnityEngine.UI.Image screenProgressImage; // todo
-		public TMPro.TextMeshProUGUI screenProgressValueText; // todo
 	}
 }
