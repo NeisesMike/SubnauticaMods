@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DroneRange", "DroneRange\Dr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VFDrillArm", "ModVehicleArms\VFDrillArm.csproj", "{BBA54565-4D6E-4096-A940-81FBF0E39410}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VFScannerArm", "VFScannerArm\VFScannerArm.csproj", "{E0828CC7-CA96-44EA-A585-E71D8DE67021}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThermalChargingModule", "ThermalChargingModule\ThermalChargingModule.csproj", "{774789B1-B5BE-4CD2-8B3D-6EE01EF009B3}"
 EndProject
 Global
@@ -59,6 +61,10 @@ Global
 		{BBA54565-4D6E-4096-A940-81FBF0E39410}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBA54565-4D6E-4096-A940-81FBF0E39410}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBA54565-4D6E-4096-A940-81FBF0E39410}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0828CC7-CA96-44EA-A585-E71D8DE67021}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0828CC7-CA96-44EA-A585-E71D8DE67021}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0828CC7-CA96-44EA-A585-E71D8DE67021}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0828CC7-CA96-44EA-A585-E71D8DE67021}.Release|Any CPU.Build.0 = Release|Any CPU
 		{774789B1-B5BE-4CD2-8B3D-6EE01EF009B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{774789B1-B5BE-4CD2-8B3D-6EE01EF009B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{774789B1-B5BE-4CD2-8B3D-6EE01EF009B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
