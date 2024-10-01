@@ -119,7 +119,7 @@ namespace VFScannerArm
 				StopScanFX();
 			}
 		}
-		public bool DoScan()
+		public void DoScan()
 		{
 			PDAScanner.Result result = Scan();
 			if (result != PDAScanner.Result.Processed)
@@ -133,13 +133,11 @@ namespace VFScannerArm
 			{
 				ErrorMessage.AddDebug(Language.main.Get("ScannerInstanceKnown"));
 			}
-			return true;
 		}
-		public void DoAnimations(bool isInUse)
+		public void HandleScreenRotation()
 		{
-			GetComponentInChildren<Animator>().SetBool("IsArmRaised", isInUse);
 			float lerpAmount = (Time.time - timeSwitched) * 3;
-			if (isInUse)
+			if (IsInUse)
 			{
 				ScreenOuter.localEulerAngles = Vector3.Lerp(ScreenClosed, ScreenOpen, lerpAmount);
 			}
@@ -147,6 +145,9 @@ namespace VFScannerArm
 			{
 				ScreenOuter.localEulerAngles = Vector3.Lerp(ScreenOpen, ScreenClosed, lerpAmount);
 			}
+		}
+		public void HandleProgressBar()
+		{
 			float progressLerp; // = Mathf.Lerp(fullOrangeOffset, fullBlueOffset, PDAScanner.scanTarget.gameObject == null ? lastProgressValue : PDAScanner.scanTarget.progress);
 			if (PDAScanner.CanScan() == PDAScanner.Result.Scan)
 			{
@@ -164,6 +165,12 @@ namespace VFScannerArm
 			float snappedScrollY = Mathf.Round(progressLerp / (3 * pixelHeightUV)) * (3 * pixelHeightUV);
 			GObjectsRoot.Find("ProgressBar").GetComponent<MeshRenderer>().material.mainTextureOffset = new Vector2(0, snappedScrollY);
 		}
+		public void DoAnimations()
+		{
+			GetComponentInChildren<Animator>().SetBool("IsArmRaised", IsInUse);
+			HandleScreenRotation();
+			HandleProgressBar();
+		}
 		public void LateUpdate()
 		{
 			bool flag = stateCurrent == ScannerTool.ScanState.Scan;
@@ -172,7 +179,7 @@ namespace VFScannerArm
 				OnHover();
 			}
 			SetFXActive(flag);
-			DoAnimations(IsInUse);
+			DoAnimations();
 			if (flag)
 			{
 				scanSound.Play();
