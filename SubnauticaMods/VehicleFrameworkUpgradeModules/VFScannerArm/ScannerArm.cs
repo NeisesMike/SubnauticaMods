@@ -6,7 +6,8 @@ namespace VFScannerArm
 {
     public class ScannerArm : MonoBehaviour
     {
-		Transform ScreenOuter => transform.Find("model/Bone.002/Bone/Bone.001/ScreenOuter");
+		Transform GObjectsRoot => transform.Find("offset/model/Bone.002/Bone/Bone.001");
+		Transform ScreenOuter => GObjectsRoot.Find("ScreenOuter");
 		Vector3 ScreenOpen = new Vector3(180, 0, 0);
 		Vector3 ScreenClosed = new Vector3(90, 0, 0);
 		readonly float fullOrangeOffset = 0.86f;
@@ -60,21 +61,21 @@ namespace VFScannerArm
 					mat.SetFloat("_EmissionLMNight", 1);
 				}
 			}
-			EnableSimpleEmission(transform.Find("model/Bone.002/Bone/Bone.001/ProgressBar").GetComponent<MeshRenderer>().material, false);
-            List<Material> mats = new List<Material>
-            {
-                transform.Find("model/Bone.002/Bone/Bone.001/Forearm.001").GetComponent<MeshRenderer>().material,
-                transform.Find("model/Bone.002/Bone/Bone.001/Forearm.002").GetComponent<MeshRenderer>().material,
-                transform.Find("model/Bone.002/Bone/Bone.001/Forearm.003").GetComponent<MeshRenderer>().material,
-                transform.Find("model/Bone.002/Bone/Bone.001/Forearm.004").GetComponent<MeshRenderer>().material
-            };
+			EnableSimpleEmission(GObjectsRoot.Find("ProgressBar").GetComponent<MeshRenderer>().material, false);
+			List<Material> mats = new List<Material>
+			{
+				GObjectsRoot.Find("Forearm.001").GetComponent<MeshRenderer>().material,
+			    GObjectsRoot.Find("Forearm.002").GetComponent<MeshRenderer>().material,
+				GObjectsRoot.Find("Forearm.003").GetComponent<MeshRenderer>().material,
+			    GObjectsRoot.Find("Forearm.004").GetComponent<MeshRenderer>().material
+			};
             mats.ForEach(x => EnableSimpleEmission(x));
 
 
-			GameObject screenInner = transform.Find("model/Bone.002/Bone/Bone.001/ScreenOuter/ScreenInner").gameObject;
+			GameObject screenInner = ScreenOuter.Find("ScreenInner").gameObject;
 			screenInner.GetComponent<UnityEngine.UI.Image>().sprite = MainPatcher.originalScannerTool.transform.Find("UI/Content/Background").GetComponent<UnityEngine.UI.Image>().sprite;
 
-			GameObject textCanvas = transform.Find("model/Bone.002/Bone/Bone.001/ScreenOuter/ScreenInner/Text (TMP)").gameObject;
+			GameObject textCanvas = ScreenOuter.Find("ScreenInner/Text (TMP)").gameObject;
 			var tmprougui = textCanvas.GetComponent<TMPro.TextMeshProUGUI>();
 			tmprougui.font = MainPatcher.originalScannerTool.transform.Find("UI/Content/Default").GetComponent<TMPro.TextMeshProUGUI>().font;
 			tmprougui.text = "SEARCHING...";
@@ -152,7 +153,7 @@ namespace VFScannerArm
 			float pixelHeightUV = uvRange / 1500.0f; // UV space per pixel
 													 // Snap to 3-pixel increments
 			float snappedScrollY = Mathf.Round(progressLerp / (3 * pixelHeightUV)) * (3 * pixelHeightUV);
-			transform.Find("model/Bone.002/Bone/Bone.001/ProgressBar").GetComponent<MeshRenderer>().material.mainTextureOffset = new Vector2(0, snappedScrollY);
+			GObjectsRoot.Find("ProgressBar").GetComponent<MeshRenderer>().material.mainTextureOffset = new Vector2(0, snappedScrollY);
 		}
 		public void LateUpdate()
 		{
@@ -301,7 +302,7 @@ namespace VFScannerArm
 		}
 		private void UpdateScreen(ScannerTool.ScreenState state, float progress = 0f)
 		{
-			TMPro.TextMeshProUGUI textCanvas = transform.Find("model/Bone.002/Bone/Bone.001/ScreenOuter/ScreenInner/Text (TMP)").GetComponent<TMPro.TextMeshProUGUI>();
+			TMPro.TextMeshProUGUI textCanvas = ScreenOuter.Find("ScreenInner/Text (TMP)").GetComponent<TMPro.TextMeshProUGUI>();
 			switch (state)
 			{
 				case ScannerTool.ScreenState.Default:
