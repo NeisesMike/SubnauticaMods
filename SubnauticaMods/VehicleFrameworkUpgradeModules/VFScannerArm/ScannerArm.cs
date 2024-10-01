@@ -167,7 +167,7 @@ namespace VFScannerArm
 		public void LateUpdate()
 		{
 			bool flag = stateCurrent == ScannerTool.ScanState.Scan;
-			if (idleTimer <= 0f)
+			if (mv.IsPlayerControlling() && idleTimer <= 0f)
 			{
 				OnHover();
 			}
