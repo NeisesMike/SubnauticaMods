@@ -82,6 +82,15 @@ namespace VFScannerArm
 			tmprougui.fontSize = 32;
 			tmprougui.alignment = TMPro.TextAlignmentOptions.Center;
 			tmprougui.enableAutoSizing = true;
+			if (gameObject == mv.GetComponent<VehicleFramework.VehicleComponents.VFArmsManager>()?.rightArm)
+			{
+				Transform rightArmDisplay = ScreenOuter.Find("ScreenInner/Text (TMP)");
+				rightArmDisplay.transform.localScale = new Vector3(
+					-rightArmDisplay.transform.localScale.x,
+					rightArmDisplay.transform.localScale.y,
+					rightArmDisplay.transform.localScale.z
+				);
+			}
 		}
 		public void Update()
 		{
