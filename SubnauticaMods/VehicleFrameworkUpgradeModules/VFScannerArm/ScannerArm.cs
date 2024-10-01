@@ -4,8 +4,8 @@ using VehicleFramework;
 
 namespace VFScannerArm
 {
-    public class ScannerArm : MonoBehaviour, VehicleFramework.IPlayerListener
-    {
+	public class ScannerArm : MonoBehaviour, VehicleFramework.IPlayerListener
+	{
 		Transform GObjectsRoot => transform.Find("offset/model/Bone.002/Bone/Bone.001");
 		Transform ScreenOuter => GObjectsRoot.Find("ScreenOuter");
 		Vector3 ScreenOpen = new Vector3(180, 0, 0);
@@ -16,36 +16,36 @@ namespace VFScannerArm
 		private ModVehicle mv => GetComponentInParent<ModVehicle>();
 		private bool IsInUse = false;
 		private float timeSwitched = 0;
-        public void Awake()
-        {
+		public void Awake()
+		{
 			SetupScannerTool();
 			UpdateScreen(ScannerTool.ScreenState.Default, 0f);
 		}
-        public void Start()
-        {
+		public void Start()
+		{
 			SetFXActive(false);
 			Shader scannerToolScanning = ShaderManager.preloadedShaders.scannerToolScanning;
-            if (scannerToolScanning != null)
-            {
-                scanMaterialCircuitFX = new Material(scannerToolScanning)
-                {
-                    hideFlags = HideFlags.HideAndDontSave,
-                };
-                scanMaterialCircuitFX.SetTexture(ShaderPropertyID._MainTex, scanCircuitTex);
-                scanMaterialCircuitFX.SetColor(ShaderPropertyID._Color, scanCircuitColor);
-                scanMaterialOrganicFX = new Material(scannerToolScanning)
-                {
-                    hideFlags = HideFlags.HideAndDontSave
-                };
-                scanMaterialOrganicFX.SetTexture(ShaderPropertyID._MainTex, scanOrganicTex);
-                scanMaterialOrganicFX.SetColor(ShaderPropertyID._Color, scanOrganicColor);
-            }
+			if (scannerToolScanning != null)
+			{
+				scanMaterialCircuitFX = new Material(scannerToolScanning)
+				{
+					hideFlags = HideFlags.HideAndDontSave,
+				};
+				scanMaterialCircuitFX.SetTexture(ShaderPropertyID._MainTex, scanCircuitTex);
+				scanMaterialCircuitFX.SetColor(ShaderPropertyID._Color, scanCircuitColor);
+				scanMaterialOrganicFX = new Material(scannerToolScanning)
+				{
+					hideFlags = HideFlags.HideAndDontSave
+				};
+				scanMaterialOrganicFX.SetTexture(ShaderPropertyID._MainTex, scanOrganicTex);
+				scanMaterialOrganicFX.SetColor(ShaderPropertyID._Color, scanOrganicColor);
+			}
 
 			void EnableSimpleEmission(Material mat, bool isGlow = true)
 			{
 				mat.EnableKeyword("MARMO_EMISSION");
 				mat.EnableKeyword("MARMO_SPECMAP");
-				if(isGlow)
+				if (isGlow)
 				{
 					mat.SetFloat("_GlowStrength", 1);
 					mat.SetFloat("_GlowStrengthNight", 1);
@@ -65,11 +65,11 @@ namespace VFScannerArm
 			List<Material> mats = new List<Material>
 			{
 				GObjectsRoot.Find("Forearm.001").GetComponent<MeshRenderer>().material,
-			    GObjectsRoot.Find("Forearm.002").GetComponent<MeshRenderer>().material,
+				GObjectsRoot.Find("Forearm.002").GetComponent<MeshRenderer>().material,
 				GObjectsRoot.Find("Forearm.003").GetComponent<MeshRenderer>().material,
-			    GObjectsRoot.Find("Forearm.004").GetComponent<MeshRenderer>().material
+				GObjectsRoot.Find("Forearm.004").GetComponent<MeshRenderer>().material
 			};
-            mats.ForEach(x => EnableSimpleEmission(x));
+			mats.ForEach(x => EnableSimpleEmission(x));
 
 
 			GameObject screenInner = ScreenOuter.Find("ScreenInner").gameObject;
@@ -90,9 +90,9 @@ namespace VFScannerArm
 				idleTimer = Mathf.Max(0f, idleTimer - Time.deltaTime);
 			}
 			if (IsInUse && mv.IsPlayerControlling())
-            {
+			{
 				DoScan();
-            }
+			}
 		}
 		public void ToggleSelect()
 		{
@@ -100,8 +100,8 @@ namespace VFScannerArm
 			timeSwitched = Time.time;
 		}
 		public void OnDisable()
-        {
-            scanSound.Stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+		{
+			scanSound.Stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
 		}
 		public void OnDestroy()
 		{
@@ -335,13 +335,13 @@ namespace VFScannerArm
 		}
 
 		public void SetupScannerTool()
-        {
-            powerConsumption = 0.2f;
-            scanBeam = GameObject.Instantiate(MainPatcher.originalScannerTool.scanBeam);
+		{
+			powerConsumption = 0.2f;
+			scanBeam = GameObject.Instantiate(MainPatcher.originalScannerTool.scanBeam);
 			scanBeam.transform.SetParent(transform);
 			scanSound = gameObject.EnsureComponent<FMOD_CustomLoopingEmitter>();
 			scanSound.asset = MainPatcher.originalScannerTool.scanSound.asset;
-            completeSound = Instantiate(MainPatcher.originalScannerTool.completeSound);
+			completeSound = Instantiate(MainPatcher.originalScannerTool.completeSound);
 			scanOrganicTex = new Texture2D(MainPatcher.originalScannerTool.scanOrganicTex.width,
 				MainPatcher.originalScannerTool.scanOrganicTex.height,
 				MainPatcher.originalScannerTool.scanOrganicTex.format,
@@ -356,24 +356,25 @@ namespace VFScannerArm
 			Graphics.CopyTexture(MainPatcher.originalScannerTool.scanCircuitTex, scanCircuitTex);
 		}
 
-		public GameObject scanBeam;
-        void IPlayerListener.OnPlayerEntry()
-        {
-        }
+		void IPlayerListener.OnPlayerEntry()
+		{
+		}
 
-        void IPlayerListener.OnPlayerExit()
+		void IPlayerListener.OnPlayerExit()
 		{
 			IsInUse = false;
 		}
 
-        void IPlayerListener.OnPilotBegin()
-        {
-        }
+		void IPlayerListener.OnPilotBegin()
+		{
+		}
 
-        void IPlayerListener.OnPilotEnd()
-        {
+		void IPlayerListener.OnPilotEnd()
+		{
 			IsInUse = false;
-        }
+		}
+
+		public GameObject scanBeam;
 		public FMOD_CustomLoopingEmitter scanSound;
 		public FMODAsset completeSound;
 		private ScannerTool.ScanState stateCurrent;
