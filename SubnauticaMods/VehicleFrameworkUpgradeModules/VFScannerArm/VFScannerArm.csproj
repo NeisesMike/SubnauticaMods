@@ -85,6 +85,7 @@
   <ItemGroup>
     <Compile Include="GUIHandPatcher.cs" />
     <Compile Include="MainPatcher.cs" />
+    <Compile Include="PDAScannerPatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScannerArm.cs" />
     <Compile Include="VFScannerArm.cs" />
