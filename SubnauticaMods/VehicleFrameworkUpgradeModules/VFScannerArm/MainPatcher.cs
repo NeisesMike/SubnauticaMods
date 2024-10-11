@@ -1,9 +1,8 @@
 ﻿using BepInEx;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using HarmonyLib;
-using VehicleFramework.Assets;
+using VehicleFramework.Admin;
 
 namespace VFScannerArm
 {
@@ -23,7 +22,12 @@ namespace VFScannerArm
         {
             UWE.CoroutineHost.StartCoroutine(GetOriginalScannerTool());
             var vfscannerarm = new VFScannerArm();
-            VehicleFramework.Admin.UpgradeTechTypes scannerArmTT = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(vfscannerarm);
+            UpgradeTechTypes scannerArmTT = UpgradeRegistrar.RegisterUpgrade(vfscannerarm);
+            TaskResult<GameObject> armRequest = new TaskResult<GameObject>();
+            yield return UWE.CoroutineHost.StartCoroutine(vfscannerarm.GetArmPrefab(armRequest));
+            GameObject armPrefab = armRequest.Get();
+            FragmentUtils.RegisterScannerArmFragment(scannerArmTT.forModVehicle, armPrefab);
+            FragmentUtils.RegisterScannerArmFragment(scannerArmTT.forExosuit, armPrefab);
         }
         public IEnumerator GetOriginalScannerTool()
         {
