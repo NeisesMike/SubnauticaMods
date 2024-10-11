@@ -27,15 +27,14 @@ namespace IonDefenseCapacitor
         public override Atlas.Sprite Icon => SpriteHelper.GetSprite("IonDefenseCapacitorIcon.png");
         public override void OnSelected(SelectableActionParams param)
         {
-            FMODUWE.PlayOneShot("event:/tools/gravcannon/repulse", param.mv.transform.position, 1f);
-            IEnumerator manageInvincibility(ModVehicle thisMV)
+            FMODUWE.PlayOneShot("event:/tools/gravcannon/repulse", param.vehicle.transform.position, 1f);
+            IEnumerator manageInvincibility(Vehicle thisVehicle)
             {
-                param.mv.GetComponent<LiveMixin>().invincible = true;
+                thisVehicle.GetComponent<LiveMixin>().invincible = true;
                 yield return new WaitForSeconds(invincibilityDuration);
-                param.mv.GetComponent<LiveMixin>().invincible = false;
-
+                thisVehicle.GetComponent<LiveMixin>().invincible = false;
             }
-            Player.main.StartCoroutine(manageInvincibility(param.mv));
+            Player.main.StartCoroutine(manageInvincibility(param.vehicle));
         }
         public override void OnAdded(AddActionParams param)
         {

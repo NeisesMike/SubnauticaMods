@@ -14,8 +14,8 @@ namespace CrabsquidModule
         [HarmonyPatch(nameof(EnergyInterface.DisableElectronicsForTime))]
         public static bool DisableElectronicsForTimePrefix(EnergyInterface __instance)
         {
-            ModVehicle mv = __instance.gameObject.GetComponent<ModVehicle>();
-            if (mv == null || !mv.IsPlayerDry || mv.GetCurrentUpgrades().Where(x => x.Contains("CrabsquidModule")).Count() == 0)
+            Vehicle mv = __instance.gameObject.GetComponent<Vehicle>();
+            if (mv == null || Player.main.currentMountedVehicle != mv || mv.GetCurrentUpgrades().Where(x => x.Contains("CrabsquidModule")).Count() == 0)
             {
                 return true;
             }

@@ -4,8 +4,8 @@ using System.Linq;
 
 namespace ThermalChargingModule
 {
-    public class VFThermalCharger : MonoBehaviour
-    {
+	public class VFThermalCharger : MonoBehaviour
+	{
 		private static readonly float minPower = 0f;
 		private static readonly float maxPower = 0.6f;
 		private static readonly float minTemp = 30f;
@@ -25,43 +25,46 @@ namespace ThermalChargingModule
 		}
 		public float originalMinDamageTemp = 0;
 		public void Start()
-        {
+		{
 			originalMinDamageTemp = GetComponent<TemperatureDamage>().minDamageTemperature;
-        }
+		}
 		public void Update()
 		{
 			if (count > 0)
 			{
-				ModVehicle mv = GetComponent<ModVehicle>();
+				Vehicle mv = GetComponent<Vehicle>();
 				float temperature = mv.GetTemperature();
 				float num = EvaluateTemperatureCharge(temperature);
-				AddChargeToMV(GetComponent<ModVehicle>(), count * num * Time.deltaTime);
+				AddChargeToMV(GetComponent<Vehicle>(), count * num * Time.deltaTime);
 			}
 		}
 		private float EvaluateTemperatureCharge(float temp)
-        {
-			if(temp <= minTemp)
-            {
+		{
+			if (temp <= minTemp)
+			{
 				return 0;
-            }
-			if(temp >= maxTemp)
-            {
+			}
+			if (temp >= maxTemp)
+			{
 				return maxPower;
-            }
+			}
 			float tempProgress = (temp - minPower) / (maxPower - minPower);
 			return Mathf.Lerp(minPower, maxPower, tempProgress);
-        }
-		private void AddChargeToMV(ModVehicle mv, float chargeToAdd)
+		}
+		private void AddChargeToMV(Vehicle mv, float chargeToAdd)
 		{
 			float chargeRemaining = chargeToAdd;
-			foreach (var battery in mv.Batteries)
+			foreach (var battery in mv.energyInterface.sources)
 			{
-				EnergyMixin thisBattEM = battery.BatterySlot.gameObject.GetComponent<EnergyMixin>();
-				if (thisBattEM is null)
+				if (battery is null)
 				{
 					continue;
 				}
-				chargeRemaining -= thisBattEM.ModifyCharge(chargeRemaining);
+				chargeRemaining -= battery.ModifyCharge(chargeRemaining);
+				if (chargeRemaining < 0)
+				{
+					break;
+				}
 			}
 		}
 		public void EnsureTempDamageCompat(int numModules)

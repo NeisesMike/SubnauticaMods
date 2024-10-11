@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using VehicleFramework.UpgradeTypes;
 using VehicleFramework.Assets;
+using VehicleFramework;
 
 namespace NanoWeaveBarrier
 {
@@ -23,15 +24,15 @@ namespace NanoWeaveBarrier
         public override Atlas.Sprite Icon => SpriteHelper.GetSprite("NanoWeaveBarrierIcon.png");
         public override void OnAdded(AddActionParams param)
         {
-            var damg = param.mv.gameObject.EnsureComponent<DamageModifier>();
+            var damg = param.vehicle.gameObject.EnsureComponent<DamageModifier>();
             damg.damageType = DamageType.Normal;
-            damg.multiplier = Mathf.Pow(0.90f, param.mv.GetCurrentUpgrades().Where(x => x.Contains("NanoWeaveBarrier")).Count());
+            damg.multiplier = Mathf.Pow(0.90f, param.vehicle.GetCurrentUpgrades().Where(x => x.Contains("NanoWeaveBarrier")).Count());
         }
         public override void OnRemoved(AddActionParams param)
         {
-            var damg = param.mv.gameObject.EnsureComponent<DamageModifier>();
+            var damg = param.vehicle.gameObject.EnsureComponent<DamageModifier>();
             damg.damageType = DamageType.Normal;
-            damg.multiplier = Mathf.Pow(0.90f, param.mv.GetCurrentUpgrades().Where(x => x.Contains("NanoWeaveBarrier")).Count());
+            damg.multiplier = Mathf.Pow(0.90f, param.vehicle.GetCurrentUpgrades().Where(x => x.Contains("NanoWeaveBarrier")).Count());
         }
 
     }

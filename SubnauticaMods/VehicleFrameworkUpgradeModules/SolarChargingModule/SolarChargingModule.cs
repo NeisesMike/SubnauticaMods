@@ -2,6 +2,7 @@
 using System.Linq;
 using VehicleFramework.UpgradeTypes;
 using VehicleFramework.Assets;
+using VehicleFramework;
 
 namespace SolarChargingModule
 {
@@ -20,11 +21,11 @@ namespace SolarChargingModule
         public override Atlas.Sprite Icon => SpriteHelper.GetSprite("SolarChargingModuleIcon.png");
         public override void OnAdded(AddActionParams param)
         {
-            param.mv.gameObject.EnsureComponent<VFSolarCharger>().numChargers = param.mv.GetCurrentUpgrades().Where(x => x.Contains("SolarChargingModule")).Count();
+            param.vehicle.gameObject.EnsureComponent<VFSolarCharger>().numChargers = param.vehicle.GetCurrentUpgrades().Where(x => x.Contains("SolarChargingModule")).Count();
         }
         public override void OnRemoved(AddActionParams param)
         {
-            param.mv.gameObject.EnsureComponent<VFSolarCharger>().numChargers = param.mv.GetCurrentUpgrades().Where(x => x.Contains("SolarChargingModule")).Count();
+            param.vehicle.gameObject.EnsureComponent<VFSolarCharger>().numChargers = param.vehicle.GetCurrentUpgrades().Where(x => x.Contains("SolarChargingModule")).Count();
         }
     }
 }

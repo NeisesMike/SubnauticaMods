@@ -2,6 +2,7 @@
 using System.Linq;
 using VehicleFramework.UpgradeTypes;
 using VehicleFramework.Assets;
+using VehicleFramework;
 
 namespace ThermalChargingModule
 {
@@ -20,11 +21,11 @@ namespace ThermalChargingModule
         public override Atlas.Sprite Icon => SpriteHelper.GetSprite("ThermalChargingModuleIcon.png");
         public override void OnAdded(AddActionParams param)
         {
-            param.mv.gameObject.EnsureComponent<VFThermalCharger>().count = param.mv.GetCurrentUpgrades().Where(x => x.Contains(ClassId)).Count();
+            param.vehicle.gameObject.EnsureComponent<VFThermalCharger>().count = param.vehicle.GetCurrentUpgrades().Where(x => x.Contains(ClassId)).Count();
         }
         public override void OnRemoved(AddActionParams param)
         {
-            param.mv.gameObject.EnsureComponent<VFThermalCharger>().count = param.mv.GetCurrentUpgrades().Where(x => x.Contains(ClassId)).Count();
+            param.vehicle.gameObject.EnsureComponent<VFThermalCharger>().count = param.vehicle.GetCurrentUpgrades().Where(x => x.Contains(ClassId)).Count();
         }
     }
 }

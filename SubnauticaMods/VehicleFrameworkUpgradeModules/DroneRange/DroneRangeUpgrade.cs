@@ -2,6 +2,7 @@
 using System.Linq;
 using VehicleFramework.UpgradeTypes;
 using VehicleFramework.VehicleTypes;
+using VehicleFramework;
 
 namespace DroneRange
 {
@@ -19,10 +20,10 @@ namespace DroneRange
         public override string TabName => "MVCM";
         public override void OnAdded(AddActionParams param)
         {
-            Drone drone = param.mv as Drone;
+            Drone drone = param.vehicle as Drone;
             if (drone != null)
             {
-                drone.addedConnectionDistance = 200 * param.mv.GetCurrentUpgrades().Where(x => x.Contains(ClassId)).Count();
+                drone.addedConnectionDistance = 200 * drone.GetCurrentUpgrades().Where(x => x.Contains(ClassId)).Count();
             }
             else
             {
@@ -31,10 +32,10 @@ namespace DroneRange
         }
         public override void OnRemoved(AddActionParams param)
         {
-            Drone drone = param.mv as Drone;
+            Drone drone = param.vehicle as Drone;
             if (drone != null)
             {
-                drone.addedConnectionDistance = 200 * param.mv.GetCurrentUpgrades().Where(x => x.Contains(ClassId)).Count();
+                drone.addedConnectionDistance = 200 * drone.GetCurrentUpgrades().Where(x => x.Contains(ClassId)).Count();
             }
         }
     }

@@ -33,7 +33,7 @@ namespace SonarModule
         public override void OnRepeat(ToggleActionParams param)
         {
             SNCameraRoot.main.SonarPing();
-            FMODUWE.PlayOneShot("event:/sub/seamoth/sonar_loop", param.mv.transform.position, 1f);
+            FMODUWE.PlayOneShot("event:/sub/seamoth/sonar_loop", param.vehicle.transform.position, 1f);
         }
     }
 }

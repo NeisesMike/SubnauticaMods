@@ -21,8 +21,8 @@ namespace ImpulseSpeedBooster
         public override Atlas.Sprite Icon => SpriteHelper.GetSprite("ImpulseSpeedBoosterIcon.png");
         public override void OnSelected(SelectableChargeableActionParams param)
         {
-            FMODUWE.PlayOneShot("event:/sub/seamoth/pulse", param.mv.transform.position, param.slotCharge);
-            param.mv.useRigidbody.AddForce(param.mv.transform.forward * param.charge * param.mv.useRigidbody.mass * 3, ForceMode.Impulse);
+            FMODUWE.PlayOneShot("event:/sub/seamoth/pulse", param.vehicle.transform.position, param.slotCharge);
+            param.vehicle.useRigidbody.AddForce(param.vehicle.transform.forward * param.charge * param.vehicle.useRigidbody.mass * 3, ForceMode.Impulse);
         }
         public override void OnAdded(AddActionParams param)
         {
