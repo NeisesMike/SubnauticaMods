@@ -21,6 +21,8 @@ namespace VFScannerArm
         public override string Description => "A scanner-arm attachment used for analyzing specimens.";
         public override Atlas.Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("VFScannerArmIcon.png");
         public override string TabName => "MVCM";
+        public override TechType UnlockWith => TechType.Fragment;
+        public override Sprite UnlockedSprite => VehicleFramework.Assets.SpriteHelper.GetSpriteRaw("ScannerArmPopUp.png");
         public override IEnumerator GetArmPrefab(IOut<GameObject> arm)
         {
             string directoryPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);

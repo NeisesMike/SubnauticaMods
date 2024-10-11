@@ -369,7 +369,10 @@ namespace VFScannerArm
 		{
 			powerConsumption = 0.2f;
 			scanBeam = GameObject.Instantiate(MainPatcher.originalScannerTool.scanBeam);
-			scanBeam.transform.SetParent(transform);
+			scanBeam.transform.SetParent(GObjectsRoot.Find("Forearm.004"));
+			scanBeam.transform.localPosition = new Vector3(0, -0.006f, -0.001f);
+			scanBeam.transform.localEulerAngles = Vector3.zero;
+			scanBeam.transform.localScale = new Vector3(0.04f, 0.04f, 0.02f);
 			scanSound = gameObject.EnsureComponent<FMOD_CustomLoopingEmitter>();
 			scanSound.asset = MainPatcher.originalScannerTool.scanSound.asset;
 			completeSound = Instantiate(MainPatcher.originalScannerTool.completeSound);

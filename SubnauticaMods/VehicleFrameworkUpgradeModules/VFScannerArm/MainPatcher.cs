@@ -1,7 +1,9 @@
 ﻿using BepInEx;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using HarmonyLib;
+using VehicleFramework.Assets;
 
 namespace VFScannerArm
 {
@@ -13,10 +15,15 @@ namespace VFScannerArm
         public static ScannerTool originalScannerTool = null;
         public void Start()
         {
-            UWE.CoroutineHost.StartCoroutine(GetOriginalScannerTool());
-            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new VFScannerArm());
+            UWE.CoroutineHost.StartCoroutine(DoRegistrations());
             var harmony = new Harmony("com.mikjaw.subnautica.vfscannerarm.mod");
             harmony.PatchAll();
+        }
+        public IEnumerator DoRegistrations()
+        {
+            UWE.CoroutineHost.StartCoroutine(GetOriginalScannerTool());
+            var vfscannerarm = new VFScannerArm();
+            VehicleFramework.Admin.UpgradeTechTypes scannerArmTT = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(vfscannerarm);
         }
         public IEnumerator GetOriginalScannerTool()
         {
