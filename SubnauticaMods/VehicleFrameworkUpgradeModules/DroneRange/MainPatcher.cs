@@ -10,7 +10,14 @@ namespace DroneRange
     {
         public void Start()
         {
-            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new DroneRangeUpgrade());
+            VehicleFramework.Admin.UpgradeCompat compat = new VehicleFramework.Admin.UpgradeCompat
+            {
+                skipCyclops = true,
+                skipModVehicle = false,
+                skipSeamoth = true,
+                skipExosuit = true
+            };
+            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new DroneRangeUpgrade(), compat);
         }
     }
 }
