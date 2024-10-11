@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using HarmonyLib;
 using UnityEngine;
 using VehicleFramework;
+using VehicleFramework.VehicleComponents;
 
 namespace VFDrillArm
 {
@@ -48,6 +49,32 @@ namespace VFDrillArm
 						__instance.lootPinataObjects.Remove(item2);
 					}
 				}
+			}
+		}
+		[HarmonyPostfix]
+		[HarmonyPatch(nameof(Drillable.HoverDrillable))]
+		public static void HoverDrillablePostfix(Drillable __instance)
+		{
+			ModVehicle drillingMV = Player.main.GetModVehicle();
+			if (drillingMV != null)
+			{
+				VFArmsManager vfam = drillingMV.GetComponent<VFArmsManager>();
+				GameInput.Button button;
+				if (vfam.leftArm.GetComponent<ExosuitDrillArm>() != null)
+				{
+					button = GameInput.Button.LeftHand;
+				}
+				else if (vfam.rightArm.GetComponent<ExosuitDrillArm>() != null)
+				{
+					button = GameInput.Button.RightHand;
+				}
+				else
+				{
+					return;
+				}
+				HandReticle.main.SetText(HandReticle.TextType.Hand, Language.main.GetFormat<string>("DrillResource", Language.main.Get(__instance.primaryTooltip)), false, button);
+				HandReticle.main.SetText(HandReticle.TextType.HandSubscript, __instance.secondaryTooltip, true, GameInput.Button.None);
+				HandReticle.main.SetIcon(HandReticle.IconType.Drill, 1f);
 			}
 		}
 	}

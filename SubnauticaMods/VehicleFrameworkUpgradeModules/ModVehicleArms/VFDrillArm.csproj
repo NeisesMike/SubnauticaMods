@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DrillablePatcher.cs" />
+    <Compile Include="ExosuitPatcher.cs" />
     <Compile Include="ExosuitDrillArmPatcher.cs" />
     <Compile Include="MainPatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
