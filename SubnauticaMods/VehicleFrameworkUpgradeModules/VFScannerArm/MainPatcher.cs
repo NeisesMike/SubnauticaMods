@@ -5,8 +5,8 @@ using HarmonyLib;
 
 namespace VFScannerArm
 {
-    [BepInPlugin("com.mikjaw.subnautica.vfscannerarm.mod", "VFScannerArm", "1.0")]
-    [BepInDependency(VehicleFramework.PluginInfo.PLUGIN_GUID, MinimumDependencyVersion: "1.3.0")]
+    [BepInPlugin("com.mikjaw.subnautica.vfscannerarm.mod", "VFScannerArm", "1.1")]
+    [BepInDependency(VehicleFramework.PluginInfo.PLUGIN_GUID, VehicleFramework.PluginInfo.PLUGIN_VERSION)]
     public class MainPatcher : BaseUnityPlugin
     {
         public static GameObject originalScannerToolPrefab = null;
