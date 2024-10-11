@@ -55,12 +55,30 @@ namespace VFScannerArm
         public override void OnRemoved(AddActionParams param)
         {
         }
-        public override void OnSelected(SelectableActionParams param)
+        public override bool OnArmDown(ArmActionParams param, out float cooldown)
         {
+            param.arm.GetComponent<ScannerArm>().StartUsing();
+            cooldown = 0;
+            return true;
         }
-        public override void OnArmSelected(ArmActionParams param)
+        public override bool OnArmUp(ArmActionParams param, out float cooldown)
         {
-            param.arm.GetComponent<ScannerArm>().ToggleSelect();
+            param.arm.GetComponent<ScannerArm>().StopUsing();
+            cooldown = 0;
+            return true;
+        }
+        public override bool OnArmHeld(ArmActionParams param, out float cooldown)
+        {
+            cooldown = 0;
+            return false;
+        }
+        public override bool OnArmAltUse(ArmActionParams param)
+        {
+            return false;
+        }
+        public override void OnPilotExit(GameObject arm, Vehicle vehicle)
+        {
+            arm.GetComponent<ScannerArm>().StopUsing();
         }
     }
 }

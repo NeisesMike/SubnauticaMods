@@ -30,23 +30,37 @@ namespace VFDrillArm
         public override void OnRemoved(AddActionParams param)
         {
         }
-        public override void OnSelected(SelectableActionParams param)
+        public override bool OnArmDown(ArmActionParams param, out float cooldown)
         {
+            param.arm.GetComponent<Animator>().SetBool("use_tool", true);
+            param.arm.GetComponent<ExosuitDrillArm>().drilling = true;
+            cooldown = 0;
+            return true;
         }
-        public override void OnArmSelected(ArmActionParams param)
+        public override bool OnArmUp(ArmActionParams param, out float cooldown)
         {
-            if (param.arm.GetComponent<Animator>().GetBool("use_tool"))
-            {
-                param.arm.GetComponent<Animator>().SetBool("use_tool", false);
-                param.arm.GetComponent<ExosuitDrillArm>().drilling = false;
-                param.arm.GetComponent<ExosuitDrillArm>().StopEffects();
-                param.arm.GetComponent<VFXController>().Stop();
-            }
-            else
-            {
-                param.arm.GetComponent<Animator>().SetBool("use_tool", true);
-                param.arm.GetComponent<ExosuitDrillArm>().drilling = true;
-            }
+            param.arm.GetComponent<Animator>().SetBool("use_tool", false);
+            param.arm.GetComponent<ExosuitDrillArm>().drilling = false;
+            param.arm.GetComponent<ExosuitDrillArm>().StopEffects();
+            param.arm.GetComponent<VFXController>().Stop();
+            cooldown = 0;
+            return true;
+        }
+        public override bool OnArmHeld(ArmActionParams param, out float cooldown)
+        {
+            cooldown = 0;
+            return false;
+        }
+        public override bool OnArmAltUse(ArmActionParams param)
+        {
+            return false;
+        }
+        public override void OnPilotExit(GameObject arm, Vehicle vehicle)
+        {
+            arm.GetComponent<Animator>().SetBool("use_tool", false);
+            arm.GetComponent<ExosuitDrillArm>().drilling = false;
+            arm.GetComponent<ExosuitDrillArm>().StopEffects();
+            arm.GetComponent<VFXController>().Stop();
         }
     }
 }

@@ -103,9 +103,14 @@ namespace VFScannerArm
 				DoScan();
 			}
 		}
-		public void ToggleSelect()
+		public void StartUsing()
 		{
-			IsInUse = !IsInUse;
+			IsInUse = true;
+			timeSwitched = Time.time;
+		}
+		public void StopUsing()
+		{
+			IsInUse = false;
 			timeSwitched = Time.time;
 		}
 		public void OnDisable()
