@@ -14,12 +14,14 @@ namespace VFScannerArm
 		readonly float fullBlueOffset = 1.25f;
 		private float lastProgressValue = 0.86f;
 		private ModVehicle mv => GetComponentInParent<ModVehicle>();
+		private Exosuit exo => GetComponentInParent<Exosuit>();
 		private bool IsInUse = false;
 		private float timeSwitched = 0;
 		public void Awake()
 		{
 			SetupScannerTool();
 			UpdateScreen(ScannerTool.ScreenState.Default, 0f);
+			GetComponentInChildren<Animator>().speed = 0.3f;
 		}
 		public void Start()
 		{
@@ -82,7 +84,8 @@ namespace VFScannerArm
 			tmprougui.fontSize = 32;
 			tmprougui.alignment = TMPro.TextAlignmentOptions.Center;
 			tmprougui.enableAutoSizing = true;
-			if (gameObject == mv.GetComponent<VehicleFramework.VehicleComponents.VFArmsManager>()?.rightArm)
+			if ((mv != null && gameObject == mv.GetComponent<VehicleFramework.VehicleComponents.VFArmsManager>()?.rightArm)
+				|| exo != null && !gameObject.GetComponent<VehicleFramework.VehicleComponents.VFArm>().IsLeft)
 			{
 				Transform rightArmDisplay = ScreenOuter.Find("ScreenInner/Text (TMP)");
 				rightArmDisplay.transform.localScale = new Vector3(
@@ -98,7 +101,7 @@ namespace VFScannerArm
 			{
 				idleTimer = Mathf.Max(0f, idleTimer - Time.deltaTime);
 			}
-			if (IsInUse && mv.IsPlayerControlling())
+			if (IsInUse && ((mv != null && mv.IsPlayerControlling()) || (exo != null && exo.GetPilotingMode())))
 			{
 				DoScan();
 			}
@@ -179,7 +182,7 @@ namespace VFScannerArm
 		public void LateUpdate()
 		{
 			bool flag = stateCurrent == ScannerTool.ScanState.Scan;
-			if (mv.IsPlayerControlling() && idleTimer <= 0f)
+			if(idleTimer <= 0f && ((mv != null && mv.IsPlayerControlling()) || (exo != null && exo.GetPilotingMode())))
 			{
 				OnHover();
 			}
@@ -207,13 +210,20 @@ namespace VFScannerArm
 			}
 			PDAScanner.Result result = PDAScanner.Result.None;
 			PDAScanner.ScanTarget scanTarget = PDAScanner.scanTarget;
-			if (scanTarget.isValid && mv.energyInterface.hasCharge)
+			if (scanTarget.isValid && ((mv != null && mv.energyInterface.hasCharge) || (exo != null && exo.energyInterface.hasCharge)))
 			{
 				result = PDAScanner.Scan();
 				if (result == PDAScanner.Result.Scan)
 				{
 					float amount = powerConsumption * Time.deltaTime;
-					mv.energyInterface.ConsumeEnergy(amount);
+					if(mv != null)
+					{
+						mv.energyInterface.ConsumeEnergy(amount);
+					}
+					if (exo != null)
+					{
+						exo.energyInterface.ConsumeEnergy(amount);
+					}
 					stateCurrent = ScannerTool.ScanState.Scan;
 				}
 				else if (result == PDAScanner.Result.Done || result == PDAScanner.Result.Researched)
@@ -235,7 +245,7 @@ namespace VFScannerArm
 		}
 		private void OnHover()
 		{
-			if (!mv.energyInterface.hasCharge)
+			if ((mv != null && !mv.energyInterface.hasCharge) || (exo != null && !exo.energyInterface.hasCharge))
 			{
 				UpdateScreen(ScannerTool.ScreenState.Unpowered, 0f);
 				return;
