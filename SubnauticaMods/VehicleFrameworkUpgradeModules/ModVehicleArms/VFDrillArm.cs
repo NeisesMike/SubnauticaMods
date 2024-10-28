@@ -22,7 +22,17 @@ namespace VFDrillArm
         public override IEnumerator GetArmPrefab(IOut<GameObject> arm)
         {
             yield return UWE.CoroutineHost.StartCoroutine(PrawnHelper.EnsurePrawn());
-            arm.Set(PrawnHelper.Prawn.GetComponent<Exosuit>().GetArmPrefab(TechType.ExosuitDrillArmModule));
+            Exosuit myExo = PrawnHelper.Prawn.GetComponent<Exosuit>();
+            GameObject result = null;
+            for (int i = 0; i < myExo.armPrefabs.Length; i++)
+            {
+                if (myExo.armPrefabs[i].techType == TechType.ExosuitDrillArmModule)
+                {
+                    result = myExo.armPrefabs[i].prefab;
+                    break;
+                }
+            }
+            arm.Set(result);
         }
         public override void OnAdded(AddActionParams param)
         {
