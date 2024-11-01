@@ -41,5 +41,15 @@ namespace VFScannerArm
             }
             return Targeting.GetTarget(Player.main.gameObject, maxDistance, out result, out distance);
         }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(PDAScanner.UpdateTarget))]
+        public static void PDAScannerUpdateTargetPrefix(float distance, ref bool self)
+        {
+            if(VehicleFramework.VehicleTypes.Drone.mountedDrone != null)
+            {
+                self = false;
+            }
+        }
     }
 }
