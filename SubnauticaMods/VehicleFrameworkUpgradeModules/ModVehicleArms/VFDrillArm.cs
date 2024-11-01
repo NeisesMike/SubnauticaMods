@@ -42,6 +42,7 @@ namespace VFDrillArm
         }
         public override bool OnArmDown(ArmActionParams param, out float cooldown)
         {
+            isToggled = false;
             param.arm.GetComponent<Animator>().SetBool("use_tool", true);
             param.arm.GetComponent<ExosuitDrillArm>().drilling = true;
             cooldown = 0;
@@ -49,10 +50,13 @@ namespace VFDrillArm
         }
         public override bool OnArmUp(ArmActionParams param, out float cooldown)
         {
-            param.arm.GetComponent<Animator>().SetBool("use_tool", false);
-            param.arm.GetComponent<ExosuitDrillArm>().drilling = false;
-            param.arm.GetComponent<ExosuitDrillArm>().StopEffects();
-            param.arm.GetComponent<VFXController>().Stop();
+            if (!isToggled)
+            {
+                param.arm.GetComponent<Animator>().SetBool("use_tool", false);
+                param.arm.GetComponent<ExosuitDrillArm>().drilling = false;
+                param.arm.GetComponent<ExosuitDrillArm>().StopEffects();
+                param.arm.GetComponent<VFXController>().Stop();
+            }
             cooldown = 0;
             return true;
         }
@@ -63,6 +67,9 @@ namespace VFDrillArm
         }
         public override bool OnArmAltUse(ArmActionParams param)
         {
+            isToggled = !isToggled;
+            param.arm.GetComponent<Animator>().SetBool("use_tool", isToggled);
+            param.arm.GetComponent<ExosuitDrillArm>().drilling = isToggled;
             return false;
         }
         public override void OnPilotExit(GameObject arm, Vehicle vehicle)
@@ -72,5 +79,6 @@ namespace VFDrillArm
             arm.GetComponent<ExosuitDrillArm>().StopEffects();
             arm.GetComponent<VFXController>().Stop();
         }
+        private bool isToggled = false;
     }
 }
