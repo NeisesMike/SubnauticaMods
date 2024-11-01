@@ -27,7 +27,6 @@ namespace VFScannerArm
             yield return UWE.CoroutineHost.StartCoroutine(vfscannerarm.GetArmPrefab(armRequest));
             GameObject armPrefab = armRequest.Get();
             FragmentUtils.RegisterScannerArmFragment(scannerArmTT.forModVehicle, armPrefab);
-            FragmentUtils.RegisterScannerArmFragment(scannerArmTT.forExosuit, armPrefab);
         }
         public IEnumerator GetOriginalScannerTool()
         {

@@ -35,7 +35,7 @@ namespace VFScannerArm
             RegisterEncyEntry();
             EnsureColliders(armPrefab);
             Component.DestroyImmediate(armPrefab.GetComponent<ScannerArm>());
-            armPrefab.AddComponent<Rigidbody>().isKinematic = true;
+            armPrefab.EnsureComponent<Rigidbody>().isKinematic = true;
             DisableVisualEffects(armPrefab);
             List<Vector3> spawnLocations = new List<Vector3>
             {
