@@ -60,13 +60,17 @@ namespace VFScannerArm
         }
         public override bool OnArmDown(ArmActionParams param, out float cooldown)
         {
+            isToggled = false;
             param.arm.GetComponent<ScannerArm>().StartUsing();
             cooldown = 0;
             return true;
         }
         public override bool OnArmUp(ArmActionParams param, out float cooldown)
         {
-            param.arm.GetComponent<ScannerArm>().StopUsing();
+            if (!isToggled)
+            {
+                param.arm.GetComponent<ScannerArm>().StopUsing();
+            }
             cooldown = 0;
             return true;
         }
@@ -77,11 +81,21 @@ namespace VFScannerArm
         }
         public override bool OnArmAltUse(ArmActionParams param)
         {
+            isToggled = !isToggled;
+            if(isToggled)
+            {
+                param.arm.GetComponent<ScannerArm>().StartUsing();
+            }
+            else
+            {
+                param.arm.GetComponent<ScannerArm>().StopUsing();
+            }
             return false;
         }
         public override void OnPilotExit(GameObject arm, Vehicle vehicle)
         {
             arm.GetComponent<ScannerArm>().StopUsing();
         }
+        private bool isToggled = false;
     }
 }
