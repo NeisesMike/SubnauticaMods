@@ -17,7 +17,7 @@ namespace FreeLook
         {
             foreach(var player in __instance.GetComponentsInChildren<Player>())
             {
-                if (player.GetVehicle() == __instance && player.IsPiloting() && player.mode == Player.Mode.LockedPiloting && player.GetComponent<FreeLookManager>().isFreeLooking)
+                if (FreeLookManager.ShouldDoEngineAction && player.GetVehicle() == __instance)
                 {
                     return false;
                 }
@@ -30,7 +30,7 @@ namespace FreeLook
         {
             foreach (var player in __instance.GetComponentsInChildren<Player>())
             {
-                if (player.GetVehicle() == __instance && player.IsPiloting() && player.mode == Player.Mode.LockedPiloting && player.GetComponent<FreeLookManager>().isFreeLooking)
+                if(FreeLookManager.ShouldDoEngineAction && player.GetVehicle() == __instance)
                 {
                     return false;
                 }
