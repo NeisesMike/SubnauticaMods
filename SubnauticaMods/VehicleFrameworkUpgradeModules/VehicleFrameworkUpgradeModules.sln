@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VFScannerArm", "VFScannerAr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThermalChargingModule", "ThermalChargingModule\ThermalChargingModule.csproj", "{774789B1-B5BE-4CD2-8B3D-6EE01EF009B3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoidDepth", "VoidDepth\VoidDepth.csproj", "{865FB5D5-148C-4B7F-80B8-D307962AF4BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{774789B1-B5BE-4CD2-8B3D-6EE01EF009B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{774789B1-B5BE-4CD2-8B3D-6EE01EF009B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{774789B1-B5BE-4CD2-8B3D-6EE01EF009B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{865FB5D5-148C-4B7F-80B8-D307962AF4BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{865FB5D5-148C-4B7F-80B8-D307962AF4BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{865FB5D5-148C-4B7F-80B8-D307962AF4BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{865FB5D5-148C-4B7F-80B8-D307962AF4BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
