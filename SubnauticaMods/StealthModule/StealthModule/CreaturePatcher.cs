@@ -66,6 +66,26 @@ namespace StealthModule
 				{
 					VehicleFramework.Logger.Output("Sea Dragon Leviathan Distance: " + distToPlayer);
 				}
+				else if (__instance.name.ToLower().Contains("gulper"))
+				{
+					VehicleFramework.Logger.Output("Gulper Distance: " + distToPlayer);
+				}
+				else if (__instance.name.ToLower().Contains("bloop"))
+				{
+					VehicleFramework.Logger.Output("Bloop Distance: " + distToPlayer);
+				}
+				else if (__instance.name.ToLower().Contains("blaza"))
+				{
+					VehicleFramework.Logger.Output("Blaza Distance: " + distToPlayer);
+				}
+				else if (__instance.name.ToLower().Contains("silence"))
+				{
+					VehicleFramework.Logger.Output("Silence Distance: " + distToPlayer);
+				}
+				else if (__instance.name.ToLower().Contains("mrteeth"))
+				{
+					VehicleFramework.Logger.Output("MrTeeth Distance: " + distToPlayer);
+				}
 			}
 
 			if (___actions.Count == 0)
