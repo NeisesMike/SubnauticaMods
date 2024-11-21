@@ -249,13 +249,6 @@ namespace FreeLook
             }
         }
         internal static bool ShouldDoEngineAction = false;
-        public void FixedUpdate()
-        {
-            if(ShouldDoEngineAction)
-            {
-                DoEngineAction();
-            }
-        }
         private void ExecuteFreeLook(Vehicle vehicle)
         {
             resetCameraFlag = false;
@@ -266,61 +259,6 @@ namespace FreeLook
 
             // control the camera
             MoveCamera();
-        }
-        public void DoEngineAction()
-        {
-            // add locomotion back in
-            if (vehicle.transform.position.y < Ocean.GetOceanLevel() && vehicle.transform.position.y < vehicle.worldForces.waterDepth && !vehicle.precursorOutOfWater)
-            {
-                Vector3 thisMovementVector;
-                if (GameInput.autoMove)
-                {
-                    thisMovementVector = vehicle.transform.forward;
-                }
-                else
-                {
-                    Vector3 myDirection = Vector3.zero;
-                    myDirection.z += GameInput.GetAnalogValueForButton(GameInput.Button.MoveRight);
-                    myDirection.z -= GameInput.GetAnalogValueForButton(GameInput.Button.MoveLeft);
-                    myDirection.x -= GameInput.GetAnalogValueForButton(GameInput.Button.MoveBackward);
-                    myDirection.x += GameInput.GetAnalogValueForButton(GameInput.Button.MoveForward);
-                    myDirection.y += GameInput.GetAnalogValueForButton(GameInput.Button.MoveUp);
-                    myDirection.y -= GameInput.GetAnalogValueForButton(GameInput.Button.MoveDown);
-
-                    thisMovementVector = vehicle.transform.forward * myDirection.x +
-                                                 vehicle.transform.right * myDirection.z +
-                                                 vehicle.transform.up * myDirection.y;
-                }
-                thisMovementVector.Normalize();
-                if (vehicle is SeaMoth)
-                {
-                    float scalar =
-                        Mathf.Abs(thisMovementVector.z) * vehicle.sidewardForce
-                        + Mathf.Abs(thisMovementVector.y) * vehicle.verticalForce
-                        + Mathf.Max(0f, thisMovementVector.x) * vehicle.forwardForce
-                        + Mathf.Max(0f, -thisMovementVector.x) * vehicle.backwardForce;
-                    Vector3 force = scalar * thisMovementVector * Time.deltaTime;
-                    for (int i = 0; i < vehicle.accelerationModifiers.Length; i++)
-                    {
-                        vehicle.accelerationModifiers[i].ModifyAcceleration(ref force);
-                    }
-                    // for some reason, this results in a 1.3x faster seamoth than usual...?
-                    // so we clamp it to an observed max :shrug:
-                    vehicle.useRigidbody.AddForce(force, ForceMode.VelocityChange);
-                    vehicle.GetComponent<Rigidbody>().velocity = Vector3.ClampMagnitude(vehicle.GetComponent<Rigidbody>().velocity, 11.27f);
-                }
-                else if (vehicle is Exosuit)
-                {
-                    thisMovementVector = new Vector3(thisMovementVector.x, 0f, thisMovementVector.z);
-                    vehicle.GetComponent<Rigidbody>().velocity += thisMovementVector * Time.deltaTime * 10f;
-                    vehicle.GetComponent<Rigidbody>().velocity = Vector3.ClampMagnitude(vehicle.GetComponent<Rigidbody>().velocity, 8f);
-                }
-                else
-                {
-                    vehicle.GetComponent<Rigidbody>().velocity += thisMovementVector * Time.deltaTime * 10f;
-                    vehicle.GetComponent<Rigidbody>().velocity = Vector3.ClampMagnitude(vehicle.GetComponent<Rigidbody>().velocity, 10f);
-                }
-            }
         }
         private void BeginFreeLook()
         {
