@@ -94,6 +94,8 @@
     <Compile Include="StealthModule.cs" />
     <Compile Include="MainPatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Upgrades\StealthUpgradeMk5.cs" />
+    <Compile Include="Upgrades\StealthUpgradeMk4.cs" />
     <Compile Include="Upgrades\StealthUpgradeMk3.cs" />
     <Compile Include="Upgrades\StealthUpgradeMk2.cs" />
     <Compile Include="Upgrades\StealthUpgradeMk1.cs" />

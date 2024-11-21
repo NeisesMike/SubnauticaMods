@@ -38,6 +38,12 @@ namespace StealthModule
 				case (StealthQuality.High):
 					myMaxRange = 40f;
 					break;
+				case (StealthQuality.Higher):
+					myMaxRange = 20f;
+					break;
+				case (StealthQuality.Highest):
+					myMaxRange = 3f;
+					break;
 				case (StealthQuality.Debug):
 					myMaxRange = float.MinValue;
 					break;

@@ -10,6 +10,8 @@ namespace StealthModule
         Low,
         Medium,
         High,
+        Higher,
+        Highest,
         Debug
     }
 
@@ -29,6 +31,14 @@ namespace StealthModule
             if (name.Contains("StealthModule3"))
             {
                 return StealthQuality.High;
+            }
+            if (name.Contains("StealthModule4"))
+            {
+                return StealthQuality.Higher;
+            }
+            if (name.Contains("StealthModule5"))
+            {
+                return StealthQuality.Highest;
             }
             return StealthQuality.None;
         }

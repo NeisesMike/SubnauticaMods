@@ -35,6 +35,14 @@ namespace StealthModule
             var sum3 = new StealthUpgradeMk3();
             sum3.ExtendRecipe(tt2);
             UpgradeTechTypes tt3 = UpgradeRegistrar.RegisterUpgrade(sum3);
+
+            var sum4 = new StealthUpgradeMk4();
+            sum4.ExtendRecipe(tt3);
+            UpgradeTechTypes tt4 = UpgradeRegistrar.RegisterUpgrade(sum4);
+
+            var sum5 = new StealthUpgradeMk5();
+            sum5.ExtendRecipe(tt4);
+            UpgradeTechTypes tt5 = UpgradeRegistrar.RegisterUpgrade(sum5);
         }
 
         [Menu("Stealth Module Options")]
