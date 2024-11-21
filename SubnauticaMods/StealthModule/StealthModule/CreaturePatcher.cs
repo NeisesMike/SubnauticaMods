@@ -52,19 +52,19 @@ namespace StealthModule
             }
 
 			// report on nearby dangerous leviathans
-			if (StealthModulePatcher.config.isDistanceIndicatorEnabled && distToPlayer < 150)
+			if (MainPatcher.config.isDistanceIndicatorEnabled && distToPlayer < 150)
 			{
 				if (__instance.name.Contains("GhostLeviathan"))
 				{
-					SubLog.Output("Ghost Leviathan Distance: " + distToPlayer);
+					VehicleFramework.Logger.Output("Ghost Leviathan Distance: " + distToPlayer);
 				}
 				else if (__instance.name.Contains("ReaperLeviathan"))
 				{
-					SubLog.Output("Reaper Leviathan Distance: " + distToPlayer);
+					VehicleFramework.Logger.Output("Reaper Leviathan Distance: " + distToPlayer);
 				}
 				else if (__instance.name.Contains("SeaDragon"))
 				{
-					SubLog.Output("Sea Dragon Leviathan Distance: " + distToPlayer);
+					VehicleFramework.Logger.Output("Sea Dragon Leviathan Distance: " + distToPlayer);
 				}
 			}
 
@@ -108,14 +108,14 @@ namespace StealthModule
 							{
 								if (((AttackLastTarget)creatureAction).lastTarget.target.name == "Player")
 								{
-									StealthModulePatcher.logger.LogInfo(__instance.name + " is replacing " + creatureAction.GetType().Name + "(Player) with SwimRandom.");
+									MainPatcher.logger.LogInfo(__instance.name + " is replacing " + creatureAction.GetType().Name + "(Player) with SwimRandom.");
 									creatureAction = new SwimRandom();
 								}
 							}
 						}
 						else
 						{
-							StealthModulePatcher.logger.LogInfo(__instance.name + " is replacing " + creatureAction.GetType().Name + " with SwimRandom.");
+							MainPatcher.logger.LogInfo(__instance.name + " is replacing " + creatureAction.GetType().Name + " with SwimRandom.");
 							creatureAction = new SwimRandom();
 						}
 					}
@@ -149,14 +149,14 @@ namespace StealthModule
 						{
 							if (((AttackLastTarget)creatureAction2).lastTarget.target.name == "Player")
 							{
-								StealthModulePatcher.logger.LogInfo(__instance.name + " is replacing " + creatureAction2.GetType().Name + "(Player) with SwimRandom (2)");
+								MainPatcher.logger.LogInfo(__instance.name + " is replacing " + creatureAction2.GetType().Name + "(Player) with SwimRandom (2)");
 								creatureAction2 = new SwimRandom();
 							}
 						}
 					}
 					else
 					{
-						StealthModulePatcher.logger.LogInfo(__instance.name + " is replacing " + creatureAction2.GetType().Name + " with SwimRandom (2)");
+						MainPatcher.logger.LogInfo(__instance.name + " is replacing " + creatureAction2.GetType().Name + " with SwimRandom (2)");
 						creatureAction2 = new SwimRandom();
 					}
 				}

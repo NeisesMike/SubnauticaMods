@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
+using VehicleFramework;
 
 namespace StealthModule
 {
@@ -19,9 +16,30 @@ namespace StealthModule
     public class StealthModule : MonoBehaviour
     {
         public StealthQuality quality = StealthQuality.None;
-        public StealthModule(StealthQuality inputQuality)
+        private static StealthQuality GetQuality(string name)
         {
-            quality = inputQuality;
+            if(name.Contains("StealthModule1"))
+            {
+                return StealthQuality.Low;
+            }
+            if (name.Contains("StealthModule2"))
+            {
+                return StealthQuality.Medium;
+            }
+            if (name.Contains("StealthModule3"))
+            {
+                return StealthQuality.High;
+            }
+            return StealthQuality.None;
+        }
+        public void UpdateQuality()
+        {
+            StealthQuality result = StealthQuality.None;
+            foreach(string upgrade in gameObject.GetComponent<Vehicle>().GetCurrentUpgrades())
+            {
+                result = (StealthQuality)Math.Max((int)result, (int)GetQuality(upgrade));
+            }
+            quality = result;
         }
     }
 }
