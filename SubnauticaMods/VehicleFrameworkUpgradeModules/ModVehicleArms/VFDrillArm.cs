@@ -18,7 +18,6 @@ namespace VFDrillArm
                 };
         public override string Description => "A drill-arm attachment used for mining large ore veins";
         public override Atlas.Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("VFDrillArmIcon.png");
-        public override string TabName => "MVCM";
         public override IEnumerator GetArmPrefab(IOut<GameObject> arm)
         {
             yield return UWE.CoroutineHost.StartCoroutine(PrawnHelper.EnsurePrawn());

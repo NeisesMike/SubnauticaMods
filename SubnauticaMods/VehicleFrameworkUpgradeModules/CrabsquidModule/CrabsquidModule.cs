@@ -16,7 +16,6 @@ namespace CrabsquidModule
                 };
         public override string Description => "Equip to shrug off Crabsquid EMP at a small cost of energy.";
         public override Atlas.Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("CrabsquidModuleIcon.png");
-        public override string TabName => "MVCM";
         public override void OnAdded(AddActionParams param)
         {
         }

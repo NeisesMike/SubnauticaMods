@@ -20,7 +20,6 @@ namespace VFScannerArm
                 };
         public override string Description => "A vehicle-mounted arm version of the spectroscope scanner used to acquire technology blueprints and data on living organisms.";
         public override Atlas.Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("VFScannerArmIcon.png");
-        public override string TabName => "MVCM";
         public override TechType UnlockWith => TechType.Fragment;
         public override bool UnlockAtStart => false;
         public override Sprite UnlockedSprite => VehicleFramework.Assets.SpriteHelper.GetSpriteRaw("ScannerArmPopUp.png");

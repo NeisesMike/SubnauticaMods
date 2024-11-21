@@ -17,7 +17,6 @@ namespace DroneRange
                 };
         public override string Description => "Boosts the effective operating range of drones by 200 meters. Stacks.";
         public override Atlas.Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("DroneRangeIcon.png");
-        public override string TabName => "MVCM";
         public override void OnAdded(AddActionParams param)
         {
             Drone drone = param.vehicle as Drone;
