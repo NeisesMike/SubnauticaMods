@@ -19,14 +19,6 @@ using BepInEx.Bootstrap;
 
 namespace FreeLook
 {
-    public static class Logger
-    {
-        internal static ManualLogSource MyLog { get; set; }
-        public static void Log(string message)
-        {
-            MyLog.LogInfo("[FreeLook] " + message);
-        }
-    }
     [Menu("FreeLook Options")]
     public class MyConfig : ConfigFile
     {
@@ -45,15 +37,9 @@ namespace FreeLook
     public class FreeLookPatcher : BaseUnityPlugin
     {
         internal static MyConfig config { get; private set; }
-        //public static Options Options = new Options();
-        public void Awake()
-        {
-            FreeLook.Logger.MyLog = base.Logger;
-        }
         public void Start()
         {
             config = OptionsPanelHandler.RegisterModOptions<MyConfig>();
-            //OptionsPanelHandler.RegisterModOptions(Options);
             var harmony = new Harmony("com.mikjaw.subnautica.freelook.mod");
             harmony.PatchAll();
 
