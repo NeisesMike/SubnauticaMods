@@ -6,7 +6,8 @@ namespace FreeLook
 {
     public class FreeLookManager : MonoBehaviour
     {
-        private bool isToggled = false;
+        internal bool isToggled = false;
+        internal bool isFreeLooking = false;
         private Player MyPlayer => GetComponent<Player>();
         private MainCameraControl MCC => MainCameraControl.main;
         private Vehicle Vehicle => MyPlayer?.GetVehicle();
@@ -20,24 +21,22 @@ namespace FreeLook
         // these are used as ref parameters in a sigmoidal lerp called smooth-damp-angle
         private float xVelocity = 0.0f;
         private float yVelocity = 0.0f;
-        const float smoothTime = 0.25f;
+        private const float smoothTime = 0.25f;
 
         private Quaternion startQuat = Quaternion.identity;
         private readonly Quaternion endQuat = Quaternion.Euler(2.2f, 0, 0);
         private float resetArmStartTime = 0f;
 
-        internal bool isFreeLooking = false;
-
         // this controls whether update will be used to "snap back" the cursor to center
-        internal bool resetCameraFlag = false;
+        private bool resetCameraFlag = false;
 
-        internal bool wasFreelyPilotingLastFrame = false;
-        internal bool isNewlyInVehicle = false;
+        private bool wasFreelyPilotingLastFrame = false;
+        private bool isNewlyInVehicle = false;
 
-        internal bool wasTriggerDownLastFrame = false;
-        internal bool isTriggerNewlyDown = false;
-        internal bool isTriggerNewlyUp = false;
-        internal bool m_IsDocking = false;
+        private bool wasTriggerDownLastFrame = false;
+        private bool isTriggerNewlyDown = false;
+        private bool isTriggerNewlyUp = false;
+        private bool m_IsDocking = false;
 
         private void SetInVehicleVars(bool inVehicleThisFrame)
         {
