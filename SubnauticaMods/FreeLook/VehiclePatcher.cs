@@ -12,12 +12,12 @@ namespace FreeLook
     public static class VehiclePatcher
     {
         [HarmonyPrefix]
-        [HarmonyPatch("Update")]
+        [HarmonyPatch(nameof(Vehicle.Update))]
         public static bool UpdatePrefix(Vehicle __instance)
         {
             foreach(var player in __instance.GetComponentsInChildren<Player>())
             {
-                if (FreeLookManager.ShouldDoEngineAction && player.GetVehicle() == __instance)
+                if (player.GetComponent<FreeLookManager>().isFreeLooking && player.GetVehicle() == __instance)
                 {
                     return false;
                 }

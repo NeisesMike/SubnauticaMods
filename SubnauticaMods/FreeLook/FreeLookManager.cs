@@ -17,6 +17,10 @@ namespace FreeLook
         private Vehicle Vehicle => MyPlayer?.GetVehicle();
         private bool IsFreelyPiloting => Vehicle != null && !Vehicle.docked && Vehicle.GetPilotingMode();
         private float Deadzone => ((float)FreeLookPatcher.config.deadzone) / 100f;
+        private bool IsTriggerHeld => (Input.GetAxisRaw("ControllerAxis3") > Deadzone) || (Input.GetAxisRaw("ControllerAxis3") < -Deadzone);
+        private bool IsControlHeld => Input.GetKey(FreeLookPatcher.config.FreeLookKey) || IsTriggerHeld;
+        private bool IsControlDown => Input.GetKeyDown(FreeLookPatcher.config.FreeLookKey) || isTriggerNewlyDown;
+        private bool IsControlUp => Input.GetKeyUp(FreeLookPatcher.config.FreeLookKey) || isTriggerNewlyUp;
 
         // these are used as ref parameters in a sigmoidal lerp called smooth-damp-angle
         private float xVelocity = 0.0f;
@@ -40,8 +44,6 @@ namespace FreeLook
         internal bool isTriggerNewlyUp = false;
         internal bool m_IsDocking = false;
 
-        internal static bool ShouldDoEngineAction = false;
-
         private void SetInVehicleVars(bool inVehicleThisFrame)
         {
             if (wasFreelyPilotingLastFrame)
@@ -54,7 +56,7 @@ namespace FreeLook
             }
             wasFreelyPilotingLastFrame = inVehicleThisFrame;
         }
-        private void SetTriggerStates(bool triggerState)
+        private void HandleTriggers(bool triggerState)
         {
             if (wasTriggerDownLastFrame)
             {
@@ -159,46 +161,33 @@ namespace FreeLook
         {
             if (IsFreelyPiloting)
             {
-                bool triggerState = (Input.GetAxisRaw("ControllerAxis3") > Deadzone) || (Input.GetAxisRaw("ControllerAxis3") < -Deadzone);
-                SetTriggerStates(triggerState);
-                if (Input.GetKey(FreeLookPatcher.config.FreeLookKey) || triggerState)// || IsToggled)
+                HandleTriggers(IsTriggerHeld);
+                if (IsControlDown)
                 {
-                    ShouldDoEngineAction = true;
-                    if (Input.GetKeyDown(FreeLookPatcher.config.FreeLookKey) || isTriggerNewlyDown)
-                    {
-                        // If we just pressed the FreeLook button, take control of the camera.
-                        BeginFreeLook();
-                    }
-                    // if we're freelooking, control the camera
-                    ExecuteFreeLook(Vehicle);
+                    // take control of the camera.
+                    BeginFreeLook();
                 }
-                else if (Input.GetKeyUp(FreeLookPatcher.config.FreeLookKey) || isTriggerNewlyUp)
+                if (IsControlHeld)
                 {
-                    ShouldDoEngineAction = false;
-                    // If we just released the FreeLook button, flag camera for release
+                    // control the camera
+                    ExecuteFreeLook();
+                    return;
+                }
+                if (IsControlUp)
+                {
+                    // flag camera for release
                     BeginReleaseCamera();
-                }
-                else
-                {
-                    ShouldDoEngineAction = false;
                 }
                 if (resetCameraFlag)
                 {
-                    ShouldDoEngineAction = false;
                     ResetCameraRotation();
-                    return;
                 }
             }
         }
-        private void ExecuteFreeLook(Vehicle vehicle)
+        private void ExecuteFreeLook()
         {
             resetCameraFlag = false;
-
-            // must add oxygen manually
-            OxygenManager oxygenMgr = Player.main.oxygenMgr;
-            oxygenMgr.AddOxygen(Time.deltaTime);
-
-            // control the camera
+            MyPlayer.oxygenMgr.AddOxygen(Time.deltaTime); // FreeLook overrides Vehicle.Update, so we have to add oxygen here.
             MoveCamera();
         }
         private void BeginFreeLook()
