@@ -24,15 +24,15 @@ namespace FreeLook
         public int deadzone = 20;
     }
 
-    [BepInPlugin("com.mikjaw.subnautica.freelook.mod", "FreeLook", "2.2.0")]
-    [BepInDependency("com.snmodding.nautilus")]
+    [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID)]
     public class FreeLookPatcher : BaseUnityPlugin
     {
         internal static MyConfig config { get; private set; }
         public void Start()
         {
             config = OptionsPanelHandler.RegisterModOptions<MyConfig>();
-            var harmony = new Harmony("com.mikjaw.subnautica.freelook.mod");
+            var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
 
             // here we coerce tweaks and fixes into compatibility
