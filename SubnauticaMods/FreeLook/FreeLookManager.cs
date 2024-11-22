@@ -12,162 +12,101 @@ namespace FreeLook
 {
     public class FreeLookManager : MonoBehaviour
     {
-        private Player _player;
-        private Player player
-        {
-            get
-            {
-                if (_player == null)
-                {
-                    _player = GetComponent<Player>();
-                }
-                return _player;
-            }
-        }
-        private MainCameraControl _mcc;
-        private MainCameraControl mcc
-        {
-            get
-            {
-                if (_mcc == null)
-                {
-                    _mcc = MainCameraControl.main;
-                }
-                return _mcc;
-            }
-        }
-        private Vehicle _vehicle = null;
-        public Vehicle vehicle
-        {
-            get
-            {
-                if (_vehicle == null)
-                {
-                    _vehicle = player.GetVehicle();
-                }
-                return _vehicle;
-            }
-            set
-            {
-                _vehicle = value;
-            }
-        }
-
-        private bool IsFreelyPiloting => player.GetVehicle() != null && !player.GetVehicle().docked && player.GetVehicle().GetPilotingMode();
-        private float deadzone => ((float)FreeLookPatcher.config.deadzone) / 100f;
+        private Player MyPlayer => GetComponent<Player>();
+        private MainCameraControl MCC => MainCameraControl.main;
+        private Vehicle Vehicle => MyPlayer?.GetVehicle();
+        private bool IsFreelyPiloting => Vehicle != null && !Vehicle.docked && Vehicle.GetPilotingMode();
+        private float Deadzone => ((float)FreeLookPatcher.config.deadzone) / 100f;
 
         // these are used as ref parameters in a sigmoidal lerp called smooth-damp-angle
         private float xVelocity = 0.0f;
         private float yVelocity = 0.0f;
         const float smoothTime = 0.25f;
 
-        public bool isFreeLooking = false;
+        private Quaternion startQuat = Quaternion.identity;
+        private readonly Quaternion endQuat = Quaternion.Euler(2.2f, 0, 0);
+        private float resetArmStartTime = 0f;
+
+        internal bool isFreeLooking = false;
 
         // this controls whether update will be used to "snap back" the cursor to center
-        public bool resetCameraFlag = false;
+        internal bool resetCameraFlag = false;
 
-        public bool wasFreelyPilotingLastFrame = false;
-        public bool isNewlyInVehicle = false;
-        public bool isNewlyOutVehicle = false;
+        internal bool wasFreelyPilotingLastFrame = false;
+        internal bool isNewlyInVehicle = false;
 
-        public bool wasTriggerDownLastFrame = false;
-        public bool isTriggerNewlyDown = false;
-        public bool isTriggerNewlyUp = false;
-        public bool m_IsDocking = false;
-        public void Start()
+        internal bool wasTriggerDownLastFrame = false;
+        internal bool isTriggerNewlyDown = false;
+        internal bool isTriggerNewlyUp = false;
+        internal bool m_IsDocking = false;
+
+        internal static bool ShouldDoEngineAction = false;
+
+        private void SetInVehicleVars(bool inVehicleThisFrame)
         {
-            // check for the existence of The Vehicle Framework
-            var type = Type.GetType("VehicleFramework.VehicleManager", false, false);
-            if (type != null)
+            if (wasFreelyPilotingLastFrame)
             {
-                //Logger.Log("Found VehicleFramework. Compensating.");
+                isNewlyInVehicle = false;
             }
+            else
+            {
+                isNewlyInVehicle = inVehicleThisFrame;
+            }
+            wasFreelyPilotingLastFrame = inVehicleThisFrame;
+        }
+        private void SetTriggerStates(bool triggerState)
+        {
+            if (wasTriggerDownLastFrame)
+            {
+                if (triggerState)
+                {
+                    isTriggerNewlyUp = false;
+                    isTriggerNewlyDown = false;
+                }
+                else
+                {
+                    isTriggerNewlyUp = true;
+                    isTriggerNewlyDown = false;
+                }
+            }
+            else
+            {
+                if (triggerState)
+                {
+                    isTriggerNewlyUp = false;
+                    isTriggerNewlyDown = true;
+                }
+                else
+                {
+                    isTriggerNewlyUp = false;
+                    isTriggerNewlyDown = false;
+                }
+            }
+            wasTriggerDownLastFrame = triggerState;
         }
         public void Update()
         {
-            if (player.playerAnimator.GetBool("cyclops_launch") ||
-                player.playerAnimator.GetBool("exosuit_launch") ||
-                player.playerAnimator.GetBool("moonpool_launchright") ||
-                player.playerAnimator.GetBool("moonpool_launchleft") ||
-                player.playerAnimator.GetBool("moonpool_exolaunchleft") ||
-                player.playerAnimator.GetBool("moonpool_exolaunchright") ||
+            if (MyPlayer.playerAnimator.GetBool("cyclops_launch") ||
+                MyPlayer.playerAnimator.GetBool("exosuit_launch") ||
+                MyPlayer.playerAnimator.GetBool("moonpool_launchright") ||
+                MyPlayer.playerAnimator.GetBool("moonpool_launchleft") ||
+                MyPlayer.playerAnimator.GetBool("moonpool_exolaunchleft") ||
+                MyPlayer.playerAnimator.GetBool("moonpool_exolaunchright") ||
                 m_IsDocking)
             {
-                if (mcc.GetComponentInParent<Player>() != null)
+                if (MCC.GetComponentInParent<Player>() != null)
                 {
-                    mcc.cinematicMode = true;
+                    MCC.cinematicMode = true;
                 }
                 return;
             }
-            void setInVehicleVars(bool inVehicleThisFrame)
-            {
-                if (wasFreelyPilotingLastFrame)
-                {
-                    isNewlyInVehicle = false;
-                    if (inVehicleThisFrame)
-                    {
-                        isNewlyOutVehicle = false;
-                        isNewlyInVehicle = false;
-                    }
-                    else
-                    {
-                        isNewlyOutVehicle = true;
-                        isNewlyInVehicle = false;
-                    }
-                }
-                else
-                {
-                    isNewlyOutVehicle = false;
-                    if (inVehicleThisFrame)
-                    {
-                        isNewlyOutVehicle = false;
-                        isNewlyInVehicle = true;
-                    }
-                    else
-                    {
-                        isNewlyOutVehicle = false;
-                        isNewlyInVehicle = false;
-                    }
-                }
-                wasFreelyPilotingLastFrame = inVehicleThisFrame;
-            }
-            void setTriggerStates(bool triggerState)
-            {
-                if (wasTriggerDownLastFrame)
-                {
-                    if (triggerState)
-                    {
-                        isTriggerNewlyUp = false;
-                        isTriggerNewlyDown = false;
-                    }
-                    else
-                    {
-                        isTriggerNewlyUp = true;
-                        isTriggerNewlyDown = false;
-                    }
-                }
-                else
-                {
-                    if (triggerState)
-                    {
-                        isTriggerNewlyUp = false;
-                        isTriggerNewlyDown = true;
-                    }
-                    else
-                    {
-                        isTriggerNewlyUp = false;
-                        isTriggerNewlyDown = false;
-                    }
-                }
-                wasTriggerDownLastFrame = triggerState;
-            }
 
-            bool isUndocking = player.GetVehicle() != null && player.GetVehicle().docked;
-            bool isDocking = (player.GetVehicle() == null) && wasFreelyPilotingLastFrame && player.cinematicModeActive;
+            bool isUndocking = MyPlayer.GetVehicle() != null && MyPlayer.GetVehicle().docked;
+            bool isDocking = (MyPlayer.GetVehicle() == null) && wasFreelyPilotingLastFrame && MyPlayer.cinematicModeActive;
             // isDocking also matches on normal vehicle exit...
 
-            bool docked = player.GetVehicle() != null && player.GetVehicle().docked;
-            bool piloting = player.IsPiloting();
+            bool docked = MyPlayer.GetVehicle() != null && MyPlayer.GetVehicle().docked;
+            bool piloting = MyPlayer.IsPiloting();
             bool exited = !IsFreelyPiloting && wasFreelyPilotingLastFrame;
 
             // if we "just got out," give up the camera right away
@@ -200,11 +139,11 @@ namespace FreeLook
                     player.IsPiloting() == TRUE
                 */
                 CameraRelinquish(isDocking);
-                setInVehicleVars(IsFreelyPiloting);
+                SetInVehicleVars(IsFreelyPiloting);
                 return;
             }
 
-            setInVehicleVars(IsFreelyPiloting);
+            SetInVehicleVars(IsFreelyPiloting);
 
             // For Mimes, print out a hint
             if (isNewlyInVehicle && FreeLookPatcher.config.isHintingEnabled)
@@ -214,12 +153,15 @@ namespace FreeLook
                 message.ShowMessage("Hold " + FreeLookPatcher.config.FreeLookKey.ToString() + " to Free Look.", 5);
             }
 
+            TryFreeLooking();
+        }
+        private void TryFreeLooking()
+        {
             if (IsFreelyPiloting)
             {
-                vehicle = player.GetVehicle();
-                bool triggerState = (Input.GetAxisRaw("ControllerAxis3") > deadzone) || (Input.GetAxisRaw("ControllerAxis3") < -deadzone);
-                setTriggerStates(triggerState);
-                if ((Input.GetKey(FreeLookPatcher.config.FreeLookKey) || triggerState))
+                bool triggerState = (Input.GetAxisRaw("ControllerAxis3") > Deadzone) || (Input.GetAxisRaw("ControllerAxis3") < -Deadzone);
+                SetTriggerStates(triggerState);
+                if (Input.GetKey(FreeLookPatcher.config.FreeLookKey) || triggerState)// || IsToggled)
                 {
                     ShouldDoEngineAction = true;
                     if (Input.GetKeyDown(FreeLookPatcher.config.FreeLookKey) || isTriggerNewlyDown)
@@ -228,7 +170,7 @@ namespace FreeLook
                         BeginFreeLook();
                     }
                     // if we're freelooking, control the camera
-                    ExecuteFreeLook(vehicle);
+                    ExecuteFreeLook(Vehicle);
                 }
                 else if (Input.GetKeyUp(FreeLookPatcher.config.FreeLookKey) || isTriggerNewlyUp)
                 {
@@ -248,7 +190,6 @@ namespace FreeLook
                 }
             }
         }
-        internal static bool ShouldDoEngineAction = false;
         private void ExecuteFreeLook(Vehicle vehicle)
         {
             resetCameraFlag = false;
@@ -266,9 +207,9 @@ namespace FreeLook
             isTriggerNewlyDown = false;
             resetCameraFlag = false;
             // invoke a camera vulnerability
-            if (mcc.GetComponentInParent<Player>() != null)
+            if (MCC.GetComponentInParent<Player>() != null)
             {
-                mcc.cinematicMode = true;
+                MCC.cinematicMode = true;
             }
 
             // We must work with camRotation here for the case where the user is in the exosuit.
@@ -276,15 +217,15 @@ namespace FreeLook
             // We should set rotation to camRotation here,
             // and set the camPivot rotation to zero,
             // so that our subsequent logic has the right origin
-            mcc.rotationX = mcc.camRotationX;
-            mcc.rotationY = mcc.camRotationY;
-            if (mcc.GetComponentInParent<Player>() != null)
+            MCC.rotationX = MCC.camRotationX;
+            MCC.rotationY = MCC.camRotationY;
+            if (MCC.GetComponentInParent<Player>() != null)
             {
-                mcc.transform.Find("camOffset/pdaCamPivot").localRotation = Quaternion.identity;
+                MCC.transform.Find("camOffset/pdaCamPivot").localRotation = Quaternion.identity;
             }
 
             // exosuit test
-            Exosuit exo = vehicle as Exosuit;
+            Exosuit exo = Vehicle as Exosuit;
             if (exo != null)
             {
                 foreach (var tmp in exo.GetComponentsInChildren<RootMotion.FinalIK.AimIK>())
@@ -298,24 +239,20 @@ namespace FreeLook
             resetCameraFlag = true;
             isFreeLooking = false;
 
-            Exosuit exo = vehicle as Exosuit;
+            Exosuit exo = Vehicle as Exosuit;
             if (exo != null)
             {
                 startQuat = exo.transform.Find("exosuit_01/root/geoChildren/lArm_clav").transform.localRotation;
                 resetArmStartTime = 0f;
             }
         }
-
-        private Quaternion startQuat = Quaternion.identity;
-        private readonly Quaternion endQuat = Quaternion.Euler(2.2f, 0, 0);
-        private float resetArmStartTime = 0f;
-        internal void ResetCameraRotation()
+        private void ResetCameraRotation()
         {
-            mcc.rotationX = Mathf.SmoothDampAngle(mcc.rotationX, 0f, ref xVelocity, smoothTime);
-            mcc.rotationY = Mathf.SmoothDampAngle(mcc.rotationY, 0f, ref yVelocity, smoothTime);
-            MainCamera.camera.transform.localEulerAngles = new Vector3(-mcc.rotationY, mcc.rotationX, 0f);
+            MCC.rotationX = Mathf.SmoothDampAngle(MCC.rotationX, 0f, ref xVelocity, smoothTime);
+            MCC.rotationY = Mathf.SmoothDampAngle(MCC.rotationY, 0f, ref yVelocity, smoothTime);
+            MainCamera.camera.transform.localEulerAngles = new Vector3(-MCC.rotationY, MCC.rotationX, 0f);
 
-            Exosuit exo = vehicle as Exosuit;
+            Exosuit exo = Vehicle as Exosuit;
             if (exo != null)
             {
                 exo.transform.Find("exosuit_01/root/geoChildren/lArm_clav").transform.localRotation = Quaternion.Slerp(startQuat, endQuat, resetArmStartTime);
@@ -325,20 +262,20 @@ namespace FreeLook
 
             // if we're not docking or undocking, and
             // if we're close enough to center, snap back and stop executing
-            bool isUndocking = player.GetVehicle() != null && player.GetVehicle().docked;
-            bool isDocking = (player.GetVehicle() == null) && wasFreelyPilotingLastFrame;
+            bool isUndocking = MyPlayer.GetVehicle() != null && MyPlayer.GetVehicle().docked;
+            bool isDocking = (MyPlayer.GetVehicle() == null) && wasFreelyPilotingLastFrame;
             //if(!isUndocking && !isDocking)
             {
-                double threshold = 1;
-                if (Mathf.Abs(mcc.rotationX) < threshold && Mathf.Abs(mcc.rotationY) < threshold)
+                double threshold = 0.01f;
+                if (Mathf.Abs(MCC.rotationX) < threshold && Mathf.Abs(MCC.rotationY) < threshold)
                 {
-                    mcc.ResetCamera();
+                    MCC.ResetCamera();
                     CameraRelinquish(false);
                     resetCameraFlag = false;
                 }
             }
         }
-        internal void MoveCamera()
+        private void MoveCamera()
         {
             Vector2 myLookDelta = GameInput.GetLookDelta();
             if (myLookDelta == Vector2.zero)
@@ -348,19 +285,19 @@ namespace FreeLook
                 myLookDelta.y += GameInput.GetAnalogValueForButton(GameInput.Button.LookUp);
                 myLookDelta.y -= GameInput.GetAnalogValueForButton(GameInput.Button.LookDown);
             }
-            mcc.rotationX += myLookDelta.x;
-            mcc.rotationY += myLookDelta.y;
-            mcc.rotationX = Mathf.Clamp(mcc.rotationX, -100, 100);
-            mcc.rotationY = Mathf.Clamp(mcc.rotationY, -80, 80);
-            MainCamera.camera.transform.localEulerAngles = new Vector3(-mcc.rotationY, mcc.rotationX, 0f);
+            MCC.rotationX += myLookDelta.x;
+            MCC.rotationY += myLookDelta.y;
+            MCC.rotationX = Mathf.Clamp(MCC.rotationX, -100, 100);
+            MCC.rotationY = Mathf.Clamp(MCC.rotationY, -80, 80);
+            MainCamera.camera.transform.localEulerAngles = new Vector3(-MCC.rotationY, MCC.rotationX, 0f);
         }
-        internal void CameraRelinquish(bool isDocking)
+        private void CameraRelinquish(bool isDocking)
         {
             MainCamera.camera.transform.localEulerAngles = Vector3.zero;
             if (isDocking)
             {
-                mcc.transform.localEulerAngles = Vector3.zero;
-                player.cinematicModeActive = true;
+                MCC.transform.localEulerAngles = Vector3.zero;
+                MyPlayer.cinematicModeActive = true;
                 m_IsDocking = true;
                 resetCameraFlag = false;
             }
@@ -369,25 +306,25 @@ namespace FreeLook
                 //resetCameraFlag = false;
                 //mcc.cinematicMode = false;
                 //mcc.cinematicMode = isDocking;
-                while (player.playerAnimator.GetBool("cyclops_dock") ||
-                       player.playerAnimator.GetBool("moonpool_dock") ||
-                       player.playerAnimator.GetBool("exosuit_dock") ||
-                       player.playerAnimator.GetBool("moonpool_exodock"))
+                while (MyPlayer.playerAnimator.GetBool("cyclops_dock") ||
+                       MyPlayer.playerAnimator.GetBool("moonpool_dock") ||
+                       MyPlayer.playerAnimator.GetBool("exosuit_dock") ||
+                       MyPlayer.playerAnimator.GetBool("moonpool_exodock"))
                 {
                     yield return null;
                 }
                 if(m_IsDocking)
                 {
                     m_IsDocking = false;
-                    player.cinematicModeActive = false;
+                    MyPlayer.cinematicModeActive = false;
                 }
                 resetCameraFlag = false;
-                if (mcc.GetComponentInParent<Player>() != null)
+                if (MCC.GetComponentInParent<Player>() != null)
                 {
-                    mcc.cinematicMode = false;
+                    MCC.cinematicMode = false;
                 }
 
-                Exosuit exo = vehicle as Exosuit;
+                Exosuit exo = Vehicle as Exosuit;
                 if (exo != null)
                 {
                     foreach (var tmp in exo.GetComponentsInChildren<RootMotion.FinalIK.AimIK>())
