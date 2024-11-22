@@ -6,6 +6,7 @@ namespace FreeLook
 {
     public class FreeLookManager : MonoBehaviour
     {
+        private bool isToggled = false;
         private Player MyPlayer => GetComponent<Player>();
         private MainCameraControl MCC => MainCameraControl.main;
         private Vehicle Vehicle => MyPlayer?.GetVehicle();
@@ -151,31 +152,61 @@ namespace FreeLook
 
             TryFreeLooking();
         }
+        private void TryNormalFreeLooking()
+        {
+            if (IsControlDown)
+            {
+                // take control of the camera.
+                BeginFreeLook();
+            }
+            if (IsControlHeld)
+            {
+                // control the camera
+                ExecuteFreeLook();
+                return;
+            }
+            if (IsControlUp)
+            {
+                // flag camera for release
+                BeginReleaseCamera();
+            }
+        }
+        private void TryToggleFreeLooking()
+        {
+            if (IsControlDown)
+            {
+                isToggled = !isToggled;
+                if(isToggled)
+                {
+                    BeginFreeLook();
+                }
+                else
+                {
+                    BeginReleaseCamera();
+                }
+            }
+            if (isToggled)
+            {
+                ExecuteFreeLook();
+            }
+        }
         private void TryFreeLooking()
         {
             if (IsFreelyPiloting)
             {
                 HandleTriggers(IsTriggerHeld);
-                if (IsControlDown)
+                if(FreeLookPatcher.config.isToggle)
                 {
-                    // take control of the camera.
-                    BeginFreeLook();
+                    TryToggleFreeLooking();
                 }
-                if (IsControlHeld)
+                else
                 {
-                    // control the camera
-                    ExecuteFreeLook();
-                    return;
+                    TryNormalFreeLooking();
                 }
-                if (IsControlUp)
-                {
-                    // flag camera for release
-                    BeginReleaseCamera();
-                }
-                if (resetCameraFlag)
-                {
-                    ResetCameraRotation();
-                }
+            }
+            if (resetCameraFlag)
+            {
+                ResetCameraRotation();
             }
         }
         private void ExecuteFreeLook()
