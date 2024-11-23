@@ -30,12 +30,17 @@ namespace SolarChargingModule
 			}
 			float num = Mathf.Clamp01((200f + transform.position.y) / 200f);
 			float localLightScalar = main.GetLocalLightScalar();
-			float amount = 1f * localLightScalar * num * (float)m_numChargers;
+			float amount =
+				MainPatcher.MyConfig.GetPower()
+				* localLightScalar 
+				* num 
+				* (float)m_numChargers;
 			AddChargeToMV(GetComponent<Vehicle>(), amount);
 		}
-		public void Start()
-		{
-			InvokeRepeating(nameof(UpdateSolarRecharge), 1f, 1f);
+		public void UpdateSetup()
+        {
+			CancelInvoke();
+			InvokeRepeating(nameof(UpdateSolarRecharge), 1f, MainPatcher.MyConfig.GetRepeatRate());
 		}
 		private void AddChargeToMV(Vehicle mv, float chargeToAdd)
 		{

@@ -21,11 +21,15 @@ namespace SolarChargingModule
         public override Atlas.Sprite Icon => SpriteHelper.GetSprite("SolarChargingModuleIcon.png");
         public override void OnAdded(AddActionParams param)
         {
-            param.vehicle.gameObject.EnsureComponent<VFSolarCharger>().numChargers = param.vehicle.GetCurrentUpgrades().Where(x => x.Contains("SolarChargingModule")).Count();
+            VFSolarCharger solarCharger = param.vehicle.gameObject.EnsureComponent<VFSolarCharger>();
+            solarCharger.numChargers = param.vehicle.GetCurrentUpgrades().Where(x => x.Contains("SolarChargingModule")).Count();
+            solarCharger.UpdateSetup();
         }
         public override void OnRemoved(AddActionParams param)
         {
-            param.vehicle.gameObject.EnsureComponent<VFSolarCharger>().numChargers = param.vehicle.GetCurrentUpgrades().Where(x => x.Contains("SolarChargingModule")).Count();
+            VFSolarCharger solarCharger = param.vehicle.gameObject.EnsureComponent<VFSolarCharger>();
+            solarCharger.numChargers = param.vehicle.GetCurrentUpgrades().Where(x => x.Contains("SolarChargingModule")).Count();
+            solarCharger.UpdateSetup();
         }
     }
 }
