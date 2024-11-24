@@ -6,7 +6,7 @@ using VehicleFramework.Admin;
 
 namespace VFScannerArm
 {
-    [BepInPlugin("com.mikjaw.subnautica.vfscannerarm.mod", "VFScannerArm", "1.2")]
+    [BepInPlugin("com.mikjaw.subnautica.vfscannerarm.mod", "VFScannerArm", "1.3")]
     [BepInDependency(VehicleFramework.PluginInfo.PLUGIN_GUID, VehicleFramework.PluginInfo.PLUGIN_VERSION)]
     public class MainPatcher : BaseUnityPlugin
     {

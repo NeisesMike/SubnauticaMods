@@ -3,7 +3,7 @@ using HarmonyLib;
 
 namespace VFDrillArm
 {
-    [BepInPlugin("com.mikjaw.subnautica.vfdrillarm.mod", "VFDrillArm", "1.5")]
+    [BepInPlugin("com.mikjaw.subnautica.vfdrillarm.mod", "VFDrillArm", "1.6")]
     [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID)]
     [BepInDependency(VehicleFramework.PluginInfo.PLUGIN_GUID, VehicleFramework.PluginInfo.PLUGIN_VERSION)]
     public class MainPatcher : BaseUnityPlugin
