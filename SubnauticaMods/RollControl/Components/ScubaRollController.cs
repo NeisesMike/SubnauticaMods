@@ -11,7 +11,7 @@ namespace RollControl
 {
     public class ScubaRollController : MonoBehaviour
     {
-        public static bool isRollEnabled = RollControlPatcher.config.IsScubaRollDefaultEnabled;
+        public static bool isRollEnabled = MainPatcher.config.IsScubaRollDefaultEnabled;
         public static Player player = null;
 
         private static MainCameraControl _CamControl = MainCameraControl.main;
@@ -172,7 +172,7 @@ namespace RollControl
                     ResetForStartRoll(null);
 
                     // remind the user that scuba roll is enabled, show them the toggle key
-                    Logger.Output("Scuba Roll is ON. Toggle with " + RollControlPatcher.config.ToggleRollKey);
+                    Logger.Output("Scuba Roll is ON. Toggle with " + MainPatcher.config.ToggleRollKey);
                     SetupForScubaRollOnceAtStart();
                 }
                 if (swimstate == SwimState.RunFall)
@@ -220,7 +220,7 @@ namespace RollControl
         {
             if (IsAbleToToggleScubaRolling)
             {
-                if (Input.GetKeyDown(RollControlPatcher.config.ToggleRollKey))
+                if (Input.GetKeyDown(MainPatcher.config.ToggleRollKey))
                 {
                     if (isRollEnabled)
                     {
@@ -293,13 +293,13 @@ namespace RollControl
             }
             if (isSpeedingUpCW && isRollReady)
             {
-                rollMagnitude = (float)RollControlPatcher.config.ScubaRollSpeed / 100f * SCALING_FACTOR * (fuel / MAX_FUEL);
+                rollMagnitude = (float)MainPatcher.config.ScubaRollSpeed / 100f * SCALING_FACTOR * (fuel / MAX_FUEL);
                 GetComponent<Rigidbody>().AddTorque(player.transform.forward * rollMagnitude, ForceMode.VelocityChange);
                 fuel += ACCEL_FUEL_STEP;
             }
             if (isSpeedingUpCCW && isRollReady)
             {
-                rollMagnitude = (float)-RollControlPatcher.config.ScubaRollSpeed / 100f * SCALING_FACTOR * (fuel / MAX_FUEL);
+                rollMagnitude = (float)-MainPatcher.config.ScubaRollSpeed / 100f * SCALING_FACTOR * (fuel / MAX_FUEL);
                 GetComponent<Rigidbody>().AddTorque(player.transform.forward * rollMagnitude, ForceMode.VelocityChange);
                 fuel += ACCEL_FUEL_STEP;
             }
@@ -339,11 +339,11 @@ namespace RollControl
             float scalar = 1;
             if(GameInput.IsPrimaryDeviceGamepad())
             {
-                scalar = RollControlPatcher.config.ScubaPadSensitivity;
+                scalar = MainPatcher.config.ScubaPadSensitivity;
             }
             else
             {
-                scalar = RollControlPatcher.config.ScubaMouseSensitivity;
+                scalar = MainPatcher.config.ScubaMouseSensitivity;
             }
             player.rigidBody.AddTorque(scalar / 100f * SCALING_FACTOR * player.transform.up * offset.x, ForceMode.VelocityChange);
             player.rigidBody.AddTorque(scalar / 100f * SCALING_FACTOR * player.transform.right * -offset.y, ForceMode.VelocityChange);
@@ -351,13 +351,13 @@ namespace RollControl
         }
         public void SetupScubaRoll()
         {
-            bool portUp = Input.GetKeyUp(RollControlPatcher.config.RollPortKey);
-            bool portHeld = Input.GetKey(RollControlPatcher.config.RollPortKey);
-            bool portDown = Input.GetKeyDown(RollControlPatcher.config.RollPortKey);
+            bool portUp = Input.GetKeyUp(MainPatcher.config.RollPortKey);
+            bool portHeld = Input.GetKey(MainPatcher.config.RollPortKey);
+            bool portDown = Input.GetKeyDown(MainPatcher.config.RollPortKey);
 
-            bool starUp = Input.GetKeyUp(RollControlPatcher.config.RollStarboardKey);
-            bool starHeld = Input.GetKey(RollControlPatcher.config.RollStarboardKey);
-            bool starDown = Input.GetKeyDown(RollControlPatcher.config.RollStarboardKey);
+            bool starUp = Input.GetKeyUp(MainPatcher.config.RollStarboardKey);
+            bool starHeld = Input.GetKey(MainPatcher.config.RollStarboardKey);
+            bool starDown = Input.GetKeyDown(MainPatcher.config.RollStarboardKey);
 
             if ((portDown || portHeld) && !(starDown || starHeld))
             {

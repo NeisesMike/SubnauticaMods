@@ -10,13 +10,13 @@ namespace RollControl
     public class VehicleRollController : MonoBehaviour
     {
         public Vehicle myVehicle;
-        private bool isRollEnabled = RollControlPatcher.config.IsVehicleRollDefaultEnabled;
+        private bool isRollEnabled = MainPatcher.config.IsVehicleRollDefaultEnabled;
 
         public bool IsPlayerInThisVehicle
         {
             get
             {
-                if (RollControlPatcher.ThereIsVehicleFramework)
+                if (MainPatcher.ThereIsVehicleFramework)
                 {
                     var vehicleTypesDroneType = Type.GetType("VehicleFramework.VehicleTypes.Drone, VehicleFramework", false, false);
                     if (vehicleTypesDroneType == null)
@@ -49,7 +49,7 @@ namespace RollControl
 
         public void Update()
         {
-            if (Input.GetKeyDown(RollControlPatcher.config.ToggleRollKey) &&
+            if (Input.GetKeyDown(MainPatcher.config.ToggleRollKey) &&
                 IsPlayerInThisVehicle &&   
                 AvatarInputHandler.main.IsEnabled() &&
                 (myVehicle as Exosuit) == null
@@ -78,13 +78,13 @@ namespace RollControl
 
         public void SubmarineRoll()
         {
-            if (Input.GetKey(RollControlPatcher.config.RollPortKey))
+            if (Input.GetKey(MainPatcher.config.RollPortKey))
             {
-                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)RollControlPatcher.config.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
+                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)MainPatcher.config.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
             }
-            if (Input.GetKey(RollControlPatcher.config.RollStarboardKey))
+            if (Input.GetKey(MainPatcher.config.RollStarboardKey))
             {
-                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)-RollControlPatcher.config.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
+                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)-MainPatcher.config.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
             }
         }
     }

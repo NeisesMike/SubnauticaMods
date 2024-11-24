@@ -94,7 +94,8 @@
     <Compile Include="Patches\PlayerPatcher.cs" />
     <Compile Include="Patches\UnderwaterMotorPatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Patches\RollControlPatcher.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="MainPatcher.cs" />
     <Compile Include="Components\ScubaRollController.cs" />
     <Compile Include="Components\VehicleRollController.cs" />
     <Compile Include="Patches\VehiclePatcher.cs" />
