@@ -68,11 +68,8 @@ namespace PersistentReaper
         [Slider("Reaper Update Interval (seconds)", Min = 1f, Max = 10f, Step = 0.25f, DefaultValue = 1f, Tooltip = updateIntervalTooltip)]
         public float updateInterval = 1f;
 
-        //[Button("Print Reaper Map")]
-        public const string printReaperMapTooltip = "Wiggle this in either direction to print the reaper map. Sorry for the weird interface.";
-        [Slider("Print Reaper Map", Min = 0, Max = 1, Step = 1, DefaultValue = 0, Tooltip = printReaperMapTooltip),OnChange(nameof(PrintReaperMap)) ]
-        public int printdummy = 50;
-        public static void PrintReaperMap()
+        [Button("Print Reaper Map", Tooltip = "Creates a file in the Persistent Reaper mod folder that shows where reapers are in the game world."), OnGameObjectCreated(nameof(PrintReaperMap))]
+        public void PrintReaperMap(ButtonClickedEventArgs e)
         {
             string[] map = new string[256];
 
