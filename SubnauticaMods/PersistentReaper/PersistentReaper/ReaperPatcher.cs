@@ -24,7 +24,7 @@ namespace PersistentReaper
             {
                 return;
             }
-            if (PersistentReaperPatcher.config.reaperBehaviors != ReaperBehaviors.Normal)
+            if (PersistentReaperPatcher.PRConfig.reaperBehaviors != ReaperBehaviors.Normal)
             {
                 // these go to a max value of 1
                 // these normally grow at a rate of deltaTime...
@@ -34,7 +34,7 @@ namespace PersistentReaper
             }
 
             // HumanHunter.Update
-            if (PersistentReaperPatcher.config.reaperBehaviors == ReaperBehaviors.HumanHunter && lastUpdateTime + updateInterval < Time.time)
+            if (PersistentReaperPatcher.PRConfig.reaperBehaviors == ReaperBehaviors.HumanHunter && lastUpdateTime + updateInterval < Time.time)
             {
                 ReaperBehavior percyBehavior = null;
                 // we're guaranteed to find a value here, due to the earlier ContainsValue call

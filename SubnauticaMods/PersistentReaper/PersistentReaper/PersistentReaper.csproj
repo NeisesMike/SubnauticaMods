@@ -80,7 +80,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LargeWorldEntityPatcher.cs" />
-    <Compile Include="PersistentReaperPatcher.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="MainPatcher.cs" />
+    <Compile Include="PluginInfo.cs" />
     <Compile Include="PlayerPatcher.cs" />
     <Compile Include="PlayerTrail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -90,7 +92,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy  $(TargetPath) "S:\SteamLibrary\steamapps\common\Subnautica\BepInEx\plugins\$(ProjectName)\" /y
-xcopy  $(TargetPath) "S:\SteamLibrary\steamapps\common\Subnautica\BepInEx\$(ProjectName)\BepInEx\plugins\$(ProjectName)\" /y</PostBuildEvent>
+    <PostBuildEvent>xcopy  $(TargetPath) "C:\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\plugins\$(ProjectName)\" /y
+</PostBuildEvent>
   </PropertyGroup>
 </Project>
