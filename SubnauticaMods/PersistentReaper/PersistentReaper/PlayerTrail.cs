@@ -11,13 +11,13 @@ namespace PersistentReaper
         public int scentIntensity = 0;
         public Scent()
         {
-            scentIntensity = MainPatcher.PRConfig.scentLifetime;
+            scentIntensity = PersistentReaperPatcher.config.scentLifetime;
             expireScent();
         }
 
         public void refreshScent()
         {
-            scentIntensity = MainPatcher.PRConfig.scentLifetime;
+            scentIntensity = PersistentReaperPatcher.config.scentLifetime;
         }
 
         public async void expireScent()

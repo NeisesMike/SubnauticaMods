@@ -106,7 +106,7 @@ namespace PersistentReaper
         public static bool Prefix(AggressiveWhenSeeTarget __instance, ref GameObject __result)
         {
             // ensure this is HumanHunting Percy
-            if (!ReaperManager.reaperDict.ContainsValue(__instance.gameObject) || MainPatcher.PRConfig.reaperBehaviors != ReaperBehaviors.HumanHunter)
+            if (!ReaperManager.reaperDict.ContainsValue(__instance.gameObject) || PersistentReaperPatcher.config.reaperBehaviors != ReaperBehaviors.HumanHunter)
             {
                 return true;
             }
@@ -131,7 +131,7 @@ namespace PersistentReaper
         public static bool Prefix(MoveTowardsTarget __instance, ref IEcoTarget ___currentTarget)
         {
             // ensure this is HumanHunting Percy
-            if (!ReaperManager.reaperDict.ContainsValue(__instance.gameObject) || MainPatcher.PRConfig.reaperBehaviors != ReaperBehaviors.HumanHunter)
+            if (!ReaperManager.reaperDict.ContainsValue(__instance.gameObject) || PersistentReaperPatcher.config.reaperBehaviors != ReaperBehaviors.HumanHunter)
             {
                 return true;
             }
