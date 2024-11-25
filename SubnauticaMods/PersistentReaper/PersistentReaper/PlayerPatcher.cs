@@ -32,7 +32,7 @@ namespace PersistentReaper
             }
             else
             {
-                PersistentReaperPatcher.logger.LogError("Failed to find ReaperLeviathan prefab.");
+                MainPatcher.PRLogger.LogError("Failed to find ReaperLeviathan prefab.");
             }
         }
     }
@@ -63,7 +63,7 @@ namespace PersistentReaper
         [HarmonyPostfix]
         public static void Postfix()
         {
-            if (PersistentReaperPatcher.config.areReapersActive)
+            if (MainPatcher.PRConfig.areReapersActive)
             {
                 ReaperManager.updateReapers();
                 leaveScent();
