@@ -10,7 +10,7 @@ namespace SonarModule
         public override string ClassId => "SonarModule";
         public override string DisplayName => "Sonar Module";
         public override string Description => "A dedicated system for detecting and displaying topographical data on the HUD.";
-        public override float RepeatRate => 5f;
+        public override float RepeatRate => MainPatcher.MyConfig.repeatRate;
         public override float TimeToFirstActivation => 0f;
         public override float EnergyCostPerActivation => 1f;
         public override List<Ingredient> Recipe => new List<Ingredient>()
