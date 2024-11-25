@@ -114,6 +114,8 @@ namespace PersistentReaper
             {
                 Percy.GetComponent<FleeOnDamage>().damageThreshold = 1000f;
             }
+            // ensure Percy is not saved
+            Component.DestroyImmediate(Percy.GetComponent<PrefabIdentifier>());
             // attach this gameobject to percy
             reaperDict[thisReaper] = Percy;
         }
