@@ -31,7 +31,7 @@ namespace PersistentReaper
         {
             while(ReaperManager.reaperDict.Count < 0)
             {
-                ReaperManager.removeOneReaper();
+                ReaperManager.RemoveOneReaper();
             }
         }
 
@@ -60,7 +60,7 @@ namespace PersistentReaper
 
         public void SetDepthMap(ChoiceChangedEventArgs<DepthMap> e)
         {
-            ReaperManager.depthDictionary = ReaperManager.getDepthDictionary(e.Value);
+            ReaperManager.depthDictionary = ReaperManager.GetDepthDictionary(e.Value);
             KillAllReapers();
         }
 

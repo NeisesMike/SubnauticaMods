@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
 
@@ -13,7 +9,7 @@ namespace PersistentReaper
         public Int3 currentRegion = Int3.zero;
         public bool isLockedOntoPlayer = false;
 
-        public static bool isValidTargetForPercy(GameObject Percy)
+        public static bool IsValidTargetForPercy(GameObject Percy)
         {
             // Percy only hunts humans
             GameObject target = Player.main.gameObject;
@@ -97,126 +93,4 @@ namespace PersistentReaper
             return false;
         }
     }
-
-    [HarmonyPatch(typeof(AggressiveWhenSeeTarget))]
-    [HarmonyPatch("GetAggressionTarget")]
-    internal class AggressiveWhenSeeTargetGetAggressionTargetPatch
-    {
-        [HarmonyPrefix]
-        public static bool Prefix(AggressiveWhenSeeTarget __instance, ref GameObject __result)
-        {
-            // ensure this is HumanHunting Percy
-            if (!ReaperManager.reaperDict.ContainsValue(__instance.gameObject) || PersistentReaperPatcher.PRConfig.reaperBehaviors != ReaperBehaviors.HumanHunter)
-            {
-                return true;
-            }
-            if (ReaperBehavior.isValidTargetForPercy(__instance.gameObject))
-            {
-                // Percy has only one target.
-                __result = Player.main.gameObject;
-            }
-            else
-            {
-                __result = null;
-            }
-            return false;
-        }
-    }
-
-    [HarmonyPatch(typeof(MoveTowardsTarget))]
-    [HarmonyPatch("UpdateCurrentTarget")]
-    internal class MoveTowardsTargetUpdateCurrentTargetPatch
-    {
-        [HarmonyPrefix]
-        public static bool Prefix(MoveTowardsTarget __instance, ref IEcoTarget ___currentTarget)
-        {
-            // ensure this is HumanHunting Percy
-            if (!ReaperManager.reaperDict.ContainsValue(__instance.gameObject) || PersistentReaperPatcher.PRConfig.reaperBehaviors != ReaperBehaviors.HumanHunter)
-            {
-                return true;
-            }
-            if(ReaperBehavior.isValidTargetForPercy(__instance.gameObject))
-            {
-                // long-handed way of getting the right reaper behavior...
-                // there's gotta be a better way...
-                // maybe by ensuringComponent on ReaperBehavior...
-                ReaperBehavior percyBehavior = null;
-                foreach (KeyValuePair<ReaperBehavior, GameObject> entry in ReaperManager.reaperDict)
-                {
-                    if(entry.Value == __instance.gameObject)
-                    {
-                        percyBehavior = entry.Key;
-                        break;
-                    }
-                }
-
-                if (percyBehavior.isLockedOntoPlayer)
-                {
-                    ___currentTarget = Player.main.gameObject.GetComponent<IEcoTarget>();
-                }
-            }
-            else
-            {
-                ___currentTarget = null;
-            }
-            return false;
-        }
-    }
-
-    /*
-	[HarmonyPatch(typeof(AttackCyclops))]
-	[HarmonyPatch("StartPerform")]
-	class AttackCyclopsStartPerformPatcher
-    {
-		[HarmonyPrefix]
-		public static bool Prefix(AttackCyclops __instance, Creature creature, ref GameObject ___currentTarget)
-		{
-			// check whether we're Percy and locked onto the player
-			if (!(ReaperManager.reaperDict.ContainsKey(__instance.gameObject) && ReaperManager.reaperDict[__instance.gameObject].isLockedOntoPlayer))
-			{
-				return true;
-			}
-
-			___currentTarget = Player.main.gameObject;
-			return true;
-		}
-    }
-
-    [HarmonyPatch(typeof(AttackCyclops))]
-    [HarmonyPatch("SetCurrentTarget")]
-    class AttackCyclopsSetCurrentTargetPatcher
-    {
-        [HarmonyPrefix]
-        public static bool Prefix(AttackCyclops __instance, ref GameObject target, bool isDecoy)
-        {
-            // check whether we're Percy and locked onto the player
-            if (!(ReaperManager.reaperDict.ContainsKey(__instance.gameObject) && ReaperManager.reaperDict[__instance.gameObject].isLockedOntoPlayer))
-            {
-                return true;
-            }
-
-            target = Player.main.gameObject;
-            return true;
-        }
-    }
-
-    [HarmonyPatch(typeof(AttackLastTarget))]
-	[HarmonyPatch("StartPerform")]
-	class AttackLastTargetStartPerformPatcher
-    {
-		[HarmonyPrefix]
-		public static bool Prefix(AttackLastTarget __instance, Creature creature, ref GameObject ___currentTarget)
-		{
-			// check whether we're Percy and locked onto the player
-			if (!(ReaperManager.reaperDict.ContainsKey(__instance.gameObject) && ReaperManager.reaperDict[__instance.gameObject].isLockedOntoPlayer))
-			{
-				return true;
-			}
-
-			___currentTarget = Player.main.gameObject;
-
-            return true;
-		}
-	}
-    */
 }

@@ -79,16 +79,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LargeWorldEntityPatcher.cs" />
+    <Compile Include="Patchers\AggressiveWhenSeeTargetPatcher.cs" />
+    <Compile Include="Patchers\MoveTowardsTargetPatcher.cs" />
+    <Compile Include="Patchers\LargeWorldEntityPatcher.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="MainPatcher.cs" />
     <Compile Include="PluginInfo.cs" />
-    <Compile Include="PlayerPatcher.cs" />
+    <Compile Include="Patchers\PlayerPatcher.cs" />
     <Compile Include="PlayerTrail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReaperBehavior.cs" />
     <Compile Include="ReaperManager.cs" />
-    <Compile Include="ReaperPatcher.cs" />
+    <Compile Include="Patchers\ReaperPatcher.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
