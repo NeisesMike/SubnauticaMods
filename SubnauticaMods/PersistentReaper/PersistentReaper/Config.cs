@@ -6,6 +6,9 @@ using UnityEngine;
 using Nautilus.Options.Attributes;
 using Nautilus.Options;
 using Nautilus.Json;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System;
 
 namespace PersistentReaper
 {
@@ -71,26 +74,31 @@ namespace PersistentReaper
         [Button("Print Reaper Map", Tooltip = "Creates a file in the Persistent Reaper mod folder that shows where reapers are in the game world."), OnGameObjectCreated(nameof(PrintReaperMap))]
         public void PrintReaperMap(ButtonClickedEventArgs e)
         {
-            string[] map = new string[256];
-
-            for (int x = 0; x < 256; x++)
+            int mapWidth = 256;
+            int mapHeight = 256;
+            using (Bitmap bitmap = new Bitmap(mapWidth, mapHeight))
             {
-                string mapRow = "";
-                for (int z = 0; z < 256; z++)
+                using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bitmap))
                 {
-                    mapRow += '.';
+                    // Fill the background with a default color
+                    g.Clear(System.Drawing.Color.Black);
+                    // Draw reaper locations
+                    foreach (KeyValuePair<ReaperBehavior, GameObject> entry in ReaperManager.reaperDict)
+                    {
+                        Int3 location = entry.Key.currentRegion;
+                        // Ensure the location is within bounds
+                        if (location.x >= 0 && location.x < mapWidth && location.z >= 0 && location.z < mapHeight)
+                        {
+                            // Set the pixel color at the reaper's location (e.g., red for reapers)
+                            bitmap.SetPixel(location.z, location.x, System.Drawing.Color.White);
+                        }
+                    }
                 }
-                map[x] = mapRow;
+                // Save the bitmap as a PNG file
+                string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                string filePath = Path.Combine(modPath, "ReaperMap.png");
+                bitmap.Save(filePath, ImageFormat.Png);
             }
-            foreach (KeyValuePair<ReaperBehavior, GameObject> entry in ReaperManager.reaperDict)
-            {
-                Int3 __instance3Loc = entry.Key.currentRegion;
-                StringBuilder sb = new StringBuilder(map[__instance3Loc.x]);
-                sb[__instance3Loc.z] = 'X';
-                map[__instance3Loc.x] = sb.ToString();
-            }
-            string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            File.WriteAllLines(Path.Combine(modPath, "ReaperMap.txt"), map);
         }
     }
 }
