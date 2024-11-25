@@ -17,7 +17,7 @@ namespace PersistentReaper
         [HarmonyPostfix]
         public static void Postfix(Player __instance)
         {
-            __instance.StartCoroutine(GetReaperPrefab(TechType.ReaperLeviathan));
+            UWE.CoroutineHost.StartCoroutine(GetReaperPrefab(TechType.ReaperLeviathan));
             return;
         }
 
@@ -59,7 +59,6 @@ namespace PersistentReaper
                 ReaperManager.playerTrailDict[thisLoc] = thisScent;
             }
         }
-
         [HarmonyPostfix]
         public static void Postfix()
         {

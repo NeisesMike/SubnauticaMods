@@ -24,15 +24,14 @@ namespace PersistentReaper
     {
         public static ManualLogSource logger { get; private set; }
         internal static MyConfig config { get; private set; }
-
         public void Start()
         {
             logger = base.Logger;
             config = OptionsPanelHandler.RegisterModOptions<MyConfig>();
             var harmony = new Harmony("com.mikjaw.subnautica.persistentreapers.mod");
             harmony.PatchAll();
+        }
     }
-}
 
     public enum ReaperBehaviors
     {
@@ -54,18 +53,24 @@ namespace PersistentReaper
         public bool areReapersActive = true;
         public void killAllReapers()
         {
-            if (ReaperManager.reaperDict != null)
+            while(ReaperManager.reaperDict.Count < 0)
             {
-                int numCurrentReapers = ReaperManager.reaperDict.Count;
-                for (int i = 0; i < numCurrentReapers; i++)
-                {
-                    ReaperManager.removeOneReaper();
-                }
+                ReaperManager.removeOneReaper();
             }
         }
 
-        [Slider("Number of Persistent Reapers", Min = 0, Max = 250, Step = 5, DefaultValue = 50)]
-        public int numReapers = 50;
+        [Slider("1000s of Persistent Reapers", Min = 0, Max = 9, Step = 1)]
+        public int numThousandReapers = 0;
+
+        [Slider("100s of Persistent Reapers", Min = 0, Max = 9, Step = 1)]
+        public int numHundredReapers = 0;
+
+        [Slider("10s of Persistent Reapers", Min = 0, Max = 9, Step = 1)]
+        public int numTenReapers = 0;
+
+        [Slider("1s of Persistent Reapers", Min = 0, Max = 9, Step = 1)]
+        public int numSingleReapers = 1;
+
 
         [Choice("Persistent Reaper Behavior")]
         public ReaperBehaviors reaperBehaviors = ReaperBehaviors.Normal;
@@ -88,10 +93,9 @@ namespace PersistentReaper
         public float updateInterval = 1f;
 
         //[Button("Print Reaper Map")]
-        public const string printReaperMapTooltip = "wiggle this in either direction to print the reaper map. Sorry for the weird interface.";
+        public const string printReaperMapTooltip = "Wiggle this in either direction to print the reaper map. Sorry for the weird interface.";
         [Slider("Print Reaper Map", Min = 0, Max = 1, Step = 1, DefaultValue = 0, Tooltip = printReaperMapTooltip),OnChange(nameof(printReaperMap)) ]
         public int printdummy = 50;
-
         public static void printReaperMap()
         {
             string[] map = new string[256];
@@ -105,7 +109,6 @@ namespace PersistentReaper
                 }
                 map[x] = mapRow;
             }
-
             foreach (KeyValuePair<ReaperBehavior, GameObject> entry in ReaperManager.reaperDict)
             {
                 Int3 __instance3Loc = entry.Key.currentRegion;
@@ -113,7 +116,6 @@ namespace PersistentReaper
                 sb[__instance3Loc.z] = 'X';
                 map[__instance3Loc.x] = sb.ToString();
             }
-
             string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             File.WriteAllLines(Path.Combine(modPath, "ReaperMap.txt"), map);
         }
