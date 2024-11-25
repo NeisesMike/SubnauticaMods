@@ -22,7 +22,6 @@ namespace VoidDepth
         public override void OnAdded(AddActionParams param)
         {
             param.vehicle.crushDamage.UpdateDepthClassification();
-            VehicleFramework.Logger.Log(GetNumberInstalled(param.vehicle).ToString());
         }
         public override void OnRemoved(AddActionParams param)
         {
