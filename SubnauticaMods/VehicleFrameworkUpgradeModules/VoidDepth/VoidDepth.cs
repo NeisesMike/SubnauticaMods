@@ -6,7 +6,9 @@ namespace VoidDepth
 {
     public class VoidDepth : ModVehicleUpgrade
     {
-        public override string ClassId => "VoidDepthUpgrade";
+        public const string upgradeName = "VoidDepthUpgrade";
+        public const float crushAddition = 5000;
+        public override string ClassId => upgradeName;
         public override string DisplayName => "Void Depth Module";
         public override string Description => "Combines advanced alloys with the enigmatic properties of Ghost Weed to achieve extraordinary crush depth capabilities. Stacks.";
         public override List<Ingredient> Recipe => new List<Ingredient>()
@@ -17,15 +19,13 @@ namespace VoidDepth
             new Ingredient(TechType.RedGreenTentacleSeed, 1),
         };
         public override Atlas.Sprite Icon => SpriteHelper.GetSprite("VoidDepthIcon.png");
-        public const float crushAddition = 5000;
         public override void OnAdded(AddActionParams param)
         {
-            param.vehicle.crushDamage.kBaseCrushDepth += crushAddition;
             param.vehicle.crushDamage.UpdateDepthClassification();
+            VehicleFramework.Logger.Log(GetNumberInstalled(param.vehicle).ToString());
         }
         public override void OnRemoved(AddActionParams param)
         {
-            param.vehicle.crushDamage.kBaseCrushDepth -= crushAddition;
             param.vehicle.crushDamage.UpdateDepthClassification();
         }
     }
