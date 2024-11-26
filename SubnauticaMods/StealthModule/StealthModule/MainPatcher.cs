@@ -4,14 +4,16 @@ using Nautilus.Handlers;
 using BepInEx;
 using BepInEx.Logging;
 using VehicleFramework.Admin;
+using HarmonyLib;
 
 namespace StealthModule
 { 
-    [BepInPlugin("com.mikjaw.subnautica.stealthmodule.mod", "StealthModule", "3.0.0")]
+    [BepInPlugin(pluginGUID, "StealthModule", "3.0.0")]
     [BepInDependency(VehicleFramework.PluginInfo.PLUGIN_GUID, VehicleFramework.PluginInfo.PLUGIN_VERSION)]
     [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID)]
     public class MainPatcher : BaseUnityPlugin
     {
+        public const string pluginGUID = "com.mikjaw.subnautica.stealthmodule.mod";
         public static ManualLogSource logger { get; private set; }
         internal static MyConfig config { get; private set; }
         internal const string tabName = "StealthModules";
@@ -22,6 +24,8 @@ namespace StealthModule
             logger = base.Logger;
             config = OptionsPanelHandler.RegisterModOptions<MyConfig>();
             RegisterUpgrades();
+            var harmony = new Harmony(pluginGUID);
+            harmony.PatchAll();
         }
 
         public void RegisterUpgrades()
