@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CrabsquidModule.cs" />
+    <Compile Include="PowerRelayPatcher.cs" />
     <Compile Include="MainPatcher.cs" />
     <Compile Include="EnergyInterfacePatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
