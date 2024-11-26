@@ -1,18 +1,17 @@
 ﻿using System.Collections.Generic;
 using VehicleFramework.UpgradeTypes;
 using VehicleFramework.Assets;
+using VehicleFramework;
+using System.Linq;
 
 namespace SonarModule
 {
-    public class SonarModule : ToggleableUpgrade
+    public class CyclopsSonarModule : ModVehicleUpgrade
     {
-        public const string SonarClassIDCore = "SonarModule";
+        public const string SonarClassIDCore = "VFSonarModule";
         public override string ClassId => SonarClassIDCore;
         public override string DisplayName => "Sonar Module";
         public override string Description => "A dedicated system for detecting and displaying topographical data on the HUD.";
-        public override float RepeatRate => MainPatcher.MyConfig.repeatRate;
-        public override float TimeToFirstActivation => 0f;
-        public override float EnergyCostPerActivation => 1f;
         public override List<Ingredient> Recipe => new List<Ingredient>()
                 {
                     new Ingredient(TechType.ComputerChip, 1),
@@ -29,11 +28,8 @@ namespace SonarModule
         public override void OnRemoved(AddActionParams param)
         {
         }
-
-        public override void OnRepeat(ToggleActionParams param)
+        public override void OnCyclops(AddActionParams param)
         {
-            SNCameraRoot.main.SonarPing();
-            FMODUWE.PlayOneShot("event:/sub/seamoth/sonar_loop", param.vehicle.transform.position, 1f);
         }
     }
 }

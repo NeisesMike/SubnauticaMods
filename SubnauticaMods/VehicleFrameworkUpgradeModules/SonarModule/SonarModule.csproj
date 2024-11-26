@@ -73,8 +73,11 @@
   <ItemGroup>
     <Compile Include="Config.cs" />
     <Compile Include="MainPatcher.cs" />
+    <Compile Include="CyclopsSonarModule.cs" />
     <Compile Include="SonarModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CyclopsSonarButtonPatcher.cs" />
+    <Compile Include="CyclopsHelmHUDManagerPatcher.cs" />
     <Compile Include="SonarScreenFXPatcher.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
