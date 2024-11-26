@@ -4,19 +4,23 @@ using HarmonyLib;
 
 namespace StealthModule
 {
-    [HarmonyPatch(typeof(Creature))]
-    [HarmonyPatch("ChooseBestAction")]
-    class CreaturePatcher
-    {
+	[HarmonyPatch(typeof(Creature))]
+	[HarmonyPatch(nameof(Creature.ChooseBestAction))]
+	class CreaturePatcher
+	{
+		public static void Output(string message, float distance)
+		{
+			VehicleFramework.Logger.Output(message + distance.ToString(), 1f);
+		}
 		[HarmonyPostfix]
 		public static void Postfix(Creature __instance, float time, ref CreatureAction __result, List<CreatureAction> ___actions, CreatureAction ___prevBestAction,
 			int ___indexLastActionChecked)
 		{
 			// Ensure the player is in a vehicle with a stealth module equipped
-			if(Player.main.currentMountedVehicle == null || Player.main.currentMountedVehicle.GetComponent<StealthModule>() == null)
-            {
+			if (Player.main.currentMountedVehicle == null || Player.main.currentMountedVehicle.GetComponent<StealthModule>() == null)
+			{
 				return;
-            }
+			}
 
 			StealthQuality thisVehicleSQ = Player.main.currentMountedVehicle.GetComponent<StealthModule>().quality;
 
@@ -52,45 +56,45 @@ namespace StealthModule
 					break;
 			}
 
-			if(thisVehicleSQ == StealthQuality.None)
-            {
+			if (thisVehicleSQ == StealthQuality.None)
+			{
 				return;
-            }
+			}
 
 			// report on nearby dangerous leviathans
 			if (MainPatcher.config.isDistanceIndicatorEnabled && distToPlayer < 150)
 			{
 				if (__instance.name.Contains("GhostLeviathan"))
 				{
-					VehicleFramework.Logger.Output("Ghost Leviathan Distance: " + distToPlayer);
+					Output("Ghost Leviathan Distance: ", distToPlayer);
 				}
 				else if (__instance.name.Contains("ReaperLeviathan"))
 				{
-					VehicleFramework.Logger.Output("Reaper Leviathan Distance: " + distToPlayer);
+					Output("Reaper Leviathan Distance: ", distToPlayer);
 				}
 				else if (__instance.name.Contains("SeaDragon"))
 				{
-					VehicleFramework.Logger.Output("Sea Dragon Leviathan Distance: " + distToPlayer);
+					Output("Sea Dragon Leviathan Distance: ", distToPlayer);
 				}
 				else if (__instance.name.ToLower().Contains("gulper"))
 				{
-					VehicleFramework.Logger.Output("Gulper Distance: " + distToPlayer);
+					Output("Gulper Distance: ", distToPlayer);
 				}
 				else if (__instance.name.ToLower().Contains("bloop"))
 				{
-					VehicleFramework.Logger.Output("Bloop Distance: " + distToPlayer);
+					Output("Bloop Distance: ", distToPlayer);
 				}
 				else if (__instance.name.ToLower().Contains("blaza"))
 				{
-					VehicleFramework.Logger.Output("Blaza Distance: " + distToPlayer);
+					Output("Blaza Distance: ", distToPlayer);
 				}
 				else if (__instance.name.ToLower().Contains("silence"))
 				{
-					VehicleFramework.Logger.Output("Silence Distance: " + distToPlayer);
+					Output("Silence Distance: ", distToPlayer);
 				}
 				else if (__instance.name.ToLower().Contains("mrteeth"))
 				{
-					VehicleFramework.Logger.Output("MrTeeth Distance: " + distToPlayer);
+					Output("MrTeeth Distance: ", distToPlayer);
 				}
 			}
 
@@ -121,10 +125,10 @@ namespace StealthModule
 				if (actionName1.Contains("Attack") || actionName1.Contains("Aggressive"))
 				{
 					// check whether we're in range of the player
-					if(distToPlayer < myMaxRange)
-                    {
+					if (distToPlayer < myMaxRange)
+					{
 						// continue as usual
-                    }
+					}
 					else
 					{
 						// special case for AttackLastTarget... target could be not the player
