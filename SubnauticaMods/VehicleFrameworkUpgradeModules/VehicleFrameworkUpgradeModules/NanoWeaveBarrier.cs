@@ -34,6 +34,12 @@ namespace NanoWeaveBarrier
             damg.damageType = DamageType.Normal;
             damg.multiplier = Mathf.Pow(0.90f, param.vehicle.GetCurrentUpgrades().Where(x => x.Contains("NanoWeaveBarrier")).Count());
         }
+        public override void OnCyclops(AddActionParams param)
+        {
+            var damg = param.cyclops.gameObject.EnsureComponent<DamageModifier>();
+            damg.damageType = DamageType.Normal;
+            damg.multiplier = Mathf.Pow(0.90f, param.cyclops.GetCurrentUpgrades().Where(x => x.Contains("NanoWeaveBarrier")).Count());
+        }
 
     }
 }
