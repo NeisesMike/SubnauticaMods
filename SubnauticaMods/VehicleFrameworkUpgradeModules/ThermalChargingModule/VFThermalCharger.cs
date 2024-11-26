@@ -11,31 +11,45 @@ namespace ThermalChargingModule
 		private static readonly float minTemp = 30f;
 		private static readonly float maxTemp = 90f;
 		private int _count = 0;
-		public int count
+		public int Count
 		{
 			get
 			{
 				return _count;
 			}
 			set
-			{
+            {
 				_count = value;
 				EnsureTempDamageCompat(value);
-			}
+            }
 		}
 		public float originalMinDamageTemp = 0;
 		public void Start()
 		{
-			originalMinDamageTemp = GetComponent<TemperatureDamage>().minDamageTemperature;
+			TemperatureDamage td = GetComponent<TemperatureDamage>();
+			if (td != null)
+			{
+				originalMinDamageTemp = GetComponent<TemperatureDamage>().minDamageTemperature;
+			}
 		}
 		public void Update()
 		{
-			if (count > 0)
+			if (Count > 0)
 			{
-				Vehicle mv = GetComponent<Vehicle>();
-				float temperature = mv.GetTemperature();
-				float num = EvaluateTemperatureCharge(temperature);
-				AddChargeToMV(GetComponent<Vehicle>(), count * num * Time.deltaTime);
+				Vehicle vehicle = GetComponent<Vehicle>();
+				SubRoot subroot = GetComponent<SubRoot>();
+				if (vehicle != null)
+				{
+					float temperature = vehicle.GetTemperature();
+					float num = EvaluateTemperatureCharge(temperature);
+					AddChargeToMV(GetComponent<Vehicle>(), Count * num * Time.deltaTime);
+				}
+				else if (subroot != null)
+				{
+					float temperature = subroot.GetTemperature();
+					float num = EvaluateTemperatureCharge(temperature);
+					AddChargeToCyclops(GetComponent<SubRoot>(), Count * num * Time.deltaTime);
+				}
 			}
 		}
 		private float EvaluateTemperatureCharge(float temp)
@@ -67,15 +81,23 @@ namespace ThermalChargingModule
 				}
 			}
 		}
+		private void AddChargeToCyclops(SubRoot subroot, float chargeToAdd)
+		{
+			subroot.powerRelay.AddEnergy(chargeToAdd, out _);
+		}
 		public void EnsureTempDamageCompat(int numModules)
 		{
-			if (numModules > 0)
+			TemperatureDamage td = GetComponent<TemperatureDamage>();
+			if (td != null)
 			{
-				GetComponent<TemperatureDamage>().minDamageTemperature = maxTemp;
-			}
-			else
-			{
-				GetComponent<TemperatureDamage>().minDamageTemperature = originalMinDamageTemp;
+				if (numModules > 0)
+				{
+					GetComponent<TemperatureDamage>().minDamageTemperature = maxTemp;
+				}
+				else
+				{
+					GetComponent<TemperatureDamage>().minDamageTemperature = originalMinDamageTemp;
+				}
 			}
 		}
 	}
