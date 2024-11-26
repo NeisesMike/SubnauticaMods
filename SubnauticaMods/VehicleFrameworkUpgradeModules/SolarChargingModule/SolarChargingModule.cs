@@ -31,5 +31,11 @@ namespace SolarChargingModule
             solarCharger.numChargers = param.vehicle.GetCurrentUpgrades().Where(x => x.Contains("SolarChargingModule")).Count();
             solarCharger.UpdateSetup();
         }
+        public override void OnCyclops(AddActionParams param)
+        {
+            VFSolarCharger solarCharger = param.cyclops.gameObject.EnsureComponent<VFSolarCharger>();
+            solarCharger.numChargers = param.cyclops.GetCurrentUpgrades().Where(x => x.Contains("SolarChargingModule")).Count();
+            solarCharger.UpdateSetup();
+        }
     }
 }

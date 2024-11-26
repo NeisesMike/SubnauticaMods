@@ -35,7 +35,16 @@ namespace SolarChargingModule
 				* localLightScalar 
 				* num 
 				* (float)m_numChargers;
-			AddChargeToMV(GetComponent<Vehicle>(), amount);
+			Vehicle vehicle = GetComponent<Vehicle>();
+			SubRoot subroot = GetComponent<SubRoot>();
+			if(vehicle != null)
+			{
+				AddChargeToMV(vehicle, amount);
+			}
+			else if(subroot != null)
+			{
+				subroot.powerRelay.AddEnergy(amount, out _);
+			}
 		}
 		public void UpdateSetup()
         {
