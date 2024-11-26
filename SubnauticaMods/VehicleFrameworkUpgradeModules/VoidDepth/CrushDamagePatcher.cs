@@ -28,12 +28,21 @@ namespace VoidDepth
         {
             const float voidDepthMeters = VoidDepth.crushAddition;
             Vehicle vehicle = crush.gameObject.GetComponent<Vehicle>();
-            if(vehicle == null)
+            SubRoot subroot = crush.gameObject.GetComponent<SubRoot>();
+            if (vehicle != null)
+            {
+                int numModules = vehicle.GetCurrentUpgrades().Where(x => x.Contains(VoidDepth.upgradeName)).Count();
+                return numModules * voidDepthMeters;
+            }
+            else if (subroot != null)
+            {
+                int numModules = subroot.GetCurrentUpgrades().Where(x => x.Contains(VoidDepth.upgradeName)).Count();
+                return numModules * voidDepthMeters;
+            }
+            else
             {
                 return 0;
             }
-            int numModules = vehicle.GetCurrentUpgrades().Where(x => x.Contains(VoidDepth.upgradeName)).Count();
-            return numModules * voidDepthMeters;
         }
     }
 }

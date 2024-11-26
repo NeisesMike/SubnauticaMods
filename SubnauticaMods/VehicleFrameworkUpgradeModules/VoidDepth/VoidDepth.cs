@@ -27,5 +27,9 @@ namespace VoidDepth
         {
             param.vehicle.crushDamage.UpdateDepthClassification();
         }
+        public override void OnCyclops(AddActionParams param)
+        {
+            param.cyclops.gameObject.GetComponent<CrushDamage>().UpdateDepthClassification();
+        }
     }
 }
