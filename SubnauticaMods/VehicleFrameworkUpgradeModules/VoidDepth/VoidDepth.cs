@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using VehicleFramework.UpgradeTypes;
 using VehicleFramework.Assets;
+using VehicleFramework.Localization;
 
 namespace VoidDepth
 {
@@ -8,8 +9,8 @@ namespace VoidDepth
     {
         public const string upgradeName = "VoidDepthUpgrade";
         public override string ClassId => upgradeName;
-        public override string DisplayName => "Void Depth Module";
-        public override string Description => "Combines advanced alloys with the enigmatic properties of Ghost Weed to achieve extraordinary crush depth capabilities. Stacks.";
+        public override string DisplayName => Localizer<EnglishString>.GetString(EnglishString.ModuleDisplayName);
+        public override string Description => Localizer<EnglishString>.GetString(EnglishString.ModuleDescription);
         public override List<Ingredient> Recipe => new List<Ingredient>()
         {
             new Ingredient(TechType.Kyanite, 2),
