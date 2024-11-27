@@ -24,9 +24,16 @@ namespace VoidDepth
 
             return newInstructions.InstructionEnumeration();
         }
+        public static float CalculateConfigDepth()
+        {
+            float result = 0;
+            result += (MainPatcher.MyConfig.thousands * 1000f);
+            result += (MainPatcher.MyConfig.hundreds * 100f);
+            return result;
+        }
         public static float GetVehicleVoidDepth(CrushDamage crush)
         {
-            const float voidDepthMeters = VoidDepth.crushAddition;
+            float voidDepthMeters = CalculateConfigDepth();
             Vehicle vehicle = crush.gameObject.GetComponent<Vehicle>();
             SubRoot subroot = crush.gameObject.GetComponent<SubRoot>();
             if (vehicle != null)
