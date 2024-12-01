@@ -210,9 +210,12 @@ namespace FreeLook
         }
         private void ExecuteFreeLook()
         {
-            resetCameraFlag = false;
-            MyPlayer.oxygenMgr.AddOxygen(Time.deltaTime); // FreeLook overrides Vehicle.Update, so we have to add oxygen here.
-            MoveCamera();
+            if (!UWE.FreezeTime.HasFreezers())
+            {
+                resetCameraFlag = false;
+                MyPlayer.oxygenMgr.AddOxygen(Time.deltaTime); // FreeLook overrides Vehicle.Update, so we have to add oxygen here.
+                MoveCamera();
+            }
         }
         private void BeginFreeLook()
         {
