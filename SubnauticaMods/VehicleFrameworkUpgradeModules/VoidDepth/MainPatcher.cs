@@ -2,7 +2,7 @@
 
 namespace VoidDepth
 {
-    [BepInPlugin(pluginGUID, "VoidDepthUpgrade", "1.1")]
+    [BepInPlugin(pluginGUID, "VoidDepthUpgrade", "1.2")]
     [BepInDependency(VehicleFramework.PluginInfo.PLUGIN_GUID, VehicleFramework.PluginInfo.PLUGIN_VERSION)]
     public class MainPatcher : BaseUnityPlugin
     {
