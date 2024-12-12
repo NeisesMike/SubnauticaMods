@@ -16,10 +16,10 @@ namespace VFSpeed
             new Ingredient(TechType.Kyanite, 2),
             new Ingredient(TechType.Sulphur, 1)
         };
-        public override Atlas.Sprite Icon => SpriteHelper.GetSprite("SpeedModuleIcon.png");
+        public override Atlas.Sprite Icon => SpriteHelper.GetSprite("SpeedModuleIcon3.png");
         public override string TabName => Names.tabName;
         public override string TabDisplayName => Names.tabDisplayName;
-        public override Atlas.Sprite TabIcon => SpriteHelper.GetSprite("SpeedModuleIcon.png");
+        public override Atlas.Sprite TabIcon => SpriteHelper.GetSprite("SpeedModuleIcon3.png");
         public override void OnAdded(AddActionParams param)
         {
             param.vehicle.gameObject.EnsureComponent<VFSpeedModule>();
