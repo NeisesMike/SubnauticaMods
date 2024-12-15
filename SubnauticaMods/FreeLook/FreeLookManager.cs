@@ -285,9 +285,7 @@ namespace FreeLook
                 double threshold = 0.01f;
                 if (Mathf.Abs(MCC.rotationX) < threshold && Mathf.Abs(MCC.rotationY) < threshold)
                 {
-                    MCC.ResetCamera();
-                    CameraRelinquish(false);
-                    resetCameraFlag = false;
+                    HardReset();
                 }
             }
         }
@@ -352,6 +350,20 @@ namespace FreeLook
                 }
             }
             StartCoroutine(RelinquishCameraAfterAnimationEnds());
+        }
+        private void HardReset()
+        {
+            MCC.ResetCamera();
+            CameraRelinquish(false);
+            resetCameraFlag = false;
+            isFreeLooking = false;
+        }
+        private void OnApplicationFocus(bool focus)
+        {
+            if(IsFreelyPiloting)
+            {
+                HardReset();
+            }
         }
     }
 }
