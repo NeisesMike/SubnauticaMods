@@ -134,7 +134,6 @@ namespace FreeLook
                     player.GetVehicle().docked == FALSE
                     player.IsPiloting() == TRUE
                 */
-                CameraRelinquish(isDocking);
                 SetInVehicleVars(IsFreelyPiloting);
                 return;
             }
@@ -349,9 +348,9 @@ namespace FreeLook
                     }
                 }
             }
-            StartCoroutine(RelinquishCameraAfterAnimationEnds());
+            UWE.CoroutineHost.StartCoroutine(RelinquishCameraAfterAnimationEnds());
         }
-        private void HardReset()
+        internal void HardReset()
         {
             MCC.ResetCamera();
             CameraRelinquish(false);
