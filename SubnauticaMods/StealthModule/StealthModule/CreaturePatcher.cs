@@ -5,24 +5,91 @@ using HarmonyLib;
 namespace StealthModule
 {
 	[HarmonyPatch(typeof(Creature))]
-	[HarmonyPatch(nameof(Creature.ChooseBestAction))]
 	class CreaturePatcher
 	{
-		public static void Output(string message, float distance)
+		public static void Output(Creature creat, string message, float distance)
 		{
-			VehicleFramework.Logger.Output(message + distance.ToString(), 1f);
+			var marty = Player.main.GetComponent<StealthModuleLogger>();
+			marty.Add(creat, message, distance);
+		}
+		public static StealthQuality CheckHasStealth()
+		{
+			StealthQuality thisVehicleSQ = StealthQuality.None;
+			if (Player.main.currentMountedVehicle != null)
+			{
+				if (Player.main.currentMountedVehicle.GetComponent<StealthModule>() != null)
+				{
+					thisVehicleSQ = Player.main.currentMountedVehicle.GetComponent<StealthModule>().quality;
+				}
+			}
+			else if (Player.main.currentSub != null)
+			{
+				if (Player.main.currentSub.GetComponent<StealthModule>() != null)
+				{
+					thisVehicleSQ = Player.main.currentSub.GetComponent<StealthModule>().quality;
+				}
+			}
+			return thisVehicleSQ;
 		}
 		[HarmonyPostfix]
-		public static void Postfix(Creature __instance, float time, ref CreatureAction __result, List<CreatureAction> ___actions, CreatureAction ___prevBestAction,
-			int ___indexLastActionChecked)
+		[HarmonyPatch(nameof(Creature.ScheduledUpdate))]
+		public static void CreatureScheduledUpdateHarmonyPostfix(Creature __instance)
 		{
-			// Ensure the player is in a vehicle with a stealth module equipped
-			if (Player.main.currentMountedVehicle == null || Player.main.currentMountedVehicle.GetComponent<StealthModule>() == null)
+			StealthQuality thisVehicleSQ = CheckHasStealth();
+			if (thisVehicleSQ == StealthQuality.None)
 			{
 				return;
 			}
 
-			StealthQuality thisVehicleSQ = Player.main.currentMountedVehicle.GetComponent<StealthModule>().quality;
+			// report on nearby dangerous leviathans
+			float distToPlayer = Vector3.Distance(Player.main.transform.position, __instance.transform.position);
+			if (MainPatcher.config.isDistanceIndicatorEnabled && distToPlayer < 150)
+			{
+				if (__instance.name.Contains("GhostLeviathan"))
+				{
+					Output(__instance, "Ghost Leviathan: ", distToPlayer);
+				}
+				else if (__instance.name.Contains("ReaperLeviathan"))
+				{
+					Output(__instance, "Reaper Leviathan: ", distToPlayer);
+				}
+				else if (__instance.name.Contains("SeaDragon"))
+				{
+					Output(__instance, "Sea Dragon Leviathan: ", distToPlayer);
+				}
+				else if (__instance.name.ToLower().Contains("gulper"))
+				{
+					Output(__instance, "Gulper: ", distToPlayer);
+				}
+				else if (__instance.name.ToLower().Contains("bloop"))
+				{
+					Output(__instance, "Bloop: ", distToPlayer);
+				}
+				else if (__instance.name.ToLower().Contains("blaza"))
+				{
+					Output(__instance, "Blaza: ", distToPlayer);
+				}
+				else if (__instance.name.ToLower().Contains("silence"))
+				{
+					Output(__instance, "Silence: ", distToPlayer);
+				}
+				else if (__instance.name.ToLower().Contains("mrteeth"))
+				{
+					Output(__instance, "MrTeeth: ", distToPlayer);
+				}
+			}
+		}
+	
+		[HarmonyPostfix]
+		[HarmonyPatch(nameof(Creature.ChooseBestAction))]
+		public static void Postfix(Creature __instance, float time, ref CreatureAction __result, List<CreatureAction> ___actions, CreatureAction ___prevBestAction,
+			int ___indexLastActionChecked)
+		{
+			StealthQuality thisVehicleSQ = CheckHasStealth();
+			if(thisVehicleSQ == StealthQuality.None)
+            {
+				return;
+            }
 
 			float distToPlayer = Vector3.Distance(Player.main.transform.position, __instance.transform.position);
 
@@ -59,43 +126,6 @@ namespace StealthModule
 			if (thisVehicleSQ == StealthQuality.None)
 			{
 				return;
-			}
-
-			// report on nearby dangerous leviathans
-			if (MainPatcher.config.isDistanceIndicatorEnabled && distToPlayer < 150)
-			{
-				if (__instance.name.Contains("GhostLeviathan"))
-				{
-					Output("Ghost Leviathan Distance: ", distToPlayer);
-				}
-				else if (__instance.name.Contains("ReaperLeviathan"))
-				{
-					Output("Reaper Leviathan Distance: ", distToPlayer);
-				}
-				else if (__instance.name.Contains("SeaDragon"))
-				{
-					Output("Sea Dragon Leviathan Distance: ", distToPlayer);
-				}
-				else if (__instance.name.ToLower().Contains("gulper"))
-				{
-					Output("Gulper Distance: ", distToPlayer);
-				}
-				else if (__instance.name.ToLower().Contains("bloop"))
-				{
-					Output("Bloop Distance: ", distToPlayer);
-				}
-				else if (__instance.name.ToLower().Contains("blaza"))
-				{
-					Output("Blaza Distance: ", distToPlayer);
-				}
-				else if (__instance.name.ToLower().Contains("silence"))
-				{
-					Output("Silence Distance: ", distToPlayer);
-				}
-				else if (__instance.name.ToLower().Contains("mrteeth"))
-				{
-					Output("MrTeeth Distance: ", distToPlayer);
-				}
 			}
 
 			if (___actions.Count == 0)

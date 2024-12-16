@@ -91,6 +91,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CreaturePatcher.cs" />
+    <Compile Include="StealthModuleLogger.cs" />
+    <Compile Include="PlayerPatcher.cs" />
     <Compile Include="StealthModule.cs" />
     <Compile Include="MainPatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -45,9 +45,19 @@ namespace StealthModule
         public void UpdateQuality()
         {
             StealthQuality result = StealthQuality.None;
-            foreach(string upgrade in gameObject.GetComponent<Vehicle>().GetCurrentUpgrades())
+            if (gameObject.GetComponent<Vehicle>() != null)
             {
-                result = (StealthQuality)Math.Max((int)result, (int)GetQuality(upgrade));
+                foreach (string upgrade in gameObject.GetComponent<Vehicle>().GetCurrentUpgrades())
+                {
+                    result = (StealthQuality)Math.Max((int)result, (int)GetQuality(upgrade));
+                }
+            }
+            else if(gameObject.GetComponent<SubRoot>() != null)
+            {
+                foreach (string upgrade in gameObject.GetComponent<SubRoot>().GetCurrentUpgrades())
+                {
+                    result = (StealthQuality)Math.Max((int)result, (int)GetQuality(upgrade));
+                }
             }
             quality = result;
         }

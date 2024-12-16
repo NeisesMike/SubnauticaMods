@@ -8,7 +8,7 @@ using HarmonyLib;
 
 namespace StealthModule
 { 
-    [BepInPlugin(pluginGUID, "StealthModule", "3.0.0")]
+    [BepInPlugin(pluginGUID, "StealthModule", "3.0.3")]
     [BepInDependency(VehicleFramework.PluginInfo.PLUGIN_GUID, VehicleFramework.PluginInfo.PLUGIN_VERSION)]
     [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID)]
     public class MainPatcher : BaseUnityPlugin

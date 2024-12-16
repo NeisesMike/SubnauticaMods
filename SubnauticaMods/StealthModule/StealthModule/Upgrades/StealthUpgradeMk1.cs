@@ -26,5 +26,9 @@ namespace StealthModule
         {
             param.vehicle.gameObject.EnsureComponent<StealthModule>().UpdateQuality();
         }
+        public override void OnCyclops(AddActionParams param)
+        {
+            param.cyclops.gameObject.EnsureComponent<StealthModule>().UpdateQuality();
+        }
     }
 }
