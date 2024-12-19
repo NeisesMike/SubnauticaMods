@@ -25,6 +25,7 @@ namespace VFSpeed
                 cyclops = gameObject.GetComponent<SubRoot>();
                 vt = VehicleType.cyclops;
                 vam = cyclops.gameObject.AddComponent<VehicleAccelerationModifier>();
+                vam.accelerationMultiplier = 1;
                 cyclops.GetComponent<SubControl>().accelerationModifiers = cyclops.GetComponent<SubControl>().accelerationModifiers.Append(vam).ToArray(); ;
             }
             else if(gameObject.GetComponent<ModVehicle>() != null)
@@ -32,12 +33,14 @@ namespace VFSpeed
                 mv = gameObject.GetComponent<ModVehicle>();
                 vt = VehicleType.mod;
                 vam = mv.gameObject.AddComponent<VehicleAccelerationModifier>();
+                vam.accelerationMultiplier = 1;
             }
             else if (gameObject.GetComponent<Vehicle>() != null)
             {
                 vehicle = gameObject.GetComponent<Vehicle>();
                 vt = VehicleType.vanilla;
                 vam = vehicle.gameObject.AddComponent<VehicleAccelerationModifier>();
+                vam.accelerationMultiplier = 1;
                 vehicle.accelerationModifiers = vehicle.accelerationModifiers.Append(vam).ToArray();
             }
             else
