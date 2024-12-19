@@ -47,11 +47,12 @@ namespace VFSpeed
         }
         private void FixedUpdate()
         {
-            int strength = GetUpgradeTotal();
+            float strength = GetUpgradeTotal();
             if(strength < 1)
             {
                 return;
             }
+            strength *= MainPatcher.config.intensity;
             switch (vt)
             {
                 case VehicleType.vanilla:
@@ -66,22 +67,22 @@ namespace VFSpeed
             }
             vam.accelerationMultiplier = Mathf.Pow(1.1f, strength);
         }
-        private void SpendVanillaEnergy(int strength)
+        private void SpendVanillaEnergy(float strength)
         {
             float cost = GetPowerExpenditure(strength);
             vehicle.GetComponent<EnergyInterface>().ConsumeEnergy(cost * Time.fixedDeltaTime);
         }
-        private void SpendModEnergy(int strength)
+        private void SpendModEnergy(float strength)
         {
             float cost = GetPowerExpenditure(strength);
             mv.powerMan.TrySpendEnergy(cost * Time.fixedDeltaTime);
         }
-        private void SpendCyclopsEnergy(int strength)
+        private void SpendCyclopsEnergy(float strength)
         {
             float cost = GetPowerExpenditure(strength);
             cyclops.powerRelay.ConsumeEnergy(cost * Time.fixedDeltaTime, out _);
         }
-        private float GetPowerExpenditure(int strength)
+        private float GetPowerExpenditure(float strength)
         {
             Vector3 moveDirection = GameInput.GetMoveDirection();
             float scalarFactor = 0.03f;
