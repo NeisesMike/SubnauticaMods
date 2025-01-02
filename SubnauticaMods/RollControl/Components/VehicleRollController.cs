@@ -74,11 +74,11 @@ namespace RollControl
 
         public void SubmarineRoll()
         {
-            if (Input.GetKey(MainPatcher.config.RollPortKey))
+            if (Input.GetKey(MainPatcher.config.VehicleRollPortKey))
             {
                 myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)MainPatcher.config.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
             }
-            if (Input.GetKey(MainPatcher.config.RollStarboardKey))
+            if (Input.GetKey(MainPatcher.config.VehicleRollStarboardKey))
             {
                 myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)-MainPatcher.config.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
             }

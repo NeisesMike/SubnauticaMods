@@ -348,13 +348,13 @@ namespace RollControl
         }
         public void SetupScubaRoll()
         {
-            bool portUp = Input.GetKeyUp(MainPatcher.config.RollPortKey);
-            bool portHeld = Input.GetKey(MainPatcher.config.RollPortKey);
-            bool portDown = Input.GetKeyDown(MainPatcher.config.RollPortKey);
+            bool portUp = Input.GetKeyUp(MainPatcher.config.ScubaRollPortKey);
+            bool portHeld = Input.GetKey(MainPatcher.config.ScubaRollPortKey);
+            bool portDown = Input.GetKeyDown(MainPatcher.config.ScubaRollPortKey);
 
-            bool starUp = Input.GetKeyUp(MainPatcher.config.RollStarboardKey);
-            bool starHeld = Input.GetKey(MainPatcher.config.RollStarboardKey);
-            bool starDown = Input.GetKeyDown(MainPatcher.config.RollStarboardKey);
+            bool starUp = Input.GetKeyUp(MainPatcher.config.ScubaRollStarboardKey);
+            bool starHeld = Input.GetKey(MainPatcher.config.ScubaRollStarboardKey);
+            bool starDown = Input.GetKeyDown(MainPatcher.config.ScubaRollStarboardKey);
 
             if ((portDown || portHeld) && !(starDown || starHeld))
             {

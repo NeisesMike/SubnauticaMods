@@ -9,10 +9,14 @@ namespace RollControl
     {
         [Keybind("Toggle Roll Key"), Tooltip("Roll is toggled individually for scuba mode and for each vehicle you have.")]
         public KeyCode ToggleRollKey = KeyCode.RightAlt;
-        [Keybind("Roll Counter-Clockwise")]
-        public KeyCode RollPortKey = KeyCode.Z;
-        [Keybind("Roll Clockwise")]
-        public KeyCode RollStarboardKey = KeyCode.C;
+        [Keybind("Vehicle Roll Counter-Clockwise")]
+        public KeyCode VehicleRollPortKey = KeyCode.Z;
+        [Keybind("Vehicle Roll Clockwise")]
+        public KeyCode VehicleRollStarboardKey = KeyCode.C;
+        [Keybind("Scuba Roll Counter-Clockwise")]
+        public KeyCode ScubaRollPortKey = KeyCode.Z;
+        [Keybind("Scuba Roll Clockwise")]
+        public KeyCode ScubaRollStarboardKey = KeyCode.C;
         [Slider("Submarine Roll Speed", Min = 0f, Max = 100f, Step = 1f, DefaultValue = 30f)]
         public double SubmarineRollSpeed = 30f;
         [Slider("Scuba Roll Speed", Min = 0f, Max = 100f, Step = 1f, DefaultValue = 75f)]
