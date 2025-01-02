@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Nautilus.Options.Attributes;
-using Nautilus.Json;
 using Nautilus.Handlers;
-using Nautilus.Options;
-using UnityEngine;
 using HarmonyLib;
 using Nautilus.Utility;
-
 using BepInEx;
 using BepInEx.Logging;
-using BepInEx.Bootstrap;
 
 namespace RollControl
 {

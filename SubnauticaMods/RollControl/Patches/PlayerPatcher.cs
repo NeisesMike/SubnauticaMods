@@ -4,11 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using UnityEngine;
 using HarmonyLib;
-using Nautilus.Options;
-using Nautilus.Handlers;
-using System.Runtime.CompilerServices;
 using System.Collections;
 
 namespace RollControl
