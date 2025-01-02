@@ -25,5 +25,7 @@ namespace RollControl
         public bool IsVehicleRollDefaultEnabled = false;
         [Toggle("Enable Scuba Roll by Default")]
         public bool IsScubaRollDefaultEnabled = false;
+        [Toggle("Enable Scuba Hint", Tooltip = "This will display a reminder message on-screen.")]
+        public bool IsScubaHinting = false;
     }
 }
