@@ -21,7 +21,7 @@ namespace RollControl
         }
     }
 
-    [BepInPlugin("com.mikjaw.subnautica.rollcontrol.mod", "RollControl", "5.2")]
+    [BepInPlugin("com.mikjaw.subnautica.rollcontrol.mod", "RollControl", "5.3.0")]
     [BepInDependency("com.snmodding.nautilus")]
     public class MainPatcher : BaseUnityPlugin
     {
