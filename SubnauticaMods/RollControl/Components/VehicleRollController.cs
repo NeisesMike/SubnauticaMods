@@ -43,6 +43,20 @@ namespace RollControl
             }
         }
 
+        public bool IsActuallyRolling
+        {
+            get
+            {
+                bool isUnderwater = myVehicle.transform.position.y < Ocean.GetOceanLevel() && myVehicle.transform.position.y < myVehicle.worldForces.waterDepth && !myVehicle.precursorOutOfWater;
+                return isRollEnabled &&
+                isUnderwater &&
+                IsPlayerInThisVehicle &&
+                Player.main.mode == Player.Mode.LockedPiloting &&
+                AvatarInputHandler.main.IsEnabled() &&
+                myVehicle as Exosuit == null;
+            }
+        }
+
         public void Update()
         {
             if (Input.GetKeyDown(MainPatcher.config.ToggleRollKey) &&
@@ -58,15 +72,8 @@ namespace RollControl
 
         public void FixedUpdate()
         {
-            bool isUnderwater = myVehicle.transform.position.y < Ocean.GetOceanLevel() && myVehicle.transform.position.y < myVehicle.worldForces.waterDepth && !myVehicle.precursorOutOfWater;
 
-            if (isRollEnabled &&
-                isUnderwater &&
-                IsPlayerInThisVehicle &&
-                Player.main.mode == Player.Mode.LockedPiloting &&
-                AvatarInputHandler.main.IsEnabled() &&
-                myVehicle as Exosuit == null
-                )
+            if (IsActuallyRolling)
             {
                 SubmarineRoll();
             }
