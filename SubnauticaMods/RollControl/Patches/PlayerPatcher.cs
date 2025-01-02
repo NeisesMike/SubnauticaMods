@@ -23,6 +23,7 @@ namespace RollControl
             {
                 Player.main.StartCoroutine(DetermineWhetherWeStartBySwimming());
             }
+            Player.main.gameObject.AddComponent<Components.RollHUDElements>();
         }
 
         [HarmonyPrefix]
