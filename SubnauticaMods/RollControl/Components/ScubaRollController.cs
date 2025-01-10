@@ -5,11 +5,11 @@ namespace RollControl
 {
     public class ScubaRollController : MonoBehaviour
     {
-        public static bool isRollEnabled = MainPatcher.config.IsScubaRollDefaultEnabled;
-        public static Player player = null;
+        public bool isRollEnabled = MainPatcher.config.IsScubaRollDefaultEnabled;
+        public Player player = null;
 
-        private static MainCameraControl _CamControl = MainCameraControl.main;
-        public static MainCameraControl CamControl
+        private MainCameraControl _CamControl = MainCameraControl.main;
+        public MainCameraControl CamControl
         {
             get
             {
@@ -22,9 +22,9 @@ namespace RollControl
             }
         }
 
-        public static Camera camera;
-        public static bool isRollReady = false;
-        public static bool wasRollingBeforeBuilder = false;
+        public Camera camera;
+        public bool isRollReady = false;
+        public bool wasRollingBeforeBuilder = false;
 
         public static ScubaRollController main;
 
@@ -35,9 +35,9 @@ namespace RollControl
             Breach,
             RunFall
         }
-        public static SwimState swimstate;
+        public SwimState swimstate;
 
-        public static bool IsActuallyScubaRolling
+        public bool IsActuallyScubaRolling
         {
             get
             {
@@ -47,7 +47,7 @@ namespace RollControl
                     AreWeSwimming;
             }
         }
-        public static bool IsAbleToStartScubaRolling
+        public bool IsAbleToStartScubaRolling
         {
             get
             {
@@ -56,7 +56,7 @@ namespace RollControl
                     isRollEnabled;
             }
         }
-        public static bool IsAbleToToggleScubaRolling
+        public bool IsAbleToToggleScubaRolling
         {
             get
             {
@@ -65,7 +65,7 @@ namespace RollControl
                     AvatarInputHandler.main.IsEnabled();
             }
         }
-        public static bool AreWeSwimming
+        public bool AreWeSwimming
         {
             get
             {
@@ -88,7 +88,7 @@ namespace RollControl
         private static readonly float ACCEL_FUEL_STEP = 25f;
         private static readonly float SCALING_FACTOR = 4f;
 
-        public static void ResetRotsForStartRoll()
+        public void ResetRotsForStartRoll()
         {
             player.transform.eulerAngles = new Vector3(-CamControl.rotationY, CamControl.rotationX, 0);
             player.transform.Find("body").localEulerAngles = Vector3.zero;
@@ -97,7 +97,7 @@ namespace RollControl
             CamControl.rotationX = 0;
             CamControl.rotationY = 0;
         }
-        public static void ResetRotsForStartRollAfterCinematic(Quaternion desiredRotation)
+        public void ResetRotsForStartRollAfterCinematic(Quaternion desiredRotation)
         {
             player.transform.rotation = desiredRotation;
             player.transform.Find("body").localEulerAngles = Vector3.zero;
@@ -106,7 +106,7 @@ namespace RollControl
             CamControl.rotationX = 0;
             CamControl.rotationY = 0;
         }
-        public static void ResetForStartRoll(GameObject lookTarget)
+        public void ResetForStartRoll(GameObject lookTarget)
         {
             player.rigidBody.angularDrag = 15;
             main.StartCoroutine(PauseCameraOneFrame());
@@ -120,7 +120,7 @@ namespace RollControl
             }
             isRollReady = true;
         }
-        public static void ResetForEndRoll()
+        public void ResetForEndRoll()
         {
             GameObject look_target = new GameObject("look target");
             look_target.transform.position = player.transform.position + player.transform.forward;
@@ -234,7 +234,7 @@ namespace RollControl
                 }
             }
         }
-        private static IEnumerator PauseCameraOneFrame()
+        private IEnumerator PauseCameraOneFrame()
         {
             Camera myCam = Camera.main;
             if(myCam is null)
@@ -373,9 +373,10 @@ namespace RollControl
                 StopScubaRoll();
             }
         }
-        public static void MaybeSetLocalEuler(Transform camTrans, Vector3 input)
+        public static void MaybeSetLocalEuler(Transform camTrans, Vector3 input) // must be static -> used in transpiler
         {
-            if(swimstate == SwimState.RunFall || !isRollEnabled || Builder.isPlacing)
+            ScubaRollController thisSRC = Player.main.GetComponent<ScubaRollController>();
+            if(thisSRC.swimstate == SwimState.RunFall || !thisSRC.isRollEnabled || Builder.isPlacing)
             {
                 camTrans.localEulerAngles = input;
             }

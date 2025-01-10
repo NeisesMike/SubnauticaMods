@@ -12,7 +12,7 @@ namespace RollControl
 		{
 			// this odd line fixes the body getting in the way sometimes when
 			// swimming down while roll is enabled
-			if (ScubaRollController.IsActuallyScubaRolling)
+			if (Player.main.GetComponent<ScubaRollController>().IsActuallyScubaRolling)
 			{
 				SafeAnimator.SetFloat(___animator, "view_pitch", 0);
 			}

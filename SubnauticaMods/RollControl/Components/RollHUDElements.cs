@@ -31,7 +31,7 @@ namespace RollControl.Components
         {
             if(ScubaCon != null && playerHUD != null)
             {
-                playerHUD.SetActive(ScubaRollController.IsActuallyScubaRolling);
+                playerHUD.SetActive(Player.main.GetComponent<ScubaRollController>().IsActuallyScubaRolling);
             }
         }
         private void HandleVehicle()

@@ -12,11 +12,11 @@ namespace RollControl
         [HarmonyPatch(nameof(PlayerCinematicController.StartCinematicMode))]
         public static bool StartCinematicModePrefix(PlayerCinematicController __instance, Player setplayer)
         {
-            if (ScubaRollController.IsActuallyScubaRolling)
+            if (Player.main.GetComponent<ScubaRollController>().IsActuallyScubaRolling)
             {
                 //Don't want to do this if we're just getting out of our vehicle via moonpool
                 endTransform = __instance.endTransform;
-                ScubaRollController.ResetForEndRoll();
+                Player.main.GetComponent<ScubaRollController>().ResetForEndRoll();
             }
             return true;
         }

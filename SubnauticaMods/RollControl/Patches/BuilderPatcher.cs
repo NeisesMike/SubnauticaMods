@@ -18,10 +18,12 @@ namespace RollControl.Patches
         [HarmonyPatch(nameof(Builder.Begin))]
         public static bool BeginPrefix()
         {
-            if (ScubaRollController.IsActuallyScubaRolling)
+            if (Player.main.GetComponent<ScubaRollController>().IsActuallyScubaRolling)
             {
                 state = BuilderToolState.blueprintBeforeRoll;
-                ScubaRollController.ResetForEndRoll();
+                Player.main.GetComponent<ScubaRollController>().isRollEnabled = false;
+                Player.main.GetComponent<ScubaRollController>().ResetForEndRoll();
+                Player.main.GetComponent<ScubaRollController>().SetupEndingScubaRollOnceAtExit();
             }
             else
             {
@@ -40,7 +42,6 @@ namespace RollControl.Patches
                     state = BuilderToolState.blueprintAfterRoll;
                     break;
                 case BuilderToolState.blueprintAfterRoll:
-                    ScubaRollController.ResetForStartRoll(null); // TODO maybe we should treat this like AfterCinematic
                     state = BuilderToolState.waiting;
                     break;
                 default:
