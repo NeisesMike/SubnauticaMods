@@ -9,7 +9,7 @@ namespace RollControl
         public static GameObject cinematicPlayerRotationDummy = null;
         public static Transform endTransform = null;
         [HarmonyPrefix]
-        [HarmonyPatch("StartCinematicMode")]
+        [HarmonyPatch(nameof(PlayerCinematicController.StartCinematicMode))]
         public static bool StartCinematicModePrefix(PlayerCinematicController __instance, Player setplayer)
         {
             if (ScubaRollController.IsActuallyScubaRolling)
@@ -21,7 +21,7 @@ namespace RollControl
             return true;
         }
         [HarmonyPostfix]
-        [HarmonyPatch("OnPlayerCinematicModeEnd")]
+        [HarmonyPatch(nameof(PlayerCinematicController.OnPlayerCinematicModeEnd))]
         public static void OnPlayerCinematicModeEndPostfix(PlayerCinematicController __instance)
         {
             if (endTransform)

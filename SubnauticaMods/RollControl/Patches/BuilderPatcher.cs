@@ -15,7 +15,7 @@ namespace RollControl.Patches
         private static BuilderToolState state = BuilderToolState.waiting;
 
         [HarmonyPrefix]
-        [HarmonyPatch("Begin")]
+        [HarmonyPatch(nameof(Builder.Begin))]
         public static bool BeginPrefix()
         {
             if (ScubaRollController.IsActuallyScubaRolling)
@@ -31,7 +31,7 @@ namespace RollControl.Patches
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch("End")]
+        [HarmonyPatch(nameof(Builder.End))]
         public static void EndPostfix()
         {
             switch(state)

@@ -14,7 +14,7 @@ using System.Reflection.Emit;
 namespace RollControl
 {
     [HarmonyPatch(typeof(MainCameraControl))]
-    [HarmonyPatch("OnUpdate")]
+    [HarmonyPatch(nameof(MainCameraControl.OnUpdate))]
     class MainCameraControlUpdatePatcher
     {
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)

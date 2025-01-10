@@ -7,7 +7,7 @@ namespace RollControl
 	class ArmsControllerPatcher
 	{
 		[HarmonyPostfix]
-		[HarmonyPatch("SetPlayerSpeedParameters")]
+		[HarmonyPatch(nameof(ArmsController.SetPlayerSpeedParameters))]
 		public static void SetPlayerSpeedParametersPostfix(Animator ___animator)
 		{
 			// this odd line fixes the body getting in the way sometimes when

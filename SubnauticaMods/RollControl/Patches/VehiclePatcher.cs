@@ -12,7 +12,7 @@ namespace RollControl
     public class VehiclePatcher
     {
         [HarmonyPostfix]
-        [HarmonyPatch("Start")]
+        [HarmonyPatch(nameof(Vehicle.Start))]
         public static void StartPostfix(Vehicle __instance)
         {
             var src = __instance.gameObject.EnsureComponent<VehicleRollController>();
@@ -21,7 +21,7 @@ namespace RollControl
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch("EnterVehicle")]
+        [HarmonyPatch(nameof(Vehicle.EnterVehicle))]
         public static bool EnterVehiclePrefix(Vehicle __instance)
         {
             // ensure we enter vehicles correctly
@@ -30,7 +30,7 @@ namespace RollControl
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch("FixedUpdate")]
+        [HarmonyPatch(nameof(Vehicle.FixedUpdate))]
         public static void FixedUpdatePostfix(Vehicle __instance)
         {
             // ensure we're rotated correctly

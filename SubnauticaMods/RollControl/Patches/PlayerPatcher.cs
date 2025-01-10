@@ -7,7 +7,7 @@ namespace RollControl
     public class PlayerPatcher
     {
         [HarmonyPostfix]
-        [HarmonyPatch("Start")]
+        [HarmonyPatch(nameof(Player.Start))]
         public static void AwakePostfix(Player __instance)
         {
             __instance.gameObject.EnsureComponent<ScubaRollController>();
@@ -21,7 +21,7 @@ namespace RollControl
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch("UpdateRotation")]
+        [HarmonyPatch(nameof(Player.UpdateRotation))]
         public static bool Prefix(Player __instance)
         {
             if (ScubaRollController.IsActuallyScubaRolling)
