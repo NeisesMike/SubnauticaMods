@@ -356,6 +356,7 @@ namespace FreeLook
             CameraRelinquish(false);
             resetCameraFlag = false;
             isFreeLooking = false;
+            isToggled = false;
         }
         private void OnApplicationFocus(bool focus)
         {
