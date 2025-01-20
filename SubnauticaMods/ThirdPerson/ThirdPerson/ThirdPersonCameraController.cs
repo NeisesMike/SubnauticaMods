@@ -257,6 +257,7 @@ namespace ThirdPerson
             bool isInCyclops = Player.main.currentSub != null && Player.main.currentSub.name.ToLower().Contains("cyclops");
             if (isInCyclops && Player.main.mode == Player.Mode.Piloting)
             {
+                Player.main.currentSub.GetComponent<FreezeRigidbodyWhenFar>().freezeDist = 150f;
                 return CameraType.Cyclops;
             }
             else if (Player.main.currentMountedVehicle != null && Player.main.mode == Player.Mode.LockedPiloting)
@@ -301,13 +302,6 @@ namespace ThirdPerson
                 case ThirpyMode.Thirpy:
                     SetPlayerCamParent(thirpyCamRoot.transform);
                     break;
-            }
-        }
-        public void UpdateCyclopsFreeze()
-        {
-            if (Player.main.currentSub.name.ToLower().Contains("cyclops"))
-            {
-                Player.main.currentSub.GetComponent<FreezeRigidbodyWhenFar>().freezeDist = 150f;
             }
         }
         #endregion
