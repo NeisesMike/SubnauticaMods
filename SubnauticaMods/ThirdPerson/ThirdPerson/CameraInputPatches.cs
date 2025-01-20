@@ -13,10 +13,25 @@ namespace ThirdPerson
         [HarmonyPatch(nameof(GameInput.GetMoveDirection))]
         public static void GetMoveDirectionPostfix(GameInput __instance, ref Vector3 __result)
         {
-            //don't allow vehicle movement if we're in scenic mode
-            if (Player.main.GetComponent<ThirdPersonCameraController>().mode == ThirpyMode.Scenic)
+            //don't allow vehicle movement if we're in scenic configuration mode
+            var marty = Player.main.GetComponent<ThirdPersonCameraController>();
+            if (marty.mode == ThirpyMode.Scenic)
             {
-                if (Player.main.GetVehicle() != null)
+                if (Player.main.GetVehicle() != null && !marty.isScenicPiloting)
+                {
+                    __result = Vector3.zero;
+                }
+            }
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(GameInput.GetLookDelta))]
+        public static void GetLookDeltaPostfix(GameInput __instance, ref Vector2 __result)
+        {
+            //don't allow camera movement to rotate the vehicle if we're in scenic configuration mode
+            var marty = Player.main.GetComponent<ThirdPersonCameraController>();
+            if (marty.mode == ThirpyMode.Scenic)
+            {
+                if (Player.main.GetVehicle() != null && !marty.allowLookDelta)
                 {
                     __result = Vector3.zero;
                 }

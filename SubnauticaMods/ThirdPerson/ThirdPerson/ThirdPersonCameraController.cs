@@ -37,6 +37,8 @@ namespace ThirdPerson
         private float timeActivationInputsHeld = 0f;
         internal ThirpyMode mode;
         public CameraType camType;
+        internal bool isScenicPiloting = false;
+        internal bool allowLookDelta = true;
         private GameObject thirpyCamRoot = null;
         internal float pitchFactor = 0.01f;
         private float _pitch = 0;
@@ -141,13 +143,18 @@ namespace ThirdPerson
         }
         public ThirpyMode HandleScenicInput()
         {
+            isScenicPiloting = false;
             switch (mode)
             {
                 case ThirpyMode.Nothing:
                     return ThirpyMode.Scenic;
                 case ThirpyMode.Scenic:
                     PerVehicleConfig.Save();
-                    return ThirpyMode.Thirpy;
+                    if(camType != CameraType.Player)
+                    {
+                        isScenicPiloting = true;
+                    }
+                    return ThirpyMode.Scenic;
                 case ThirpyMode.Thirpy:
                     return ThirpyMode.Scenic;
             }
@@ -155,6 +162,7 @@ namespace ThirdPerson
         }
         public ThirpyMode HandleThirpyInput()
         {
+            isScenicPiloting = false;
             switch (mode)
             {
                 case ThirpyMode.Nothing:
@@ -175,10 +183,15 @@ namespace ThirdPerson
             CameraType newCamType = GetCameraType();
             if(newCamType != camType)
             {
+                if (mode == ThirpyMode.Scenic)
+                {
+                    mode = ThirpyMode.Thirpy;
+                }
                 switch (newCamType)
                 {
                     case CameraType.Player:
                         SetThirpyCamParent(Player.main.transform);
+                        isScenicPiloting = false;
                         break;
                     case CameraType.Vehicle:
                         SetThirpyCamParent(Player.main.currentMountedVehicle.transform);
@@ -231,7 +244,7 @@ namespace ThirdPerson
             ThirpyMode newMode = mode;
             if (timeActivationInputsHeld == 0 && lastTimeActivationInputsHeld > 0)
             {
-                if (lastTimeActivationInputsHeld > 1)
+                if (lastTimeActivationInputsHeld > 0.25f)
                 {
                     newMode = HandleScenicInput();
                 }
@@ -330,8 +343,28 @@ namespace ThirdPerson
         private void HandleScenicMode()
         {
             Player.main.GetComponent<PlayerController>().inputEnabled = false;
-            AvatarInputHandler.main.gameObject.SetActive(false);
+            allowLookDelta = true;
             Vector2 lookVector = GameInput.GetLookDelta();
+            if (isScenicPiloting)
+            {
+                allowLookDelta = false;
+                AvatarInputHandler.main.gameObject.SetActive(true);
+            }
+            else
+            {
+                AvatarInputHandler.main.gameObject.SetActive(false);
+                float zoomIn = GameInput.GetAnalogValueForButton(GameInput.Button.MoveForward);
+                float zoomInFine = GameInput.GetAnalogValueForButton(GameInput.Button.MoveRight);
+                float zoomOut = GameInput.GetAnalogValueForButton(GameInput.Button.MoveBackward);
+                float zoomOutFine = GameInput.GetAnalogValueForButton(GameInput.Button.MoveLeft);
+                float currentZoom = PerVehicleConfig.GetDistance();
+                currentZoom -= zoomIn * 0.25f;
+                currentZoom -= zoomInFine * 0.01f;
+                currentZoom += zoomOut * 0.25f;
+                currentZoom += zoomOutFine * 0.01f;
+                PerVehicleConfig.UpdateDistance(currentZoom);
+                PerVehicleConfig.UpdatePitch(thirpyCamRoot.transform.localEulerAngles.x * Mathf.Deg2Rad);
+            }
             thirpyCamRoot.transform.localEulerAngles = new Vector3(
                 thirpyCamRoot.transform.localEulerAngles.x - lookVector.y,
                 thirpyCamRoot.transform.localEulerAngles.y + lookVector.x,
@@ -340,18 +373,6 @@ namespace ThirdPerson
             thirpyCamRoot.transform.localPosition = Vector3.zero;
             Vector3 desiredWorldPosition = thirpyCamRoot.transform.parent.position - thirpyCamRoot.transform.forward * PerVehicleConfig.GetDistance();
             thirpyCamRoot.transform.position = desiredWorldPosition;
-            float zoomIn = GameInput.GetAnalogValueForButton(GameInput.Button.MoveForward);
-            float zoomInFine = GameInput.GetAnalogValueForButton(GameInput.Button.MoveRight);
-            float zoomOut = GameInput.GetAnalogValueForButton(GameInput.Button.MoveBackward);
-            float zoomOutFine = GameInput.GetAnalogValueForButton(GameInput.Button.MoveLeft);
-
-            float currentZoom = PerVehicleConfig.GetDistance();
-            currentZoom -= zoomIn * 0.25f;
-            currentZoom -= zoomInFine * 0.01f;
-            currentZoom += zoomOut * 0.25f;
-            currentZoom += zoomOutFine * 0.01f;
-            PerVehicleConfig.UpdateDistance(currentZoom);
-            PerVehicleConfig.UpdatePitch(thirpyCamRoot.transform.localEulerAngles.x * Mathf.Deg2Rad);
             thirpyCamRoot.transform.LookAt(thirpyCamRoot.transform.parent);
             PlayerCam.Find("camOffset/pdaCamPivot").transform.localEulerAngles = Vector3.zero;
         }
