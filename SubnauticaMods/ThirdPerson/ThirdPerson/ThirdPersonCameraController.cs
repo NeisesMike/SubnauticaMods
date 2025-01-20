@@ -143,19 +143,33 @@ namespace ThirdPerson
         }
         public ThirpyMode HandleScenicInput()
         {
-            isScenicPiloting = false;
             switch (mode)
             {
                 case ThirpyMode.Nothing:
+                    isScenicPiloting = false;
                     return ThirpyMode.Scenic;
                 case ThirpyMode.Scenic:
-                    PerVehicleConfig.Save();
-                    if(camType != CameraType.Player)
+                    if (camType == CameraType.Cyclops)
                     {
-                        isScenicPiloting = true;
+                        if (!isScenicPiloting)
+                        {
+                            PerVehicleConfig.Save();
+                        }
+                        isScenicPiloting = !isScenicPiloting;
+                        return ThirpyMode.Scenic;
                     }
-                    return ThirpyMode.Scenic;
+                    else
+                    {
+                        isScenicPiloting = false;
+                        PerVehicleConfig.Save();
+                        if (camType != CameraType.Player)
+                        {
+                            isScenicPiloting = true;
+                        }
+                        return ThirpyMode.Scenic;
+                    }
                 case ThirpyMode.Thirpy:
+                    isScenicPiloting = false;
                     return ThirpyMode.Scenic;
             }
             return ThirpyMode.Nothing;
@@ -166,10 +180,25 @@ namespace ThirdPerson
             switch (mode)
             {
                 case ThirpyMode.Nothing:
-                    return ThirpyMode.Thirpy;
+                    if (camType == CameraType.Cyclops)
+                    {
+                        isScenicPiloting = true;
+                        return ThirpyMode.Scenic;
+                    }
+                    else
+                    {
+                        return ThirpyMode.Thirpy;
+                    }
                 case ThirpyMode.Scenic:
-                    PerVehicleConfig.Save();
-                    return ThirpyMode.Thirpy;
+                    if (camType == CameraType.Cyclops)
+                    {
+                        return ThirpyMode.Nothing;
+                    }
+                    else
+                    {
+                        PerVehicleConfig.Save();
+                        return ThirpyMode.Thirpy;
+                    }
                 case ThirpyMode.Thirpy:
                     return ThirpyMode.Nothing;
             }
