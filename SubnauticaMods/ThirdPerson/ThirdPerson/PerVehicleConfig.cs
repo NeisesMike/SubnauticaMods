@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using System.IO;
 
@@ -11,8 +8,10 @@ namespace ThirdPerson
     public static class PerVehicleConfig
     {
         private static bool dirty = false;
-        private const float defaultZoom = 5.1f;
+        internal const float defaultZoom = 5.1f;
+        internal const float defaultPitch = 0.3f;
         private static Dictionary<string, float> Distances = new Dictionary<string, float>();
+        private static Dictionary<string, float> Pitches = new Dictionary<string, float>();
         public static float GetDistance()
         {
             return Distances.GetOrDefault(FindName(), defaultZoom);
@@ -32,6 +31,28 @@ namespace ThirdPerson
             else
             {
                 Distances[FindName()] = distance;
+                dirty = true;
+            }
+        }
+        public static float GetPitch()
+        {
+            return Pitches.GetOrDefault(FindName(), defaultPitch);
+        }
+        public static void UpdatePitch(float pitch)
+        {
+            if (Pitches.ContainsKey(FindName()))
+            {
+                float storedPitch = Pitches[FindName()];
+                float pitchDifference = Mathf.Abs(pitch - storedPitch);
+                if (pitchDifference > 0.01)
+                {
+                    Pitches[FindName()] = pitch;
+                    dirty = true;
+                }
+            }
+            else
+            {
+                Pitches[FindName()] = pitch;
                 dirty = true;
             }
         }
@@ -58,7 +79,8 @@ namespace ThirdPerson
         {
             try
             {
-                Distances = JsonInterface.Read();
+                Distances = JsonInterface.ReadDistances();
+                Pitches = JsonInterface.ReadPitches();
             }
             catch (FileNotFoundException)
             {
@@ -73,7 +95,7 @@ namespace ThirdPerson
         {
             if (dirty)
             {
-                JsonInterface.Write(Distances);
+                JsonInterface.Write(Distances, Pitches);
             }
             dirty = false;
         }
