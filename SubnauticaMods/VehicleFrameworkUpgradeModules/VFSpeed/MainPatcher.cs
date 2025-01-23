@@ -5,7 +5,7 @@ using Nautilus.Handlers;
 
 namespace VFSpeed
 {
-    [BepInPlugin(pluginGUID, "VFSpeedModule", "1.0")]
+    [BepInPlugin(pluginGUID, "VFSpeedModule", "1.2")]
     [BepInDependency(VehicleFramework.PluginInfo.PLUGIN_GUID, VehicleFramework.PluginInfo.PLUGIN_VERSION)]
     public class MainPatcher : BaseUnityPlugin
     {

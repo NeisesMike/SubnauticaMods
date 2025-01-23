@@ -51,24 +51,33 @@ namespace VFSpeed
         private void FixedUpdate()
         {
             float strength = GetUpgradeTotal();
-            if(strength < 1)
+            if (strength < 1)
             {
                 return;
             }
             strength *= MainPatcher.config.intensity;
+            vam.accelerationMultiplier = Mathf.Pow(1.1f, strength);
             switch (vt)
             {
                 case VehicleType.vanilla:
-                    SpendVanillaEnergy(strength);
+                    if (Player.main.currentMountedVehicle == vehicle)
+                    {
+                        SpendVanillaEnergy(strength);
+                    }
                     break;
                 case VehicleType.mod:
-                    SpendModEnergy(strength);
+                    if (Player.main.currentMountedVehicle == mv && mv.IsPlayerControlling())
+                    {
+                        SpendModEnergy(strength);
+                    }
                     break;
                 case VehicleType.cyclops:
-                    SpendCyclopsEnergy(strength);
+                    if (Player.main.currentSub == cyclops && Player.main.IsPilotingCyclops())
+                    {
+                        SpendCyclopsEnergy(strength);
+                    }
                     break;
             }
-            vam.accelerationMultiplier = Mathf.Pow(1.1f, strength);
         }
         private void SpendVanillaEnergy(float strength)
         {
