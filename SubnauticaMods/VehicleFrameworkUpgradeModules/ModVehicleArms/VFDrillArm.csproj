@@ -81,6 +81,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config.cs" />
     <Compile Include="DrillablePatcher.cs" />
     <Compile Include="ExosuitPatcher.cs" />
     <Compile Include="ExosuitDrillArmPatcher.cs" />
@@ -90,7 +91,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy  $(TargetPath) "C:\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\plugins\$(ProjectName)\" /y
+    <PostBuildEvent>xcopy  $(TargetPath) "C:\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\plugins\!VehicleUpgrades\$(ProjectName)\" /y
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
