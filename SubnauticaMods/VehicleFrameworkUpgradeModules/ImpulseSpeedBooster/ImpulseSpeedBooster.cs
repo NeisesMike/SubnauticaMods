@@ -22,7 +22,23 @@ namespace ImpulseSpeedBooster
         public override void OnSelected(SelectableChargeableActionParams param)
         {
             FMODUWE.PlayOneShot("event:/sub/seamoth/pulse", param.vehicle.transform.position, param.slotCharge);
-            param.vehicle.useRigidbody.AddForce(param.vehicle.transform.forward * param.charge * param.vehicle.useRigidbody.mass * 3, ForceMode.Impulse);
+
+            string name = param.vehicle.name;
+            VehicleFramework.Logger.Log(name);
+            float power;
+            if (name.ToLower().Contains("seamoth"))
+            {
+                power = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetSeamothConfig().GetValue("Impulse Power");
+            }
+            else if (name.ToLower().Contains("exosuit"))
+            {
+                power = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetPrawnConfig().GetValue("Impulse Power");
+            }
+            else
+            {
+                power = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetModVehicleConfig(name).GetValue("Impulse Power");
+            }
+            param.vehicle.useRigidbody.AddForce(power * param.vehicle.transform.forward * param.charge * param.vehicle.useRigidbody.mass * 3, ForceMode.Impulse);
         }
         public override void OnAdded(AddActionParams param)
         {
