@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CameraInputPatches.cs" />
+    <Compile Include="Config.cs" />
     <Compile Include="JsonInterface.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MainPatcher.cs" />

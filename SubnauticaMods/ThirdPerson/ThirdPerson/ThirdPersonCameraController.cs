@@ -272,18 +272,29 @@ namespace ThirdPerson
         public void UpdateThirpyState()
         {
             ThirpyMode newMode = mode;
-            if (timeActivationInputsHeld == 0 && lastTimeActivationInputsHeld > 0)
+            if (MainPatcher.Instance.EnableUpDownChord.Value)
             {
-                if (lastTimeActivationInputsHeld > 0.25f)
+                if (timeActivationInputsHeld == 0 && lastTimeActivationInputsHeld > 0)
                 {
-                    newMode = HandleScenicInput();
-                }
-                else
-                {
-                    newMode = HandleThirpyInput();
+                    if (lastTimeActivationInputsHeld > 0.25f)
+                    {
+                        newMode = HandleScenicInput();
+                    }
+                    else
+                    {
+                        newMode = HandleThirpyInput();
+                    }
                 }
             }
-            if(mode != newMode)
+            if (GameInput.GetKeyDown(MainPatcher.Instance.EnableThirdPerson.Value.MainKey))
+            {
+                newMode = HandleThirpyInput();
+            }
+            if (GameInput.GetKeyDown(MainPatcher.Instance.EnableConfigurationMode.Value.MainKey))
+            {
+                newMode = HandleScenicInput();
+            }
+            if (mode != newMode)
             {
                 mode = newMode;
                 OnThirpyModeChanged();
