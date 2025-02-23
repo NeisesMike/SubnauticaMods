@@ -3,7 +3,7 @@
 namespace SonarModule
 {
 
-    [BepInPlugin(pluginGUID, "SonarModule", "1.4")]
+    [BepInPlugin(pluginGUID, "SonarModule", "1.6")]
     [BepInDependency("com.snmodding.nautilus")]
     [BepInDependency(VehicleFramework.PluginInfo.PLUGIN_GUID, VehicleFramework.PluginInfo.PLUGIN_VERSION)]
     public class MainPatcher : BaseUnityPlugin
