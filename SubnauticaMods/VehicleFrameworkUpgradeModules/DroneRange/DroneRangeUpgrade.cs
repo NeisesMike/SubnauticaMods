@@ -26,7 +26,7 @@ namespace DroneRange
             }
             else
             {
-                VehicleFramework.Logger.Output("This upgrade has no effect on this vehicle.");
+                ErrorMessage.AddWarning("This upgrade has no effect on this vehicle.");
             }
         }
         public override void OnRemoved(AddActionParams param)
