@@ -31,13 +31,18 @@ namespace JukeboxLib
             right = gameObject.AddComponent<AudioSource>();
             left = gameObject.AddComponent<AudioSource>();
             Playlist = MasterPlaylist;
+            //gameObject.GetComponentsInChildren<MeshRenderer>(true).ForEach(x => x.materials.ForEach(y => y.SetTexture("_Illum", AssetLoader.emissive)));
         }
         public static TechType RegisterJukebox()
         {
             Nautilus.Assets.PrefabInfo Info = Nautilus.Assets.PrefabInfo.WithTechType("SimpleJukebox", "Simple Jukebox", "It can play your music.")
                 .WithIcon(SpriteManager.Get(TechType.Nickel));
             Nautilus.Assets.CustomPrefab prefab = new Nautilus.Assets.CustomPrefab(Info);
-            Nautilus.Utility.ConstructableFlags constructableFlags = Nautilus.Utility.ConstructableFlags.Inside | Nautilus.Utility.ConstructableFlags.Wall | Nautilus.Utility.ConstructableFlags.Submarine;
+            Nautilus.Utility.ConstructableFlags constructableFlags = 
+                Nautilus.Utility.ConstructableFlags.AllowedOnConstructable
+                | Nautilus.Utility.ConstructableFlags.Default 
+                | Nautilus.Utility.ConstructableFlags.Rotatable;
+            /*
             Nautilus.Assets.PrefabTemplates.CloneTemplate lockerClone = new Nautilus.Assets.PrefabTemplates.CloneTemplate(Info, "cd34fecd-794c-4a0c-8012-dd81b77f2840");
             lockerClone.ModifyPrefab += obj =>
             {
@@ -45,11 +50,26 @@ namespace JukeboxLib
                 GameObject model = obj.transform.Find("submarine_locker_04").gameObject;
                 Nautilus.Utility.PrefabUtils.AddConstructable(obj, Info.TechType, constructableFlags, model);
             };
-            //Nautilus.Utility.PrefabUtils.AddBasicComponents(cube, "SimpleJukebox", Info.TechType, LargeWorldEntity.CellLevel.Medium);
-            //Nautilus.Utility.PrefabUtils.AddConstructable(cube, Info.TechType, constructableFlags, cube.transform.Find("cube2").gameObject);
             prefab.SetGameObject(lockerClone);
+            */
+            Nautilus.Utility.PrefabUtils.AddBasicComponents(AssetLoader.radioAsset, "SimpleJukebox", Info.TechType, LargeWorldEntity.CellLevel.Medium);
+            Nautilus.Utility.PrefabUtils.AddConstructable(AssetLoader.radioAsset, Info.TechType, constructableFlags, AssetLoader.radioAsset.transform.Find("model").gameObject);
+            AssetLoader.radioAsset.AddComponent<DefaultJukebox>();
+            foreach(var renderer in AssetLoader.radioAsset.GetComponentsInChildren<MeshRenderer>(true))
+            {
+                foreach(var mat in renderer.materials)
+                {
+                    mat.shader = Shader.Find("MarmosetUBER");
+                    mat.SetTexture("_Illum", AssetLoader.emissive);
+                    mat.EnableKeyword("MARMO_EMISSION");
+                    mat.EnableKeyword("MARMO_SPECMAP");
+                    mat.SetFloat("_GlowStrength", 3f);
+                    mat.SetFloat("_GlowStrengthNight", 3f);
+                }
+            }
+            prefab.SetGameObject(AssetLoader.radioAsset);
             prefab.SetPdaGroupCategory(TechGroup.InteriorModules, TechCategory.InteriorModule);
-            prefab.SetRecipe(new Nautilus.Crafting.RecipeData(new CraftData.Ingredient(TechType.ComputerChip, 1), new CraftData.Ingredient(TechType.Glass, 1), new CraftData.Ingredient(TechType.Titanium, 1), new CraftData.Ingredient(TechType.Silver, 1)));
+            prefab.SetRecipe(new Nautilus.Crafting.RecipeData(new CraftData.Ingredient(TechType.Titanium, 1), new CraftData.Ingredient(TechType.CopperWire, 1)));
             prefab.Register();
             return Info.TechType;
         }

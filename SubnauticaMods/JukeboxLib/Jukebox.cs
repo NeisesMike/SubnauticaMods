@@ -18,22 +18,22 @@ namespace JukeboxLib
             RepeatPlaylist,
             Shuffle
         }
-        private bool isLoaded = true;
         private string currentSong = "[no song]";
         private Playback playbackStyle = Playback.RepeatPlaylist;
         public Dictionary<string, AudioClip> Playlist = new Dictionary<string, AudioClip>();
+        public float MaxAudibleDistance = 30f;
 
-        private float _volume = 1;
-        protected float Volume
+        private int _masterVolume = 0;
+        protected int MasterVolume
         {
             set
             {
-                _volume = value;
-                GetSpeakers().ForEach(x => x.volume = _volume);
+                _masterVolume = value;
+                _masterVolume = Math.Max(0, Math.Min(100, _masterVolume));
             }
             get
             {
-                return _volume;
+                return _masterVolume;
             }
         }
 
@@ -43,7 +43,7 @@ namespace JukeboxLib
         public virtual void OnHandHover(GUIHand hand)
         {
             // show info
-            string info = $"Now Playing: {currentSong}\nVolume: {Volume}";
+            string info = $"Now Playing: {GetSongNameFromFullPath(currentSong)}\nVolume: {MasterVolume}%";
             HandReticle.main.SetTextRaw(HandReticle.TextType.Hand, info);
             HandReticle.main.SetIcon(HandReticle.IconType.Hand, 1f);
 
@@ -77,7 +77,63 @@ namespace JukeboxLib
         {
 
         }
-        public virtual void FixedUpdate()
+        public virtual void Update()
+        {
+            UpdateSongFinished();
+            UpdateLowPassFilter();
+            UpdateVolume();
+        }
+
+        public virtual void Start()
+        {
+            MasterVolume = 0;
+            LeftSpeakers.Concat(RightSpeakers).ForEach(SetupSpeaker);
+        }
+
+        #region private_methods
+
+        private void UpdateVolume()
+        {
+            float desiredVolume;
+            float playerDistance = Vector3.Distance(Player.main.transform.position, transform.position);
+            if (MaxAudibleDistance < playerDistance)
+            {
+                desiredVolume = 0;
+            }
+            else
+            {
+                desiredVolume = ((float)_masterVolume / 100f) * ((MaxAudibleDistance - playerDistance) / MaxAudibleDistance);
+            }
+            GetSpeakers().ForEach(x => x.volume = desiredVolume);
+        }
+        private void SetupSpeaker(AudioSource speaker)
+        {
+            speaker.gameObject.EnsureComponent<AudioLowPassFilter>().cutoffFrequency = 1500;
+        }
+        private void UpdateLowPassFilter()
+        {
+            bool shouldEnableLowPass = true;
+            if (Player.main.IsInBase())
+            {
+                BaseRoot baseroot = gameObject.GetComponentInParent<BaseRoot>();
+                if (baseroot != null && baseroot == Player.main.currentSub.GetComponent<BaseRoot>())
+                {
+                    // the player and jukebox are in the same base
+                    shouldEnableLowPass = false;
+                }
+            }
+            else if(Player.main.currentSub != null)
+            {
+                SubRoot thisSubRoot = gameObject.GetComponentInParent<SubRoot>();
+                if (thisSubRoot != null && thisSubRoot == Player.main.currentSub)
+                {
+                    // the player and jukebox are in the same submarine
+                    shouldEnableLowPass = false;
+                }
+            }
+            LeftSpeakers.Concat(RightSpeakers).ForEach(x => x.GetComponent<AudioLowPassFilter>().enabled = shouldEnableLowPass);
+        }
+        private void UpdateSongFinished()
         {
             AudioSource representative = GetSpeakers().First();
             if (!representative.isPlaying) // it's not playing
@@ -91,8 +147,6 @@ namespace JukeboxLib
                 }
             }
         }
-
-        #region private_methods
         private void HandlePlayNextSong()
         {
             switch (playbackStyle)
@@ -113,6 +167,10 @@ namespace JukeboxLib
         private List<AudioSource> GetSpeakers()
         {
             return RightSpeakers.Concat(LeftSpeakers).ToList();
+        }
+        private string GetSongNameFromFullPath(string fullpath)
+        {
+            return fullpath.SplitByChar('\\').Last();
         }
         #endregion
 
@@ -196,17 +254,17 @@ namespace JukeboxLib
                 Play(Playlist.Keys.ToList()[index]);
             }
         }
-        public void VolumeUp(float increment = 0.01f)
+        public void VolumeUp(int increment = 1)
         {
-            Volume += increment;
+            MasterVolume += increment;
         }
-        public void VolumeDown(float increment = 0.01f)
+        public void VolumeDown(int increment = 1)
         {
-            Volume -= increment;
+            MasterVolume -= increment;
         }
-        public void SetVolume(float level)
+        public void SetVolume(int level)
         {
-            Volume = level;
+            MasterVolume = level;
         }
         public void Mute(bool isMuted)
         {

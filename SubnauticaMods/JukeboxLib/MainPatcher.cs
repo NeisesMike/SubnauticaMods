@@ -11,11 +11,13 @@ namespace JukeboxLib
         public IEnumerator Start()
         {
             Logger.LogInfo("JukeboxLib Starting!");
+            AssetLoader.LoadRadioAsset();
             JukeboxLib.Logger.myLogger = Logger;
             DefaultJukebox.RegisterJukebox();
             string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string fullPath = Path.Combine(modPath, "music");
             yield return UWE.CoroutineHost.StartCoroutine(DefaultJukebox.LoadMasterPlaylist(fullPath));
+            new HarmonyLib.Harmony(PluginInfo.PLUGIN_GUID).PatchAll();
             JukeboxLib.Logger.Log("JukeboxLib Finished!");
         }
     }
