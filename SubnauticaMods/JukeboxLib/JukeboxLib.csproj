@@ -59,6 +59,9 @@
     <Reference Include="Unity.Addressables">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.Addressables.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
@@ -84,6 +87,7 @@
     <Compile Include="AudioLoader.cs" />
     <Compile Include="DesktopJukebox.cs" />
     <Compile Include="Jukebox.cs" />
+    <Compile Include="JukeboxButton.cs" />
     <Compile Include="MainPatcher.cs" />
     <Compile Include="PluginInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

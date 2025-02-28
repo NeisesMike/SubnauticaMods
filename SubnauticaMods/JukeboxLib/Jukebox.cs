@@ -5,13 +5,13 @@ using UnityEngine;
 
 namespace JukeboxLib
 {
-    public abstract class Jukebox : MonoBehaviour
+    public abstract class Jukebox : HandTarget
     {
-        public enum Playback
+        public enum RepeatStyle
         {
-            RepeatSong,
-            RepeatPlaylist,
-            Shuffle
+            None,
+            Song,
+            Playlist
         }
         private string currentSong = "[no song]";
         protected string CurrentSong
@@ -21,7 +21,9 @@ namespace JukeboxLib
                 return currentSong;
             }
         }
-        private Playback playbackStyle = Playback.RepeatPlaylist;
+        protected RepeatStyle repeatStyle = RepeatStyle.None;
+        protected bool isShuffle = false;
+
         public Dictionary<string, AudioClip> Playlist = new Dictionary<string, AudioClip>();
         public float MaxAudibleDistance = 30f;
         private int _masterVolume = 0;
@@ -51,6 +53,9 @@ namespace JukeboxLib
             MasterVolume = 0;
             LeftSpeakers.Concat(RightSpeakers).ForEach(SetupSpeaker);
         }
+        protected virtual void OnRepeatStyleChanged(RepeatStyle repeatStyle) { }
+        protected virtual void OnShuffleChanged(bool shuffling) { }
+        protected virtual void OnPlaySong(string songName) { }
         #region private_methods
         private void UpdateVolume()
         {
@@ -102,26 +107,57 @@ namespace JukeboxLib
                 {
                     if (representative.time > representative.clip.length) // it finished a song
                     {
-                        HandlePlayNextSong();
+                        OnSongEnd();
                     }
                 }
             }
         }
-        private void HandlePlayNextSong()
+        private void OnSongEnd()
         {
-            switch (playbackStyle)
+            switch (repeatStyle)
             {
-                case Playback.RepeatPlaylist:
-                    Next();
-                    break;
-                case Playback.RepeatSong:
+                case RepeatStyle.Song:
                     Play(currentSong);
                     break;
-                case Playback.Shuffle:
-                    PlayRandom();
+                case RepeatStyle.Playlist:
+                    TryPlayNextSong(true);
+                    break;
+                case RepeatStyle.None:
+                    TryPlayNextSong(false);
                     break;
                 default:
                     throw new FormatException("Impossible Playback Style. Dying!");
+            }
+                    PlayRandom();
+        }
+        private void TryPlayNextSong(bool repeat)
+        {
+            if (isShuffle)
+            {
+                PlayRandom();
+                return;
+            }
+            if (repeat)
+            {
+                if (currentSong == Playlist.Last().Key)
+                {
+                    Play(Playlist.First().Key);
+                }
+                else
+                {
+                    Next();
+                }
+            }
+            else
+            {
+                if (currentSong == Playlist.Last().Key)
+                {
+                    Stop();
+                }
+                else
+                {
+                    Next();
+                }
             }
         }
         private List<AudioSource> GetSpeakers()
@@ -145,6 +181,7 @@ namespace JukeboxLib
                     source.Play();
                 }
                 currentSong = filename;
+                OnPlaySong(GetSongNameFromFullPath(currentSong));
             }
             else
             {
@@ -233,9 +270,26 @@ namespace JukeboxLib
                 source.mute = isMuted;
             }
         }
-        public void SetPlayback(Playback input)
+        public void IncrementRepeatStyle()
         {
-            playbackStyle = input;
+            switch (repeatStyle)
+            {
+                case RepeatStyle.None:
+                    repeatStyle = RepeatStyle.Song;
+                    break;
+                case RepeatStyle.Song:
+                    repeatStyle = RepeatStyle.Playlist;
+                    break;
+                case RepeatStyle.Playlist:
+                    repeatStyle = RepeatStyle.None;
+                    break;
+            }
+            OnRepeatStyleChanged(repeatStyle);
+        }
+        public void ToggleShuffleStyle()
+        {
+            isShuffle = !isShuffle;
+            OnShuffleChanged(isShuffle);
         }
         #endregion
     }
