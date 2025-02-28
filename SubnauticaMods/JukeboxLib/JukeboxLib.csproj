@@ -82,7 +82,7 @@
   <ItemGroup>
     <Compile Include="AssetLoader.cs" />
     <Compile Include="AudioLoader.cs" />
-    <Compile Include="DefaultJukebox.cs" />
+    <Compile Include="DesktopJukebox.cs" />
     <Compile Include="Jukebox.cs" />
     <Compile Include="MainPatcher.cs" />
     <Compile Include="PluginInfo.cs" />

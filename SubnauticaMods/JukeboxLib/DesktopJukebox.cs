@@ -7,7 +7,7 @@ using Nautilus.Assets.Gadgets;
 
 namespace JukeboxLib
 {
-    public class DefaultJukebox : Jukebox
+    public class DesktopJukebox : Jukebox, IHandTarget
     {
         public static Dictionary<string, AudioClip> MasterPlaylist = new Dictionary<string, AudioClip>();
 
@@ -15,15 +15,15 @@ namespace JukeboxLib
         private AudioSource left;
         public override List<AudioSource> LeftSpeakers => new List<AudioSource>() { left };
         public override List<AudioSource> RightSpeakers => new List<AudioSource>() { right };
+        private GameObject menuInterface => transform.Find("interface").gameObject;
         public override string GetFullPathToMusicFolder()
         {
             string modPath = Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
             string fullPath = Path.Combine(modPath, "music");
             return fullPath;
         }
-        public override void Awake()
+        public virtual void Awake()
         {
-            base.Awake();
             if (!Directory.Exists(GetFullPathToMusicFolder()))
             {
                 Directory.CreateDirectory(GetFullPathToMusicFolder());
@@ -31,32 +31,29 @@ namespace JukeboxLib
             right = gameObject.AddComponent<AudioSource>();
             left = gameObject.AddComponent<AudioSource>();
             Playlist = MasterPlaylist;
-            //gameObject.GetComponentsInChildren<MeshRenderer>(true).ForEach(x => x.materials.ForEach(y => y.SetTexture("_Illum", AssetLoader.emissive)));
         }
         public static TechType RegisterJukebox()
         {
-            Nautilus.Assets.PrefabInfo Info = Nautilus.Assets.PrefabInfo.WithTechType("SimpleJukebox", "Simple Jukebox", "It can play your music.")
+            Nautilus.Assets.PrefabInfo Info = Nautilus.Assets.PrefabInfo.WithTechType("DesktopJukebox", "Desktop Jukebox", "It can play your music.")
                 .WithIcon(SpriteManager.Get(TechType.Nickel));
             Nautilus.Assets.CustomPrefab prefab = new Nautilus.Assets.CustomPrefab(Info);
             Nautilus.Utility.ConstructableFlags constructableFlags = 
                 Nautilus.Utility.ConstructableFlags.AllowedOnConstructable
                 | Nautilus.Utility.ConstructableFlags.Default 
                 | Nautilus.Utility.ConstructableFlags.Rotatable;
-            /*
-            Nautilus.Assets.PrefabTemplates.CloneTemplate lockerClone = new Nautilus.Assets.PrefabTemplates.CloneTemplate(Info, "cd34fecd-794c-4a0c-8012-dd81b77f2840");
-            lockerClone.ModifyPrefab += obj =>
-            {
-                obj.AddComponent<DefaultJukebox>();
-                GameObject model = obj.transform.Find("submarine_locker_04").gameObject;
-                Nautilus.Utility.PrefabUtils.AddConstructable(obj, Info.TechType, constructableFlags, model);
-            };
-            prefab.SetGameObject(lockerClone);
-            */
-            Nautilus.Utility.PrefabUtils.AddBasicComponents(AssetLoader.radioAsset, "SimpleJukebox", Info.TechType, LargeWorldEntity.CellLevel.Medium);
+            Nautilus.Utility.PrefabUtils.AddBasicComponents(AssetLoader.radioAsset, "DesktopJukebox", Info.TechType, LargeWorldEntity.CellLevel.Medium);
             Nautilus.Utility.PrefabUtils.AddConstructable(AssetLoader.radioAsset, Info.TechType, constructableFlags, AssetLoader.radioAsset.transform.Find("model").gameObject);
-            AssetLoader.radioAsset.AddComponent<DefaultJukebox>();
+            AssetLoader.radioAsset.AddComponent<DesktopJukebox>();
             foreach(var renderer in AssetLoader.radioAsset.GetComponentsInChildren<MeshRenderer>(true))
             {
+                if(renderer.gameObject.name.Equals("background", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    foreach (var mat in renderer.materials)
+                    {
+                        mat.shader = Shader.Find("MarmosetUBER");
+                    }
+                    continue;
+                }
                 foreach(var mat in renderer.materials)
                 {
                     mat.shader = Shader.Find("MarmosetUBER");
@@ -78,6 +75,36 @@ namespace JukeboxLib
             var task = new TaskResult<Dictionary<string, AudioClip>>();
             yield return UWE.CoroutineHost.StartCoroutine(AudioLoader.LoadMusic(fullPath, task));
             MasterPlaylist = task.Get();
+        }
+
+        private float timeToDie = 0f;
+        private void ExtendTimeToDie()
+        {
+            timeToDie = Time.time + 1f;
+        }
+        public virtual void OnHandClick(GUIHand hand)
+        {
+            menuInterface.SetActive(true);
+            ExtendTimeToDie();
+        }
+        public virtual void OnHandHover(GUIHand hand)
+        {
+            string info = $"Now Playing: {GetSongNameFromFullPath(CurrentSong)}\nVolume: {MasterVolume}%";
+            HandReticle.main.SetTextRaw(HandReticle.TextType.Hand, info);
+            HandReticle.main.SetIcon(HandReticle.IconType.Hand, 1f);
+            ExtendTimeToDie();
+        }
+        public override void Update()
+        {
+            base.Update();
+            if(timeToDie < Time.time)
+            {
+                menuInterface.SetActive(false);
+            }
+            if (menuInterface.activeInHierarchy)
+            {
+                menuInterface.transform.LookAt(Player.main.transform);
+            }
         }
     }
 }

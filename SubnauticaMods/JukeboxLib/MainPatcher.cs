@@ -13,10 +13,10 @@ namespace JukeboxLib
             Logger.LogInfo("JukeboxLib Starting!");
             AssetLoader.LoadRadioAsset();
             JukeboxLib.Logger.myLogger = Logger;
-            DefaultJukebox.RegisterJukebox();
+            DesktopJukebox.RegisterJukebox();
             string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string fullPath = Path.Combine(modPath, "music");
-            yield return UWE.CoroutineHost.StartCoroutine(DefaultJukebox.LoadMasterPlaylist(fullPath));
+            yield return UWE.CoroutineHost.StartCoroutine(DesktopJukebox.LoadMasterPlaylist(fullPath));
             new HarmonyLib.Harmony(PluginInfo.PLUGIN_GUID).PatchAll();
             JukeboxLib.Logger.Log("JukeboxLib Finished!");
         }

@@ -1,16 +1,11 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
 using System.Collections.Generic;
-using System.Collections;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace JukeboxLib
 {
-    public abstract class Jukebox : HandTarget, IHandTarget
+    public abstract class Jukebox : MonoBehaviour
     {
         public enum Playback
         {
@@ -19,10 +14,16 @@ namespace JukeboxLib
             Shuffle
         }
         private string currentSong = "[no song]";
+        protected string CurrentSong
+        {
+            get
+            {
+                return currentSong;
+            }
+        }
         private Playback playbackStyle = Playback.RepeatPlaylist;
         public Dictionary<string, AudioClip> Playlist = new Dictionary<string, AudioClip>();
         public float MaxAudibleDistance = 30f;
-
         private int _masterVolume = 0;
         protected int MasterVolume
         {
@@ -36,62 +37,21 @@ namespace JukeboxLib
                 return _masterVolume;
             }
         }
-
         public abstract string GetFullPathToMusicFolder();
         public abstract List<AudioSource> LeftSpeakers { get; }
         public abstract List<AudioSource> RightSpeakers { get; }
-        public virtual void OnHandHover(GUIHand hand)
-        {
-            // show info
-            string info = $"Now Playing: {GetSongNameFromFullPath(currentSong)}\nVolume: {MasterVolume}%";
-            HandReticle.main.SetTextRaw(HandReticle.TextType.Hand, info);
-            HandReticle.main.SetIcon(HandReticle.IconType.Hand, 1f);
-
-            // handle controls
-            if (GameInput.GetButtonDown(GameInput.Button.CyclePrev))
-            {
-                VolumeDown();
-            }
-            if (GameInput.GetButtonDown(GameInput.Button.CycleNext))
-            {
-                VolumeUp();
-            }
-            if (GameInput.GetButtonDown(GameInput.Button.LeftHand))
-            {
-                if (GetSpeakers().First().isPlaying)
-                {
-                    Next();
-                }
-                else
-                {
-                    PlayRandom();
-                }
-            }
-            if (GameInput.GetButtonDown(GameInput.Button.RightHand))
-            {
-                Stop();
-            }
-            return;
-        }
-        public virtual void OnHandClick(GUIHand hand)
-        {
-
-        }
         public virtual void Update()
         {
             UpdateSongFinished();
             UpdateLowPassFilter();
             UpdateVolume();
         }
-
         public virtual void Start()
         {
             MasterVolume = 0;
             LeftSpeakers.Concat(RightSpeakers).ForEach(SetupSpeaker);
         }
-
         #region private_methods
-
         private void UpdateVolume()
         {
             float desiredVolume;
@@ -168,7 +128,7 @@ namespace JukeboxLib
         {
             return RightSpeakers.Concat(LeftSpeakers).ToList();
         }
-        private string GetSongNameFromFullPath(string fullpath)
+        protected string GetSongNameFromFullPath(string fullpath)
         {
             return fullpath.SplitByChar('\\').Last();
         }
