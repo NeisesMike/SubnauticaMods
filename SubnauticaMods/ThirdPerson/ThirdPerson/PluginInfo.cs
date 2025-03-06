@@ -5,6 +5,6 @@ namespace ThirdPerson
     {
         public const string PLUGIN_GUID = "com.mikjaw.subnautica.thirdperson.mod";
         public const string PLUGIN_NAME = "ThirdPerson";
-        public const string PLUGIN_VERSION = "2.1";
+        public const string PLUGIN_VERSION = "2.2";
     }
 }

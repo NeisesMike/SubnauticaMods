@@ -305,12 +305,15 @@ namespace ThirdPerson
             switch (mode)
             {
                 case ThirpyMode.Nothing:
+                    MainCamera.camera.GetComponent<WaterSurfaceOnCamera>().waterSurface.frustumDilation = 0.5f;
                     SetPlayerCamParent(PlayerCamPivot);
                     break;
                 case ThirpyMode.Scenic:
+                    MainCamera.camera.GetComponent<WaterSurfaceOnCamera>().waterSurface.frustumDilation = 100;
                     SetPlayerCamParent(thirpyCamRoot.transform);
                     break;
                 case ThirpyMode.Thirpy:
+                    MainCamera.camera.GetComponent<WaterSurfaceOnCamera>().waterSurface.frustumDilation = 100;
                     SetPlayerCamParent(thirpyCamRoot.transform);
                     break;
             }
