@@ -17,6 +17,7 @@ namespace VoidDepth
             new Ingredient(TechType.PlasteelIngot, 1),
             new Ingredient(TechType.Nickel, 1),
             new Ingredient(TechType.RedGreenTentacleSeed, 1),
+            new Ingredient(TechType.PrecursorIonCrystal, 1),
         };
         public override Atlas.Sprite Icon => SpriteHelper.GetSprite("VoidDepthIcon.png");
         public override void OnAdded(AddActionParams param)
