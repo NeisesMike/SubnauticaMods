@@ -36,7 +36,8 @@ namespace ImpulseSpeedBooster
             }
             else
             {
-                power = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetModVehicleConfig(name).GetValue("Impulse Power");
+                string mvName = param.vehicle.GetComponent<TechTag>().type.AsString();
+                power = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetModVehicleConfig(mvName).GetValue("Impulse Power");
             }
             param.vehicle.useRigidbody.AddForce(power * param.vehicle.transform.forward * param.charge * param.vehicle.useRigidbody.mass * 3, ForceMode.Impulse);
         }
