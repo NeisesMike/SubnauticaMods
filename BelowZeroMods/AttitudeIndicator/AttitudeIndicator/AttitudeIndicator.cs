@@ -1,155 +1,130 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using UnityEngine;
-using HarmonyLib;
-using Nautilus.Options;
-using Nautilus.Handlers;
-using System.Runtime.CompilerServices;
-using System.Collections;
-using Nautilus.Options.Attributes;
-using Nautilus.Json;
-using Nautilus.Utility;
-using Nautilus.Patchers;
-using System.Threading;
-using System.Collections.Concurrent;
+﻿using UnityEngine;
 
 namespace AttitudeIndicator
 {
-    public enum VehicleType
+    internal class AttitudeIndicator : MonoBehaviour
     {
-        Seamoth,
-        Cyclops,
-        Seatruck,
-        Snowfox,
-        None
-    }
-
-    public class AttitudeIndicator : MonoBehaviour
-    {
-        public static GameObject prefab = null;
-        public VehicleType type = VehicleType.None;
-        public GameObject model;
-        public GameObject aircraft;
-        public GameObject chassi;
-        public GameObject frame;
-        public GameObject globe;
-        public GameObject ring;
-        public static void GetAssets()
+        private Transform Model => transform.Find("InstrumentModel");
+        private Transform Globe => Model.Find("Globe");
+        private Transform Ring => Model.Find("Ring");
+        private Vehicle MyVehicle => GetComponentInParent<Vehicle>();
+        private SubRoot MySub => GetComponentInParent<SubRoot>();
+        private void Update()
         {
-            // load the asset bundle
-            string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var myLoadedAssetBundle = AssetBundle.LoadFromFile(Path.Combine(modPath, "assets/attitudeindicator"));
-            if (myLoadedAssetBundle == null)
+            if (UpdateEnabled())
             {
-                AILogger.Log("Failed to load AssetBundle!");
-                return;
+                Model.gameObject.SetActive(true);
+                UpdatePosition();
+                UpdateRotations();
             }
-
-            System.Object[] arr = myLoadedAssetBundle.LoadAllAssets();
-            foreach (System.Object obj in arr)
+            else
             {
-                if (obj.ToString().Contains("attitudeindicator"))
+                Model.gameObject.SetActive(false);
+            }
+        }
+        private bool UpdateEnabled()
+        {
+            VehicleFramework.ModVehicle mv = transform.parent.GetComponent<VehicleFramework.ModVehicle>();
+            if (mv != null)
+            {
+                string mvName = mv.GetComponent<TechTag>().type.AsString();
+                bool isMVEnabled = VehicleFramework.Admin.ExternalVehicleConfig<bool>.GetModVehicleConfig(mvName).GetValue(InstrumentConfig.enabledString);
+                return isMVEnabled && Player.main.currentMountedVehicle == mv && mv.IsPlayerControlling();
+            }
+            else
+            {
+                switch (GetTechType())
                 {
-                    prefab = (GameObject)obj;
+                    case TechType.Seamoth:
+                        bool isSeamothEnabled = VehicleFramework.Admin.ExternalVehicleConfig<bool>.GetSeamothConfig().GetValue(InstrumentConfig.enabledString);
+                        return isSeamothEnabled && Player.main.currentMountedVehicle == MyVehicle;
+                    case TechType.Cyclops:
+                        bool isCyclopsEnabled = VehicleFramework.Admin.ExternalVehicleConfig<bool>.GetCyclopsConfig().GetValue(InstrumentConfig.enabledString);
+                        return isCyclopsEnabled && Player.main.currentSub == MySub && Player.main.GetMode() == Player.Mode.Piloting;
+                    default:
+                        return false;
                 }
             }
         }
-
-        public void Start()
+        private void UpdatePosition()
         {
-            aircraft = model.transform.Find("Aircraft").gameObject;
-            chassi = model.transform.Find("Chassi").gameObject;
-            frame = model.transform.Find("Frame").gameObject;
-            globe = model.transform.Find("Globe").gameObject;
-            ring = model.transform.Find("Ring").gameObject;
-        }
-        public void Update()
-        {
-            UpdatePosition();
-            UpdateRotations();
-        }
-
-        public void UpdatePosition()
-        {
-#if SUBNAUTICA
-            void PositionSeamothAI()
+            TechType myTT = GetTechType();
+            float xPosition;
+            float yPosition;
+            float zPosition;
+            float scale;
+            VehicleFramework.ModVehicle mv = transform.parent.GetComponent<VehicleFramework.ModVehicle>();
+            if (mv != null)
             {
-                model.transform.localScale = Vector3.one * AttitudeIndicatorPatcher.SubnauticaConfig.scale;
-                model.transform.position = Player.main.transform.position
-                    + Player.main.transform.forward * AttitudeIndicatorPatcher.SubnauticaConfig.z
-                    + Player.main.transform.right * AttitudeIndicatorPatcher.SubnauticaConfig.x
-                    + Player.main.transform.up * AttitudeIndicatorPatcher.SubnauticaConfig.y;
+                string mvName = mv.GetComponent<TechTag>().type.AsString();
+                xPosition = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetModVehicleConfig(mvName).GetValue(InstrumentConfig.xString);
+                yPosition = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetModVehicleConfig(mvName).GetValue(InstrumentConfig.yString);
+                zPosition = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetModVehicleConfig(mvName).GetValue(InstrumentConfig.zString);
+                scale = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetModVehicleConfig(mvName).GetValue(InstrumentConfig.scaleString);
             }
-            void PositionCyclopsAI()
+            else
             {
-                model.transform.localScale = Vector3.one * AttitudeIndicatorPatcher.SubnauticaConfig.Cscale;
-                model.transform.position = Player.main.transform.position
-                    + Player.main.transform.forward * AttitudeIndicatorPatcher.SubnauticaConfig.Cz
-                    + Player.main.transform.right * AttitudeIndicatorPatcher.SubnauticaConfig.Cx
-                    + Player.main.transform.up * AttitudeIndicatorPatcher.SubnauticaConfig.Cy;
-            }
-#elif BELOWZERO
-            void PositionSnowfoxAI()
-            {
-                model.transform.localScale = Vector3.one * AttitudeIndicatorPatcher.SubnauticaConfig.Fscale;
-                model.transform.position = Player.main.transform.position
-                    + Player.main.transform.forward * AttitudeIndicatorPatcher.SubnauticaConfig.Fz
-                    + Player.main.transform.right * AttitudeIndicatorPatcher.SubnauticaConfig.Fx
-                    + Player.main.transform.up * AttitudeIndicatorPatcher.SubnauticaConfig.Fy;
-            }
-            void PositionSeatruckAI()
-            {
-                model.transform.localScale = Vector3.one * AttitudeIndicatorPatcher.SubnauticaConfig.Tscale;
-                model.transform.position = Player.main.transform.position
-                    + Player.main.transform.forward * AttitudeIndicatorPatcher.SubnauticaConfig.Tz
-                    + Player.main.transform.right * AttitudeIndicatorPatcher.SubnauticaConfig.Tx
-                    + Player.main.transform.up * AttitudeIndicatorPatcher.SubnauticaConfig.Ty;
-            }
-#endif
-            switch (type)
-            {
-#if SUBNAUTICA
-                case VehicleType.Seamoth:
-                    PositionSeamothAI();
-                    break;
-                case VehicleType.Cyclops:
-                    PositionCyclopsAI();
-                    break;
-#elif BELOWZERO
-                case VehicleType.Snowfox:
-                    PositionSnowfoxAI();
-                    break;
-                case VehicleType.Seatruck:
-                    PositionSeatruckAI();
-                    break;
-#endif
-                default:
-                    AILogger.Log("ERROR: this AI had no vehicle type");
-                    break;
+                switch (myTT)
+                {
+                    case TechType.Seamoth:
+                        xPosition = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetSeamothConfig().GetValue(InstrumentConfig.xString);
+                        yPosition = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetSeamothConfig().GetValue(InstrumentConfig.yString);
+                        zPosition = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetSeamothConfig().GetValue(InstrumentConfig.zString);
+                        scale = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetSeamothConfig().GetValue(InstrumentConfig.scaleString);
+                        break;
+                    case TechType.Cyclops:
+                        xPosition = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetCyclopsConfig().GetValue(InstrumentConfig.xString);
+                        yPosition = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetCyclopsConfig().GetValue(InstrumentConfig.yString);
+                        scale = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetCyclopsConfig().GetValue(InstrumentConfig.scaleString);
+                        zPosition = VehicleFramework.Admin.ExternalVehicleConfig<float>.GetCyclopsConfig().GetValue(InstrumentConfig.zString);
+                        break;
+                    default:
+                        xPosition = 0;
+                        yPosition = 0;
+                        zPosition = 0;
+                        scale = 0;
+                        break;
+                }
             }
 
+            transform.localScale = Vector3.one * scale;
+            transform.position = MainCameraControl.main.transform.position
+                + MainCameraControl.main.transform.forward * zPosition
+                + MainCameraControl.main.transform.right * xPosition
+                + MainCameraControl.main.transform.up * yPosition;
         }
-
-        public void UpdateRotations()
+        private void UpdateRotations()
         {
             float playerPitch = MainCameraControl.main.transform.eulerAngles.x;
             float playerRoll = MainCameraControl.main.transform.eulerAngles.z;
 
-            model.transform.LookAt(MainCamera.camera.transform, MainCamera.camera.transform.up);
+            gameObject.transform.LookAt(MainCamera.camera.transform, MainCamera.camera.transform.up);
 
-            var but = ring.transform.localEulerAngles;
-            but.z = playerRoll - 90;
-            ring.transform.localEulerAngles = but;
+            var ringLocalEulers = Ring.localEulerAngles;
+            ringLocalEulers.z = playerRoll - 90;
+            Ring.localEulerAngles = ringLocalEulers;
 
-            var fart = globe.transform.localEulerAngles;
-            fart.z = playerPitch - 90;
-            globe.transform.localEulerAngles = fart;
+            var globeLocalEulers = Globe.localEulerAngles;
+            globeLocalEulers.z = playerPitch - 90;
+            Globe.localEulerAngles = globeLocalEulers;
         }
-
+        private TechType GetTechType()
+        {
+            TechTag thisTechTag = transform.parent.GetComponent<TechTag>();
+            if (thisTechTag != null)
+            {
+                return thisTechTag.type;
+            }
+            else
+            {
+                SubRoot thisSubRoot = transform.parent.GetComponent<SubRoot>();
+                if (thisSubRoot != null && thisSubRoot.isCyclops)
+                {
+                    return TechType.Cyclops;
+                }
+            }
+            return TechType.None;
+        }
     }
 }
 
