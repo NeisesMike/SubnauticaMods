@@ -8,7 +8,7 @@ namespace FlightModule
     {
         private const string PLUGIN_GUID = "com.mikjaw.subnautica.flightmodule.mod";
         private const string PLUGIN_NAME = "FlightModule";
-        private const string PLUGIN_VERSION = "1.0.1";
+        private const string PLUGIN_VERSION = "1.0.2";
         public void Start()
         {
             VehicleFramework.Admin.UpgradeCompat compat = new VehicleFramework.Admin.UpgradeCompat

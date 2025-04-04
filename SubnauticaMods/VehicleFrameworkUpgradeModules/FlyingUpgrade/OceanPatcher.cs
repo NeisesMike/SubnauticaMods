@@ -22,7 +22,7 @@ namespace FlightModule
             SubRoot thisSubRoot = obj.GetComponent<SubRoot>();
             if (thisSubRoot != null && thisSubRoot.isCyclops)
             {
-                if (__result < 0)
+                if (__result <= 0)
                 {
                     int numUpgrades = thisSubRoot.GetCurrentUpgrades().Where(x => x.Contains("FlightModule")).Count();
                     if (numUpgrades > 0)
