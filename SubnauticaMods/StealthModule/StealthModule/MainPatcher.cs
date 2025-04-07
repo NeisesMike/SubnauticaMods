@@ -8,7 +8,7 @@ using HarmonyLib;
 
 namespace StealthModule
 { 
-    [BepInPlugin(pluginGUID, "StealthModule", "3.0.4")]
+    [BepInPlugin(pluginGUID, "StealthModule", "3.1.0")]
     [BepInDependency(VehicleFramework.PluginInfo.PLUGIN_GUID, VehicleFramework.PluginInfo.PLUGIN_VERSION)]
     [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID)]
     public class MainPatcher : BaseUnityPlugin
@@ -54,6 +54,9 @@ namespace StealthModule
         {
             [Toggle("Enable Leviathan Distance Indicator")]
             public bool isDistanceIndicatorEnabled = true;
+
+            [Toggle("Effect Logging", Tooltip = "Write in the BepInEx log whenever a stealth module causes a creature to not attack a target.")]
+            public bool isEffectLogging = true;
         }
     }
 

@@ -61,5 +61,37 @@ namespace StealthModule
             }
             quality = result;
         }
+        internal static float GetMaxRange(StealthQuality thisVehicleSQ)
+        {
+            float myMaxRange;
+            switch (thisVehicleSQ)
+            {
+                case (StealthQuality.None):
+                    myMaxRange = float.MaxValue;
+                    break;
+                case (StealthQuality.Low):
+                    myMaxRange = 80f;
+                    break;
+                case (StealthQuality.Medium):
+                    myMaxRange = 60f;
+                    break;
+                case (StealthQuality.High):
+                    myMaxRange = 40f;
+                    break;
+                case (StealthQuality.Higher):
+                    myMaxRange = 20f;
+                    break;
+                case (StealthQuality.Highest):
+                    myMaxRange = 3f;
+                    break;
+                case (StealthQuality.Debug):
+                    myMaxRange = float.MinValue;
+                    break;
+                default:
+                    myMaxRange = float.MaxValue;
+                    break;
+            }
+            return myMaxRange;
+        }
     }
 }
