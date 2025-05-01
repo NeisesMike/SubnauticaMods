@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VFSpeed", "VFSpeed\VFSpeed.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagnetBoots", "MagnetBoots\MagnetBoots.csproj", "{DAB68CE9-B487-4B90-B34C-5B688E196483}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightModule", "FlyingUpgrade\FlightModule.csproj", "{049AE322-4601-480A-828B-09A73BCC4056}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{DAB68CE9-B487-4B90-B34C-5B688E196483}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAB68CE9-B487-4B90-B34C-5B688E196483}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAB68CE9-B487-4B90-B34C-5B688E196483}.Release|Any CPU.Build.0 = Release|Any CPU
+		{049AE322-4601-480A-828B-09A73BCC4056}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{049AE322-4601-480A-828B-09A73BCC4056}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{049AE322-4601-480A-828B-09A73BCC4056}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{049AE322-4601-480A-828B-09A73BCC4056}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
