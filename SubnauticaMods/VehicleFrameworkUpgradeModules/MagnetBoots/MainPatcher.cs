@@ -13,7 +13,14 @@ namespace MagnetBoots
         internal static MagnetBootsConfig MagnetConfig { get; private set; }
         public void Start()
         {
-            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new MagnetBootsModule());
+            VehicleFramework.Admin.UpgradeCompat compat = new VehicleFramework.Admin.UpgradeCompat()
+            {
+                skipCyclops = true,
+                skipExosuit = false,
+                skipModVehicle = false,
+                skipSeamoth = false
+            };
+            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new MagnetBootsModule(), compat);
             MagnetConfig = OptionsPanelHandler.RegisterModOptions<MagnetBootsConfig>();
         }
     }
