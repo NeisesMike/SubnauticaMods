@@ -5,31 +5,26 @@ using UnityEngine;
 
 namespace JukeboxLib
 {
+    public enum RepeatEnum
+    {
+        None,
+        Song,
+        Playlist
+    }
     public abstract class Jukebox : HandTarget
     {
-        public enum RepeatStyle
-        {
-            None,
-            Song,
-            Playlist
-        }
-        private string currentSong = "[no song]";
-        protected string CurrentSong
-        {
-            get
-            {
-                return currentSong;
-            }
-        }
-        protected RepeatStyle repeatStyle = RepeatStyle.None;
-        protected bool isShuffle = false;
+        protected Dictionary<string, AudioClip> Playlist = new Dictionary<string, AudioClip>();
+        public const string noSongString = "[no song]";
+        private string currentSong = noSongString;
+        protected RepeatEnum RepeatStyle { get; private set; } = RepeatEnum.Playlist;
+        protected bool IsShuffle { get; private set; } = false;
+        protected bool IsPaused { get; private set; } = false;
 
-        public Dictionary<string, AudioClip> Playlist = new Dictionary<string, AudioClip>();
-        public float MaxAudibleDistance = 30f;
+        protected float MaxAudibleDistance = 30f;
         private int _masterVolume = 0;
         protected int MasterVolume
         {
-            set
+            private set
             {
                 _masterVolume = value;
                 _masterVolume = Math.Max(0, Math.Min(100, _masterVolume));
@@ -39,23 +34,35 @@ namespace JukeboxLib
                 return _masterVolume;
             }
         }
-        public abstract string GetFullPathToMusicFolder();
-        public abstract List<AudioSource> LeftSpeakers { get; }
-        public abstract List<AudioSource> RightSpeakers { get; }
-        public virtual void Update()
+
+        #region passthrough
+        protected abstract string GetFullPathToMusicFolder();
+        protected abstract List<AudioSource> LeftSpeakers { get; }
+        protected abstract List<AudioSource> RightSpeakers { get; }
+        protected virtual void Update()
         {
             UpdateSongFinished();
             UpdateLowPassFilter();
             UpdateVolume();
+            UpdateSongProgress();
         }
-        public virtual void Start()
+        protected virtual void Start()
         {
             MasterVolume = 0;
             LeftSpeakers.Concat(RightSpeakers).ForEach(SetupSpeaker);
+            OnShuffleChanged(IsShuffle);
+            OnRepeatStyleChanged(RepeatStyle);
+            FreezeTimePatcher.Register(this);
         }
-        protected virtual void OnRepeatStyleChanged(RepeatStyle repeatStyle) { }
+        protected virtual void OnRepeatStyleChanged(RepeatEnum repeatStyle) { }
         protected virtual void OnShuffleChanged(bool shuffling) { }
         protected virtual void OnPlaySong(string songName) { }
+        protected virtual void OnPlay() { }
+        protected virtual void OnPause() { }
+        protected virtual void OnSongProgress(float progress) { }
+        protected virtual void OnStopped() { }
+        #endregion
+
         #region private_methods
         private void UpdateVolume()
         {
@@ -105,7 +112,7 @@ namespace JukeboxLib
             {
                 if (representative.clip != null && representative.clip.length > 0) // it has a real clip
                 {
-                    if (representative.time > representative.clip.length) // it finished a song
+                    if (representative.time >= representative.clip.length) // it finished a song
                     {
                         OnSongEnd();
                     }
@@ -114,25 +121,24 @@ namespace JukeboxLib
         }
         private void OnSongEnd()
         {
-            switch (repeatStyle)
+            switch (RepeatStyle)
             {
-                case RepeatStyle.Song:
+                case RepeatEnum.Song:
                     Play(currentSong);
                     break;
-                case RepeatStyle.Playlist:
+                case RepeatEnum.Playlist:
                     TryPlayNextSong(true);
                     break;
-                case RepeatStyle.None:
+                case RepeatEnum.None:
                     TryPlayNextSong(false);
                     break;
                 default:
                     throw new FormatException("Impossible Playback Style. Dying!");
             }
-                    PlayRandom();
         }
         private void TryPlayNextSong(bool repeat)
         {
-            if (isShuffle)
+            if (IsShuffle)
             {
                 PlayRandom();
                 return;
@@ -164,13 +170,60 @@ namespace JukeboxLib
         {
             return RightSpeakers.Concat(LeftSpeakers).ToList();
         }
-        protected string GetSongNameFromFullPath(string fullpath)
+        private string GetSongNameFromFullPath(string fullpath)
         {
             return fullpath.SplitByChar('\\').Last();
+        }
+        private void UpdateSongProgress()
+        {
+            if (IsPlaying())
+            {
+                AudioSource representative = GetSpeakers().First();
+                if (representative.clip == null || representative.clip.length == 0) return;
+
+                OnSongProgress(representative.time / representative.clip.length);
+            }
+        }
+        #endregion
+
+        #region internal_methods
+        private bool isMenuPause = false;
+        internal void MenuPause(bool shouldPause)
+        {
+            if (shouldPause)
+            {
+                if (IsPlaying())
+                {
+                    Pause(true);
+                    isMenuPause = true;
+                }
+            }
+            else
+            {
+                if (isMenuPause)
+                {
+                    Pause(false);
+                }
+                isMenuPause = false;
+            }
         }
         #endregion
 
         #region public_methods
+        public void PlayFirst()
+        {
+            if (IsShuffle)
+            {
+                PlayRandom();
+            }
+            else
+            {
+                if (Playlist.Any())
+                {
+                    Play(Playlist.First().Key);
+                }
+            }
+        }
         public void Play(string filename)
         {
             if(Playlist.Keys.Contains(filename))
@@ -178,14 +231,35 @@ namespace JukeboxLib
                 foreach(AudioSource source in GetSpeakers())
                 {
                     source.clip = Playlist[filename];
+                    source.time = 0;
                     source.Play();
                 }
                 currentSong = filename;
                 OnPlaySong(GetSongNameFromFullPath(currentSong));
+                IsPaused = false;
+                OnPlay();
             }
             else
             {
                 Logger.Log("Playlist did not contain the song: " + filename);
+            }
+        }
+        public void PressPlayButton()
+        {
+            if (IsPlaying())
+            {
+                Pause(true);
+            }
+            else
+            {
+                if (IsPaused)
+                {
+                    Pause(false);
+                }
+                else
+                {
+                    PlayFirst();
+                }
             }
         }
         public void Stop()
@@ -194,15 +268,20 @@ namespace JukeboxLib
             {
                 source.Stop();
             }
+            IsPaused = false;
+            currentSong = noSongString;
+            OnStopped();
         }
-        public void Pause(bool isPaused)
+        public void Pause(bool inputPaused)
         {
-            if (isPaused)
+            if (inputPaused)
             {
                 foreach (AudioSource source in GetSpeakers())
                 {
                     source.Pause();
                 }
+                OnPause();
+                IsPaused = true;
             }
             else
             {
@@ -210,11 +289,18 @@ namespace JukeboxLib
                 {
                     source.UnPause();
                 }
+                OnPlay();
+                IsPaused = false;
             }
         }
         public void Next()
         {
             bool isNext = false;
+            if (IsShuffle)
+            {
+                PlayRandom();
+                return;
+            }
             foreach(string name in Playlist.Keys)
             {
                 if(isNext)
@@ -270,26 +356,31 @@ namespace JukeboxLib
                 source.mute = isMuted;
             }
         }
-        public void IncrementRepeatStyle()
+        public void SetRepeat(RepeatEnum style)
         {
-            switch (repeatStyle)
-            {
-                case RepeatStyle.None:
-                    repeatStyle = RepeatStyle.Song;
-                    break;
-                case RepeatStyle.Song:
-                    repeatStyle = RepeatStyle.Playlist;
-                    break;
-                case RepeatStyle.Playlist:
-                    repeatStyle = RepeatStyle.None;
-                    break;
-            }
-            OnRepeatStyleChanged(repeatStyle);
+            RepeatStyle = style;
+            OnRepeatStyleChanged(RepeatStyle);
         }
         public void ToggleShuffleStyle()
         {
-            isShuffle = !isShuffle;
-            OnShuffleChanged(isShuffle);
+            IsShuffle = !IsShuffle;
+            OnShuffleChanged(IsShuffle);
+        }
+        public bool IsPlaying()
+        {
+            return GetSpeakers().First().isPlaying;
+        }
+        public void SetSongProgress(float progress)
+        {
+            if(progress < 0)
+            {
+                throw new System.ArgumentException("Can't set song progress to a negative time value.", "progress");
+            }
+            if(progress > 1)
+            {
+                throw new System.ArgumentException("Can't set song progress to a time value larger than the length of the song.", "progress");
+            }
+            GetSpeakers().ForEach(x => x.time = x.clip.length * progress);
         }
         #endregion
     }

@@ -10,14 +10,34 @@ namespace JukeboxLib
 {
     public class DesktopJukebox : Jukebox, IHandTarget
     {
+        private string _currentSongName = noSongString;
+        public string CurrentSongName
+        {
+            get
+            {
+                return _currentSongName;
+            }
+            private set
+            {
+                transform.Find("interface/background/Canvas/Text (TMP)").GetComponent<TMPro.TextMeshProUGUI>().text = _currentSongName = value;
+            }
+        }
+        private GameObject PlayImage => transform.Find("interface/background/play/Canvas/play").gameObject;
+        private GameObject PauseImage => transform.Find("interface/background/play/Canvas/pause").gameObject;
+        private GameObject LoopImage => transform.Find("interface/background/repeat/Canvas/loop").gameObject;
+        private GameObject LoopSingleImage => transform.Find("interface/background/repeat/Canvas/loopsingle").gameObject;
+        private GameObject NoLoopImage => transform.Find("interface/background/repeat/Canvas/noloop").gameObject;
+        private GameObject ShuffleImage => transform.Find("interface/background/playback/Canvas/shuffle").gameObject;
+        private GameObject NoShuffleImage => transform.Find("interface/background/playback/Canvas/noshuffle").gameObject;
         public static Dictionary<string, AudioClip> MasterPlaylist = new Dictionary<string, AudioClip>();
 
         private AudioSource right;
         private AudioSource left;
-        public override List<AudioSource> LeftSpeakers => new List<AudioSource>() { left };
-        public override List<AudioSource> RightSpeakers => new List<AudioSource>() { right };
-        private GameObject menuInterface => transform.Find("interface").gameObject;
-        public override string GetFullPathToMusicFolder()
+        protected override List<AudioSource> LeftSpeakers => new List<AudioSource>() { left };
+        protected override List<AudioSource> RightSpeakers => new List<AudioSource>() { right };
+        private GameObject MenuInterface => transform.Find("interface").gameObject;
+        private Transform Tracker => transform.Find("interface/background/time/tracker");
+        protected override string GetFullPathToMusicFolder()
         {
             string modPath = Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
             string fullPath = Path.Combine(modPath, "music");
@@ -34,6 +54,7 @@ namespace JukeboxLib
             left = gameObject.AddComponent<AudioSource>();
             Playlist = MasterPlaylist;
             SetupButtons();
+            CurrentSongName = noSongString;
         }
 
         public static TechType RegisterJukebox()
@@ -48,7 +69,7 @@ namespace JukeboxLib
             Nautilus.Utility.PrefabUtils.AddBasicComponents(AssetLoader.radioAsset, "DesktopJukebox", Info.TechType, LargeWorldEntity.CellLevel.Medium);
             Nautilus.Utility.PrefabUtils.AddConstructable(AssetLoader.radioAsset, Info.TechType, constructableFlags, AssetLoader.radioAsset.transform.Find("model").gameObject);
             AssetLoader.radioAsset.AddComponent<DesktopJukebox>();
-            foreach(var renderer in AssetLoader.radioAsset.GetComponentsInChildren<MeshRenderer>(true))
+            foreach(var renderer in AssetLoader.radioAsset.transform.Find("model").GetComponentsInChildren<MeshRenderer>(true))
             {
                 if(renderer.gameObject.name.Equals("background", System.StringComparison.OrdinalIgnoreCase))
                 {
@@ -88,12 +109,12 @@ namespace JukeboxLib
         }
         public virtual void OnHandClick(GUIHand hand)
         {
-            menuInterface.SetActive(true);
+            MenuInterface.SetActive(true);
             ExtendTimeToDie();
         }
         public virtual void OnHandHover(GUIHand hand)
         {
-            string info = $"Now Playing: {GetSongNameFromFullPath(CurrentSong)}\nVolume: {MasterVolume}%\n";
+            string info = $"Now Playing: {CurrentSongName}\nVolume: {MasterVolume}%\n";
             info += HandReticle.main.GetText("Volume Up:   ", false, GameInput.Button.CycleNext) + "\n";
             info += HandReticle.main.GetText("Volume Down: ", false, GameInput.Button.CyclePrev) + "\n";
             info += HandReticle.main.GetText("Stop: ", false, GameInput.Button.RightHand) + "\n";
@@ -114,32 +135,78 @@ namespace JukeboxLib
                 Stop();
             }
         }
-        public override void Update()
+        protected override void Update()
         {
             base.Update();
             if(timeToDie < Time.time)
             {
-                menuInterface.SetActive(false);
+                MenuInterface.SetActive(false);
             }
-            if (menuInterface.activeInHierarchy)
+            if (MenuInterface.activeInHierarchy)
             {
-                menuInterface.transform.LookAt(Player.main.transform);
+                MenuInterface.transform.LookAt(Player.main.transform);
             }
         }
 
         protected override void OnShuffleChanged(bool shuffling)
         {
-            // update graphics
+            if (shuffling)
+            {
+                ShuffleImage.SetActive(true);
+                NoShuffleImage.SetActive(false);
+            }
+            else
+            {
+                ShuffleImage.SetActive(false);
+                NoShuffleImage.SetActive(true);
+            }
         }
-        protected override void OnRepeatStyleChanged(RepeatStyle repeatStyle)
+        protected override void OnRepeatStyleChanged(RepeatEnum repeatStyle)
         {
-            // update graphics
+            switch (repeatStyle)
+            {
+                case RepeatEnum.None:
+                    LoopImage.SetActive(false);
+                    LoopSingleImage.SetActive(false);
+                    NoLoopImage.SetActive(true);
+                    break;
+                case RepeatEnum.Song:
+                    LoopImage.SetActive(false);
+                    LoopSingleImage.SetActive(true);
+                    NoLoopImage.SetActive(false);
+                    break;
+                case RepeatEnum.Playlist:
+                    LoopImage.SetActive(true);
+                    LoopSingleImage.SetActive(false);
+                    NoLoopImage.SetActive(false);
+                    break;
+            }
         }
         protected override void OnPlaySong(string songName)
         {
-            transform.Find("interface/background/Canvas/Text (TMP)").GetComponent<TMPro.TextMeshProUGUI>().text = songName;
+            CurrentSongName = songName;
         }
-
+        protected override void OnPlay()
+        {
+            PlayImage.SetActive(false);
+            PauseImage.SetActive(true);
+        }
+        protected override void OnPause()
+        {
+            PlayImage.SetActive(true);
+            PauseImage.SetActive(false);
+        }
+        protected override void OnStopped()
+        {
+            CurrentSongName = noSongString;
+            PlayImage.SetActive(true);
+            PauseImage.SetActive(false);
+        }
+        protected override void OnSongProgress(float progress)
+        {
+            float placement = Mathf.Lerp(-0.5f, 0.5f, progress);
+            Tracker.localPosition = new Vector3(0f, placement, 0f);
+        }
         private void SetupButtons()
         {
             void HoverAction(string message)
@@ -148,24 +215,80 @@ namespace JukeboxLib
                 HandReticle.main.SetTextRaw(HandReticle.TextType.Hand, message);
             }
             JukeboxButton play = transform.Find("interface/background/play").gameObject.AddComponent<JukeboxButton>();
-            play.clickAction = () => PlayRandom();
+            play.clickAction = PressPlayButton;
             play.hoverAction = () => HoverAction("Play");
+            play.GetComponent<MeshRenderer>().sortingOrder = 1;
 
             JukeboxButton prev = transform.Find("interface/background/previous").gameObject.AddComponent<JukeboxButton>();
-            prev.clickAction = () => Previous();
+            prev.clickAction = Previous;
             prev.hoverAction = () => HoverAction("Previous");
+            prev.GetComponent<MeshRenderer>().sortingOrder = 1;
 
             JukeboxButton next = transform.Find("interface/background/next").gameObject.AddComponent<JukeboxButton>();
-            next.clickAction = () => Next();
+            next.clickAction = Next;
             next.hoverAction = () => HoverAction("Next");
+            next.GetComponent<MeshRenderer>().sortingOrder = 1;
 
             JukeboxButton shuffle = transform.Find("interface/background/playback").gameObject.AddComponent<JukeboxButton>();
-            shuffle.clickAction = () => ToggleShuffleStyle();
+            shuffle.clickAction = ToggleShuffleStyle;
             shuffle.hoverAction = () => HoverAction("Shuffle");
+            shuffle.GetComponent<MeshRenderer>().sortingOrder = 1;
 
             JukeboxButton repeat = transform.Find("interface/background/repeat").gameObject.AddComponent<JukeboxButton>();
-            repeat.clickAction = () => IncrementRepeatStyle();
+            repeat.clickAction = IncrementRepeatStyle;
             repeat.hoverAction = () => HoverAction("Repeat");
+            repeat.GetComponent<MeshRenderer>().sortingOrder = 1;
+
+            Tracker.GetComponent<MeshRenderer>().sortingOrder = 2;
+            Tracker.parent.GetComponent<MeshRenderer>().sortingOrder = 1;
+
+            JukeboxButton seek = Tracker.parent.gameObject.AddComponent<JukeboxButton>();
+            seek.clickAction = SeekSong;
+            seek.hoverAction = () => HoverAction("Seek");
+        }
+        public void IncrementRepeatStyle()
+        {
+            switch (RepeatStyle)
+            {
+                case RepeatEnum.None:
+                    SetRepeat(RepeatEnum.Song);
+                    break;
+                case RepeatEnum.Song:
+                    SetRepeat(RepeatEnum.Playlist);
+                    break;
+                case RepeatEnum.Playlist:
+                    SetRepeat(RepeatEnum.None);
+                    break;
+            }
+        }
+        private void SeekSong()
+        {
+            if(CurrentSongName == noSongString)
+            {
+                return;
+            }
+            // Get the center of the screen (in pixels)
+            Vector3 screenCenter = new Vector3(Screen.width / 2f, Screen.height / 2f, 0);
+
+            // Create a ray from the camera going through the center of the screen
+            Ray ray = Camera.main.ScreenPointToRay(screenCenter);
+
+            RaycastHit[] hits = Physics.RaycastAll(ray);
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.collider == Tracker.parent.GetComponent<Collider>())
+                {
+                    Vector3 hitWorldPos = hit.point;
+
+                    // Convert the world-space hit point to local-space relative to the hit object
+                    Vector3 hitLocalPos = hit.collider.transform.InverseTransformPoint(hitWorldPos);
+
+                    // the progress bar has length 1, so hitLocalPos is in [-0.5, 0.5]
+                    float progress = hitLocalPos.y + 0.5f;
+                    SetSongProgress(progress);
+                    return;
+                }
+            }
         }
     }
 }
