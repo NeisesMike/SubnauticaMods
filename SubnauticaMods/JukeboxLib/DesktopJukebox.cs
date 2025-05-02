@@ -60,7 +60,7 @@ namespace JukeboxLib
         public static TechType RegisterJukebox()
         {
             Nautilus.Assets.PrefabInfo Info = Nautilus.Assets.PrefabInfo.WithTechType("DesktopJukebox", "Desktop Jukebox", "It can play your music.")
-                .WithIcon(SpriteManager.Get(TechType.Nickel));
+                .WithIcon(new Atlas.Sprite(AssetLoader.crafterSprite));
             Nautilus.Assets.CustomPrefab prefab = new Nautilus.Assets.CustomPrefab(Info);
             Nautilus.Utility.ConstructableFlags constructableFlags = 
                 Nautilus.Utility.ConstructableFlags.AllowedOnConstructable

@@ -8,23 +8,18 @@ namespace JukeboxLib
     {
         internal static GameObject radioAsset;
         internal static Texture2D emissive;
+        internal static Sprite crafterSprite;
         internal static void LoadRadioAsset()
         {
             string directoryPath = Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
             string bundlePath = Path.Combine(directoryPath, "radio");
             AssetBundle bundle = AssetBundle.LoadFromFile(bundlePath);
-            System.Object[] objectArray = bundle.LoadAllAssets();
-            foreach (System.Object obj in objectArray)
-            {
-                if (obj.ToString().Contains("Radio"))
-                {
-                    radioAsset = (GameObject)obj;
-                }
-                if (obj.ToString().Contains("Emissive"))
-                {
-                    emissive = (Texture2D)obj;
-                }
-            }
+
+            radioAsset = bundle.LoadAsset<GameObject>("Radio.prefab");
+            emissive = bundle.LoadAsset<Texture2D>("radio_new_EmissiveNew.png");
+            UnityEngine.U2D.SpriteAtlas spriteAtlas = bundle.LoadAsset<UnityEngine.U2D.SpriteAtlas>("JukeboxSpriteAtlas.spriteatlas");
+            crafterSprite = spriteAtlas.GetSprite("JukeboxCrafterSprite");
+
             if(radioAsset == null)
             {
                 ErrorMessage.AddError("JukeboxLib: failed to get Radio Asset!");
@@ -32,6 +27,10 @@ namespace JukeboxLib
             if (emissive == null)
             {
                 ErrorMessage.AddError("JukeboxLib: failed to get emissive texture!");
+            }
+            if (crafterSprite == null)
+            {
+                ErrorMessage.AddError("JukeboxLib: failed to get crafter sprite!");
             }
         }
     }
