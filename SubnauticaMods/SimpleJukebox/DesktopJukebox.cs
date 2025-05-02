@@ -4,9 +4,9 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 using Nautilus.Assets.Gadgets;
-using System;
+using JukeboxLib;
 
-namespace JukeboxLib
+namespace SimpleJukebox
 {
     public class DesktopJukebox : Jukebox, IHandTarget
     {
@@ -37,19 +37,19 @@ namespace JukeboxLib
         protected override List<AudioSource> RightSpeakers => new List<AudioSource>() { right };
         private GameObject MenuInterface => transform.Find("interface").gameObject;
         private Transform Tracker => transform.Find("interface/background/time/tracker");
-        protected override string GetFullPathToMusicFolder()
+        internal static string GetFullPathToThisMusicFolder()
         {
             string modPath = Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
             string fullPath = Path.Combine(modPath, "music");
+            if (!Directory.Exists(fullPath))
+            {
+                Directory.CreateDirectory(fullPath);
+            }
             return fullPath;
         }
         public override void Awake()
         {
             base.Awake();
-            if (!Directory.Exists(GetFullPathToMusicFolder()))
-            {
-                Directory.CreateDirectory(GetFullPathToMusicFolder());
-            }
             right = gameObject.AddComponent<AudioSource>();
             left = gameObject.AddComponent<AudioSource>();
             Playlist = MasterPlaylist;
@@ -62,16 +62,16 @@ namespace JukeboxLib
             Nautilus.Assets.PrefabInfo Info = Nautilus.Assets.PrefabInfo.WithTechType("DesktopJukebox", "Desktop Jukebox", "It can play your music.")
                 .WithIcon(new Atlas.Sprite(AssetLoader.crafterSprite));
             Nautilus.Assets.CustomPrefab prefab = new Nautilus.Assets.CustomPrefab(Info);
-            Nautilus.Utility.ConstructableFlags constructableFlags = 
+            Nautilus.Utility.ConstructableFlags constructableFlags =
                 Nautilus.Utility.ConstructableFlags.AllowedOnConstructable
-                | Nautilus.Utility.ConstructableFlags.Default 
+                | Nautilus.Utility.ConstructableFlags.Default
                 | Nautilus.Utility.ConstructableFlags.Rotatable;
             Nautilus.Utility.PrefabUtils.AddBasicComponents(AssetLoader.radioAsset, "DesktopJukebox", Info.TechType, LargeWorldEntity.CellLevel.Medium);
             Nautilus.Utility.PrefabUtils.AddConstructable(AssetLoader.radioAsset, Info.TechType, constructableFlags, AssetLoader.radioAsset.transform.Find("model").gameObject);
             AssetLoader.radioAsset.AddComponent<DesktopJukebox>();
-            foreach(var renderer in AssetLoader.radioAsset.transform.Find("model").GetComponentsInChildren<MeshRenderer>(true))
+            foreach (var renderer in AssetLoader.radioAsset.transform.Find("model").GetComponentsInChildren<MeshRenderer>(true))
             {
-                if(renderer.gameObject.name.Equals("background", System.StringComparison.OrdinalIgnoreCase))
+                if (renderer.gameObject.name.Equals("background", System.StringComparison.OrdinalIgnoreCase))
                 {
                     foreach (var mat in renderer.materials)
                     {
@@ -79,7 +79,7 @@ namespace JukeboxLib
                     }
                     continue;
                 }
-                foreach(var mat in renderer.materials)
+                foreach (var mat in renderer.materials)
                 {
                     mat.shader = Shader.Find("MarmosetUBER");
                     mat.SetTexture("_Illum", AssetLoader.emissive);
@@ -95,9 +95,10 @@ namespace JukeboxLib
             prefab.Register();
             return Info.TechType;
         }
-        public static IEnumerator LoadMasterPlaylist(string fullPath)
+        public static IEnumerator LoadMasterPlaylist()
         {
             var task = new TaskResult<Dictionary<string, AudioClip>>();
+            string fullPath = GetFullPathToThisMusicFolder();
             yield return UWE.CoroutineHost.StartCoroutine(AudioLoader.LoadMusic(fullPath, task));
             MasterPlaylist = task.Get();
         }
@@ -138,7 +139,7 @@ namespace JukeboxLib
         protected override void Update()
         {
             base.Update();
-            if(timeToDie < Time.time)
+            if (timeToDie < Time.time)
             {
                 MenuInterface.SetActive(false);
             }
@@ -263,7 +264,7 @@ namespace JukeboxLib
         }
         private void SeekSong()
         {
-            if(CurrentSongName == noSongString)
+            if (CurrentSongName == noSongString)
             {
                 return;
             }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 namespace JukeboxLib
@@ -36,7 +38,6 @@ namespace JukeboxLib
         }
 
         #region passthrough
-        protected abstract string GetFullPathToMusicFolder();
         protected abstract List<AudioSource> LeftSpeakers { get; }
         protected abstract List<AudioSource> RightSpeakers { get; }
         protected virtual void Update()
@@ -381,6 +382,19 @@ namespace JukeboxLib
                 throw new System.ArgumentException("Can't set song progress to a time value larger than the length of the song.", "progress");
             }
             GetSpeakers().ForEach(x => x.time = x.clip.length * progress);
+        }
+        #endregion
+
+        #region static_methods
+        public static string GetFullPathToMusicFolder()
+        {
+            string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string fullPath = Path.Combine(modPath, "music");
+            if (!Directory.Exists(fullPath))
+            {
+                Directory.CreateDirectory(fullPath);
+            }
+            return fullPath;
         }
         #endregion
     }

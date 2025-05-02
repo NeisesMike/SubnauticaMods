@@ -17,7 +17,6 @@ namespace JukeboxLib
             internal Coroutine cor;
             internal TaskResult<AudioClip> task;
         }
-
         public static List<String> ReadMusicFilenames(string directoryFullPath)
         {
             try
@@ -40,17 +39,19 @@ namespace JukeboxLib
                 throw ex;
             }
         }
-
         public static bool CheckMusicDirty(string directoryFullPath, List<string> lastKnown)
         {
             List<string> current = ReadMusicFilenames(directoryFullPath);
             return !current.SequenceEqual(lastKnown);
         }
-
         public static IEnumerator LoadMusic(string directoryFullPath, IOut<Dictionary<string, AudioClip>> result)
         {
             List<MusicRequest> requests = new List<MusicRequest>();
-            foreach(string file in Directory.GetFiles(directoryFullPath))
+            if (Directory.GetFiles(directoryFullPath).Length == 0)
+            {
+                directoryFullPath = Jukebox.GetFullPathToMusicFolder();
+            }
+            foreach (string file in Directory.GetFiles(directoryFullPath))
             {
                 MusicRequest thisRequest;
                 thisRequest.songName = file;
@@ -67,7 +68,6 @@ namespace JukeboxLib
             }
             result.Set(output);
         }
-
         static IEnumerator LoadAudio(string path, IOut<AudioClip> result)
         {
             using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.MPEG))
@@ -93,5 +93,4 @@ namespace JukeboxLib
             }
         }
     }
-
 }

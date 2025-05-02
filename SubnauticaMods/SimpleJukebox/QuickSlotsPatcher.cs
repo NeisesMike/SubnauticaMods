@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 
-namespace JukeboxLib
+namespace SimpleJukebox
 {
     // This patch allows us to use the scroll wheel (or next slot, prev slot)
     // to control volume without actually changing our equipped item

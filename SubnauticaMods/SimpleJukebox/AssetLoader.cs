@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reflection;
 
-namespace JukeboxLib
+namespace SimpleJukebox
 {
     internal static class AssetLoader
     {
@@ -14,13 +14,11 @@ namespace JukeboxLib
             string directoryPath = Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
             string bundlePath = Path.Combine(directoryPath, "radio");
             AssetBundle bundle = AssetBundle.LoadFromFile(bundlePath);
-
             radioAsset = bundle.LoadAsset<GameObject>("Radio.prefab");
             emissive = bundle.LoadAsset<Texture2D>("radio_new_EmissiveNew.png");
             UnityEngine.U2D.SpriteAtlas spriteAtlas = bundle.LoadAsset<UnityEngine.U2D.SpriteAtlas>("JukeboxSpriteAtlas.spriteatlas");
             crafterSprite = spriteAtlas.GetSprite("JukeboxCrafterSprite");
-
-            if(radioAsset == null)
+            if (radioAsset == null)
             {
                 ErrorMessage.AddError("JukeboxLib: failed to get Radio Asset!");
             }
@@ -35,3 +33,4 @@ namespace JukeboxLib
         }
     }
 }
+

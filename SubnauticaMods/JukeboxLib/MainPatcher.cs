@@ -1,24 +1,14 @@
 ﻿using BepInEx;
-using System.Collections;
-using System.Reflection;
-using System.IO;
 
 namespace JukeboxLib
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     public class MainPatcher : BaseUnityPlugin
     {
-        public IEnumerator Start()
+        public void Start()
         {
-            Logger.LogInfo("JukeboxLib Starting!");
-            AssetLoader.LoadRadioAsset();
             JukeboxLib.Logger.myLogger = Logger;
-            DesktopJukebox.RegisterJukebox();
-            string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string fullPath = Path.Combine(modPath, "music");
-            yield return UWE.CoroutineHost.StartCoroutine(DesktopJukebox.LoadMasterPlaylist(fullPath));
             new HarmonyLib.Harmony(PluginInfo.PLUGIN_GUID).PatchAll();
-            JukeboxLib.Logger.Log("JukeboxLib Finished!");
         }
     }
 
