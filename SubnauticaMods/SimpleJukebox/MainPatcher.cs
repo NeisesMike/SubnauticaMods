@@ -1,7 +1,5 @@
 ﻿using BepInEx;
 using System.Collections;
-using System.IO;
-using JukeboxLib;
 
 namespace SimpleJukebox
 {

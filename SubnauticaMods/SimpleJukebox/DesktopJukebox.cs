@@ -29,6 +29,8 @@ namespace SimpleJukebox
         private GameObject NoLoopImage => transform.Find("interface/background/repeat/Canvas/noloop").gameObject;
         private GameObject ShuffleImage => transform.Find("interface/background/playback/Canvas/shuffle").gameObject;
         private GameObject NoShuffleImage => transform.Find("interface/background/playback/Canvas/noshuffle").gameObject;
+        private GameObject CustomMusicImage => transform.Find("interface/background/custom/Canvas/custommusic").gameObject;
+        private GameObject IncludedMusicImage => transform.Find("interface/background/custom/Canvas/includedmusic").gameObject;
         public static Dictionary<string, AudioClip> MasterPlaylist = new Dictionary<string, AudioClip>();
 
         private AudioSource right;
@@ -37,26 +39,15 @@ namespace SimpleJukebox
         protected override List<AudioSource> RightSpeakers => new List<AudioSource>() { right };
         private GameObject MenuInterface => transform.Find("interface").gameObject;
         private Transform Tracker => transform.Find("interface/background/time/tracker");
-        internal static string GetFullPathToThisMusicFolder()
-        {
-            string modPath = Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
-            string fullPath = Path.Combine(modPath, "music");
-            if (!Directory.Exists(fullPath))
-            {
-                Directory.CreateDirectory(fullPath);
-            }
-            return fullPath;
-        }
         public override void Awake()
         {
             base.Awake();
             right = gameObject.AddComponent<AudioSource>();
             left = gameObject.AddComponent<AudioSource>();
-            Playlist = MasterPlaylist;
+            SetPlaylist(MasterPlaylist);
             SetupButtons();
             CurrentSongName = noSongString;
         }
-
         public static TechType RegisterJukebox()
         {
             Nautilus.Assets.PrefabInfo Info = Nautilus.Assets.PrefabInfo.WithTechType("DesktopJukebox", "Desktop Jukebox", "It can play your music.")
@@ -98,11 +89,15 @@ namespace SimpleJukebox
         public static IEnumerator LoadMasterPlaylist()
         {
             var task = new TaskResult<Dictionary<string, AudioClip>>();
-            string fullPath = GetFullPathToThisMusicFolder();
+            string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string fullPath = Path.Combine(modPath, "music");
+            if (!Directory.Exists(fullPath))
+            {
+                Directory.CreateDirectory(fullPath);
+            }
             yield return UWE.CoroutineHost.StartCoroutine(AudioLoader.LoadMusic(fullPath, task));
             MasterPlaylist = task.Get();
         }
-
         private float timeToDie = 0f;
         private void ExtendTimeToDie()
         {
@@ -208,6 +203,16 @@ namespace SimpleJukebox
             float placement = Mathf.Lerp(-0.5f, 0.5f, progress);
             Tracker.localPosition = new Vector3(0f, placement, 0f);
         }
+        protected override void OnCustomMusicSelected()
+        {
+            CustomMusicImage.SetActive(true);
+            IncludedMusicImage.SetActive(false);
+        }
+        protected override void OnIncludedMusicSelected()
+        {
+            CustomMusicImage.SetActive(false);
+            IncludedMusicImage.SetActive(true);
+        }
         private void SetupButtons()
         {
             void HoverAction(string message)
@@ -246,6 +251,11 @@ namespace SimpleJukebox
             JukeboxButton seek = Tracker.parent.gameObject.AddComponent<JukeboxButton>();
             seek.clickAction = SeekSong;
             seek.hoverAction = () => HoverAction("Seek");
+
+            JukeboxButton custom = transform.Find("interface/background/custom").gameObject.AddComponent<JukeboxButton>();
+            custom.clickAction = ToggleCustomMusic;
+            custom.hoverAction = () => HoverAction("Custom Music");
+            custom.GetComponent<MeshRenderer>().sortingOrder = 1;
         }
         public void IncrementRepeatStyle()
         {
