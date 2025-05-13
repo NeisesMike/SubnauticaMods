@@ -17,10 +17,12 @@ namespace SonarModule
             {
                 __instance.sonarActive = true;
                 __instance.InvokeRepeating("SonarPing", 0f, MainPatcher.MyConfig.repeatRate);
+                __instance.subRoot.sonarPowerCost = MainPatcher.MyConfig.powerConsumption;
                 return false;
             }
             else
             {
+                __instance.subRoot.sonarPowerCost = 10f;
                 return true;
             }
         }
