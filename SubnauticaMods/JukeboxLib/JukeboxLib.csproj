@@ -91,7 +91,11 @@
     <Compile Include="FreezeTimePatcher.cs" />
     <Compile Include="Jukebox.cs" />
     <Compile Include="JukeboxButton.cs" />
+    <Compile Include="JukeboxDisk.cs" />
+    <Compile Include="JukeboxDiskPrefab.cs" />
+    <Compile Include="JukeboxLibrary.cs" />
     <Compile Include="MainPatcher.cs" />
+    <Compile Include="PlayerPatcher.cs" />
     <Compile Include="PluginInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

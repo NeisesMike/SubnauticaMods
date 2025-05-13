@@ -15,6 +15,8 @@ namespace JukeboxLib
     }
     public abstract class Jukebox : HandTarget
     {
+        private bool isCustomMusic = true;
+        private Dictionary<string, AudioClip> InternalPlaylist = new Dictionary<string, AudioClip>();
         protected Dictionary<string, AudioClip> Playlist = new Dictionary<string, AudioClip>();
         public const string noSongString = "[no song]";
         private string currentSong = noSongString;
@@ -62,6 +64,8 @@ namespace JukeboxLib
         protected virtual void OnPause() { }
         protected virtual void OnSongProgress(float progress) { }
         protected virtual void OnStopped() { }
+        protected virtual void OnCustomMusicSelected() { }
+        protected virtual void OnIncludedMusicSelected() { }
         #endregion
 
         #region private_methods
@@ -227,22 +231,25 @@ namespace JukeboxLib
         }
         public void Play(string filename)
         {
-            if(Playlist.Keys.Contains(filename))
+            if (Playlist.Any())
             {
-                foreach(AudioSource source in GetSpeakers())
+                if (Playlist.Keys.Contains(filename))
                 {
-                    source.clip = Playlist[filename];
-                    source.time = 0;
-                    source.Play();
+                    foreach (AudioSource source in GetSpeakers())
+                    {
+                        source.clip = Playlist[filename];
+                        source.time = 0;
+                        source.Play();
+                    }
+                    currentSong = filename;
+                    OnPlaySong(GetSongNameFromFullPath(currentSong));
+                    IsPaused = false;
+                    OnPlay();
                 }
-                currentSong = filename;
-                OnPlaySong(GetSongNameFromFullPath(currentSong));
-                IsPaused = false;
-                OnPlay();
-            }
-            else
-            {
-                Logger.Log("Playlist did not contain the song: " + filename);
+                else
+                {
+                    Logger.Log("Playlist did not contain the song: " + filename);
+                }
             }
         }
         public void PressPlayButton()
@@ -296,37 +303,43 @@ namespace JukeboxLib
         }
         public void Next()
         {
-            bool isNext = false;
-            if (IsShuffle)
+            if (Playlist.Any())
             {
-                PlayRandom();
-                return;
-            }
-            foreach(string name in Playlist.Keys)
-            {
-                if(isNext)
+                bool isNext = false;
+                if (IsShuffle)
                 {
-                    Play(name);
+                    PlayRandom();
                     return;
                 }
-                if(currentSong.Equals(name, StringComparison.OrdinalIgnoreCase))
+                foreach (string name in Playlist.Keys)
                 {
-                    isNext = true;
+                    if (isNext)
+                    {
+                        Play(name);
+                        return;
+                    }
+                    if (currentSong.Equals(name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        isNext = true;
+                    }
                 }
+                Play(Playlist.Keys.First());
             }
-            Play(Playlist.Keys.First());
         }
         public void Previous()
         {
-            string lastSong = Playlist.Keys.Last();
-            foreach(string name in Playlist.Keys)
+            if (Playlist.Any())
             {
-                if (currentSong.Equals(name, StringComparison.OrdinalIgnoreCase))
+                string lastSong = Playlist.Keys.Last();
+                foreach (string name in Playlist.Keys)
                 {
-                    Play(lastSong);
-                    return;
+                    if (currentSong.Equals(name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Play(lastSong);
+                        return;
+                    }
+                    lastSong = name;
                 }
-                lastSong = name;
             }
         }
         public void PlayRandom()
@@ -382,6 +395,28 @@ namespace JukeboxLib
                 throw new System.ArgumentException("Can't set song progress to a time value larger than the length of the song.", "progress");
             }
             GetSpeakers().ForEach(x => x.time = x.clip.length * progress);
+        }
+        public void ToggleCustomMusic()
+        {
+            isCustomMusic = !isCustomMusic;
+            if (isCustomMusic)
+            {
+                Playlist = InternalPlaylist;
+                OnCustomMusicSelected();
+            }
+            else
+            {
+                Playlist = JukeboxLibrary.GetIncludedMusic();
+                OnIncludedMusicSelected();
+            }
+        }
+        public void SetPlaylist(Dictionary<string, AudioClip> inputPlaylist)
+        {
+            InternalPlaylist = Playlist = new Dictionary<string, AudioClip>(inputPlaylist);
+            if (!isCustomMusic)
+            {
+                ToggleCustomMusic();
+            }
         }
         #endregion
 
