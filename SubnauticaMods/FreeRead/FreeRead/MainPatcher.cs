@@ -7,7 +7,7 @@ using BepInEx;
 
 namespace FreeRead
 {
-    [BepInPlugin(GUID, "FreeRead", "2.1.0")]
+    [BepInPlugin(GUID, "FreeRead", "3.0.0")]
     [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID)]
     public class MainPatcher : BaseUnityPlugin
     {
@@ -23,7 +23,7 @@ namespace FreeRead
     [Menu("FreeRead Options")]
     public class Config : ConfigFile
     {
-        [Keybind("Open Journal and Auto Move")]
+        [Keybind("Toggle FreeRead PDA")]
         public KeyCode FreeReadKey = KeyCode.RightControl;
     }
 }

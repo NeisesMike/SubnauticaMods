@@ -6,31 +6,64 @@ namespace FreeRead
     [HarmonyPatch(typeof(Vehicle))]
     class VehiclePatcher
     {
-        [HarmonyPatch(nameof(Vehicle.Awake))]
-        [HarmonyPostfix]
-        public static void VehicleAwakePostfix(Vehicle __instance)
+        private static FreeReadManager.InputPair StronglyEnableInput()
         {
-            __instance.gameObject.EnsureComponent<FreeReadManager>();
+            var result = new FreeReadManager.InputPair
+            {
+                avatarEnabled = AvatarInputHandler.main.gameObject.activeSelf,
+                lockCursor = UWE.Utils.lockCursor
+            };
+            UWE.Utils.lockCursor = true;
+            AvatarInputHandler.main.gameObject.SetActive(true);
+            return result;
         }
+        private static void StronglyRememberInput(FreeReadManager.InputPair inputPair)
+        {
+            UWE.Utils.lockCursor = inputPair.lockCursor;
+            AvatarInputHandler.main.gameObject.SetActive(inputPair.avatarEnabled);
+        }
+
         [HarmonyPatch(nameof(Vehicle.Update))]
-        [HarmonyPrefix]
-        public static bool VehicleUpdatePrefix(Vehicle __instance)
+        [HarmonyPostfix]
+        public static void VehicleUpdatePostfix(Vehicle __instance)
         {
             FreeReadManager frm = __instance.gameObject.EnsureComponent<FreeReadManager>();
             if (Input.GetKeyDown(MainPatcher.FreeReadConfig.FreeReadKey))
             {
-                frm.isCruising = true;
-                Player.main.GetPDA().Open();
+                frm.isFreeReading = !frm.isFreeReading;
+                if (frm.isFreeReading)
+                {
+                    Player.main.GetPDA().Open();
+                }
             }
-
-            // add locomotion back in
-            if (frm.isCruising && __instance == Player.main.currentMountedVehicle)
+            if(__instance is SeaMoth sm)
             {
-                __instance.GetComponent<Rigidbody>().velocity += __instance.transform.forward * Time.deltaTime * 10f;
-                __instance.GetComponent<Rigidbody>().velocity = Vector3.ClampMagnitude(__instance.GetComponent<Rigidbody>().velocity, 10f);
-                return false;
+                var inputPair = StronglyEnableInput();
+                sm.UpdateSounds();
+                StronglyRememberInput(inputPair);
             }
-            return true;
+        }
+
+        [HarmonyPatch(nameof(Vehicle.FixedUpdate))]
+        [HarmonyPrefix]
+        public static void VehicleFixedUpdatePrefix(Vehicle __instance)
+        {
+            var frm = __instance.gameObject.EnsureComponent<FreeReadManager>();
+            if (frm.isFreeReading)
+            {
+                frm.lastInputPair = StronglyEnableInput();
+            }
+        }
+
+        [HarmonyPatch(nameof(Vehicle.FixedUpdate))]
+        [HarmonyPostfix]
+        public static void VehicleFixedUpdatePostfix(Vehicle __instance)
+        {
+            var frm = __instance.gameObject.EnsureComponent<FreeReadManager>();
+            if (frm.isFreeReading)
+            {
+                StronglyRememberInput(frm.lastInputPair);
+            }
         }
     }
 }

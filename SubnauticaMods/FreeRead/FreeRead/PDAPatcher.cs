@@ -12,7 +12,7 @@ namespace FreeRead
             Vehicle thisVehicle = Player.main.currentMountedVehicle;
             if (thisVehicle == null) return;
 
-            thisVehicle.gameObject.EnsureComponent<FreeReadManager>().isCruising = false;
+            thisVehicle.gameObject.EnsureComponent<FreeReadManager>().isFreeReading = false;
         }
     }
 }
