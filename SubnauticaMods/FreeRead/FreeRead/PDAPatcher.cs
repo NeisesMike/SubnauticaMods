@@ -1,25 +1,18 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using UnityEngine;
-using HarmonyLib;
-using System.Runtime.CompilerServices;
-using System.Collections;
+﻿using HarmonyLib;
 
 namespace FreeRead
 {
     [HarmonyPatch(typeof(PDA))]
-    [HarmonyPatch("Close")]
     class PDAClosePatcher
     {
+        [HarmonyPatch(nameof(PDA.Close))]
         [HarmonyPrefix]
-        public static bool Prefix()
+        public static void Prefix()
         {
-            FreeReadPatcher.isCruising = false;
-            return true;
+            Vehicle thisVehicle = Player.main.currentMountedVehicle;
+            if (thisVehicle == null) return;
+
+            thisVehicle.gameObject.EnsureComponent<FreeReadManager>().isCruising = false;
         }
     }
 }

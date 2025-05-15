@@ -1,33 +1,30 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 using HarmonyLib;
-using Nautilus.Options;
-using Nautilus.Handlers;
-using Nautilus.Utility;
-using System.Net.NetworkInformation;
 
 namespace FreeRead
 {
     [HarmonyPatch(typeof(Vehicle))]
-    [HarmonyPatch("Update")]
     class VehiclePatcher
     {
-        [HarmonyPrefix]
-        public static bool Prefix(Vehicle __instance)
+        [HarmonyPatch(nameof(Vehicle.Awake))]
+        [HarmonyPostfix]
+        public static void VehicleAwakePostfix(Vehicle __instance)
         {
-            if (Input.GetKeyDown(FreeReadPatcher.config.FreeReadKey))
+            __instance.gameObject.EnsureComponent<FreeReadManager>();
+        }
+        [HarmonyPatch(nameof(Vehicle.Update))]
+        [HarmonyPrefix]
+        public static bool VehicleUpdatePrefix(Vehicle __instance)
+        {
+            FreeReadManager frm = __instance.gameObject.EnsureComponent<FreeReadManager>();
+            if (Input.GetKeyDown(MainPatcher.FreeReadConfig.FreeReadKey))
             {
-                FreeReadPatcher.isCruising = true;
+                frm.isCruising = true;
                 Player.main.GetPDA().Open();
             }
 
             // add locomotion back in
-            if (FreeReadPatcher.isCruising && __instance == Player.main.currentMountedVehicle)
+            if (frm.isCruising && __instance == Player.main.currentMountedVehicle)
             {
                 __instance.GetComponent<Rigidbody>().velocity += __instance.transform.forward * Time.deltaTime * 10f;
                 __instance.GetComponent<Rigidbody>().velocity = Vector3.ClampMagnitude(__instance.GetComponent<Rigidbody>().velocity, 10f);
