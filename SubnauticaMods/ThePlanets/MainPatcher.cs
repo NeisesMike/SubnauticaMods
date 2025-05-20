@@ -12,6 +12,10 @@ namespace ThePlanets
         public const string PLUGIN_GUID = "com.mikjaw.subnautica.theplanets.mod";
         public const string PLUGIN_NAME = "The Planets Jukebox Disks";
         public const string PLUGIN_VERSION = "1.0.0";
+
+        private const string bartPdaThreeGoal = "IslandsPDABase1a";
+        private const string encyEntryName = "newBartPdaEntryPlanets";
+
         internal static readonly Vector3 marsLocation = new Vector3(-803.2f, 77.1f, -1047.6f);
         internal static readonly Vector3 uranusLocation = new Vector3(-764.6f, 17.9f, -1116.2f);
         internal static readonly Vector3 venusLocation = new Vector3(-716.8f, 75.6f, -1167.8f);
@@ -52,6 +56,10 @@ namespace ThePlanets
                 .Register();
 
             new HarmonyLib.Harmony(PLUGIN_GUID).PatchAll(typeof(PlayerPatcher));
+
+            Nautilus.Handlers.StoryGoalHandler.RegisterCustomEvent(bartPdaThreeGoal, () => PDAEncyclopedia.Add(encyEntryName, true));
+            Nautilus.Handlers.LanguageHandler.RegisterLocalizationFolder();
+            Nautilus.Handlers.PDAHandler.AddEncyclopediaEntry(encyEntryName, "DownloadedData/Degasi", null, null);
         }
     }
 }
