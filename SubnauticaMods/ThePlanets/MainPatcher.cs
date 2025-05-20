@@ -50,6 +50,8 @@ namespace ThePlanets
                 .WithDisplayName("The Planets: Mercury")
                 .WithSpawnLocations(new Nautilus.Assets.SpawnLocation[] { new Nautilus.Assets.SpawnLocation(mercuryLocation) })
                 .Register();
+
+            new HarmonyLib.Harmony(PLUGIN_GUID).PatchAll(typeof(PlayerPatcher));
         }
     }
 }
