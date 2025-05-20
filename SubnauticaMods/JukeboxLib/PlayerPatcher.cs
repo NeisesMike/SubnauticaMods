@@ -17,6 +17,7 @@ namespace JukeboxLib
         private static IEnumerator CheckDiskStoryGoals()
         {
             yield return new WaitUntil(() => Story.StoryGoalManager.main != null);
+            yield return new WaitUntil(() => Story.StoryGoalManager.main.initialized);
             JukeboxDisk.displayNames.Keys.ForEach(CheckDiskStoryGoal);
         }
         private static void CheckDiskStoryGoal(TechType tt)
