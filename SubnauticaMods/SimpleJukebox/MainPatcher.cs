@@ -4,6 +4,7 @@ using System.Collections;
 namespace SimpleJukebox
 {
     [BepInPlugin(PLUGIN_GUID, PLUGIN_NAME, PLUGIN_VERSION)]
+    [BepInDependency(JukeboxLib.PluginInfo.PLUGIN_GUID)]
     public class MainPatcher : BaseUnityPlugin
     {
         public const string PLUGIN_GUID = "com.mikjaw.subnautica.desktopjukebox.mod";
