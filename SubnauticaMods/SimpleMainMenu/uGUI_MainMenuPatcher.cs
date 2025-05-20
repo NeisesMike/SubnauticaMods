@@ -73,7 +73,9 @@ namespace SimpleMainMenu
         }
         private static IEnumerator DisableHome()
         {
-            yield return new WaitUntil(() => MainMenuRightSide.main?.homeGroup?.gameObject != null);
+            yield return new WaitUntil(() => MainMenuRightSide.main!= null);
+            yield return new WaitUntil(() => MainMenuRightSide.main.homeGroup!= null);
+            yield return new WaitUntil(() => MainMenuRightSide.main.homeGroup.gameObject != null);
             yield return new WaitUntil(() => MainMenuRightSide.main.homeGroup.gameObject.activeInHierarchy);
             MainMenuRightSide.main.homeGroup.gameObject.SetActive(false);
         }
