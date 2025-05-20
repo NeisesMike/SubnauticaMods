@@ -7,6 +7,7 @@ using JukeboxLib;
 namespace ThePlanets
 {
     [BepInPlugin(PLUGIN_GUID, PLUGIN_NAME, PLUGIN_VERSION)]
+    [BepInDependency(JukeboxLib.PluginInfo.PLUGIN_GUID)]
     public class MainPatcher : BaseUnityPlugin
     {
         public const string PLUGIN_GUID = "com.mikjaw.subnautica.theplanets.mod";
