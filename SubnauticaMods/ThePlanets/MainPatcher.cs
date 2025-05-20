@@ -12,6 +12,11 @@ namespace ThePlanets
         public const string PLUGIN_GUID = "com.mikjaw.subnautica.theplanets.mod";
         public const string PLUGIN_NAME = "The Planets Jukebox Disks";
         public const string PLUGIN_VERSION = "1.0.0";
+        internal static readonly Vector3 marsLocation = new Vector3(-803.2f, 77.1f, -1047.6f);
+        internal static readonly Vector3 uranusLocation = new Vector3(-764.6f, 17.9f, -1116.2f);
+        internal static readonly Vector3 venusLocation = new Vector3(-716.8f, 75.6f, -1167.8f);
+        internal static readonly Vector3 jupiterLocation = new Vector3(97.35f, -258.66f, -367.2f);
+        internal static readonly Vector3 mercuryLocation = new Vector3(-644.5f, -509.4f, -940.6f);
         public void Start()
         {
             AssetBundle AssetBundle = AssetBundleLoadingUtils.LoadFromAssetsFolder(Assembly.GetExecutingAssembly(), "theplanets");
@@ -23,27 +28,27 @@ namespace ThePlanets
             new JukeboxDiskPrefab(Nautilus.Assets.PrefabInfo.WithTechType("JukeboxDiskMars"))
                 .WithAudioClip(AssetBundle.LoadAsset<GameObject>("Mars.prefab").GetComponent<AudioSource>().clip)
                 .WithDisplayName("The Planets: Mars")
-                .WithSpawnLocations(new Nautilus.Assets.SpawnLocation[] { new Nautilus.Assets.SpawnLocation(new Vector3(-802.8f, 78.6f, -1049.1f)) })
+                .WithSpawnLocations(new Nautilus.Assets.SpawnLocation[] { new Nautilus.Assets.SpawnLocation(marsLocation) })
                 .Register();
             new JukeboxDiskPrefab(Nautilus.Assets.PrefabInfo.WithTechType("JukeboxDiskUranus"))
                 .WithAudioClip(AssetBundle.LoadAsset<GameObject>("Uranus.prefab").GetComponent<AudioSource>().clip)
                 .WithDisplayName("The Planets: Uranus")
-                .WithSpawnLocations(new Nautilus.Assets.SpawnLocation[] { new Nautilus.Assets.SpawnLocation(new Vector3(-765.6f, 19.3f, -1116.2f)) })
+                .WithSpawnLocations(new Nautilus.Assets.SpawnLocation[] { new Nautilus.Assets.SpawnLocation(uranusLocation) })
                 .Register();
             new JukeboxDiskPrefab(Nautilus.Assets.PrefabInfo.WithTechType("JukeboxDiskVenus"))
                 .WithAudioClip(AssetBundle.LoadAsset<GameObject>("Venus.prefab").GetComponent<AudioSource>().clip)
                 .WithDisplayName("The Planets: Venus")
-                .WithSpawnLocations(new Nautilus.Assets.SpawnLocation[] { new Nautilus.Assets.SpawnLocation(new Vector3(-716.3f, 76.2f, -1167.1f)) })
+                .WithSpawnLocations(new Nautilus.Assets.SpawnLocation[] { new Nautilus.Assets.SpawnLocation(venusLocation) })
                 .Register();
             new JukeboxDiskPrefab(Nautilus.Assets.PrefabInfo.WithTechType("JukeboxDiskJupiter"))
                 .WithAudioClip(AssetBundle.LoadAsset<GameObject>("Jupiter.prefab").GetComponent<AudioSource>().clip)
                 .WithDisplayName("The Planets: Jupiter")
-                .WithSpawnLocations(new Nautilus.Assets.SpawnLocation[] { new Nautilus.Assets.SpawnLocation(new Vector3(97.5f, -257.9f, -367.6f)) })
+                .WithSpawnLocations(new Nautilus.Assets.SpawnLocation[] { new Nautilus.Assets.SpawnLocation(jupiterLocation) })
                 .Register();
             new JukeboxDiskPrefab(Nautilus.Assets.PrefabInfo.WithTechType("JukeboxDiskMercury"))
                 .WithAudioClip(AssetBundle.LoadAsset<GameObject>("Mercury.prefab").GetComponent<AudioSource>().clip)
                 .WithDisplayName("The Planets: Mercury")
-                .WithSpawnLocations(new Nautilus.Assets.SpawnLocation[] { new Nautilus.Assets.SpawnLocation(new Vector3(-643.6f, -509.3f -941.4f)) })
+                .WithSpawnLocations(new Nautilus.Assets.SpawnLocation[] { new Nautilus.Assets.SpawnLocation(mercuryLocation) })
                 .Register();
         }
     }
