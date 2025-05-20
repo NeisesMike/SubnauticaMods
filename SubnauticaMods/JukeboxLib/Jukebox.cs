@@ -52,7 +52,6 @@ namespace JukeboxLib
         protected virtual void Start()
         {
             MasterVolume = 0;
-            LeftSpeakers.Concat(RightSpeakers).ForEach(SetupSpeaker);
             OnShuffleChanged(IsShuffle);
             OnRepeatStyleChanged(RepeatStyle);
             FreezeTimePatcher.Register(this);
@@ -83,10 +82,6 @@ namespace JukeboxLib
             }
             GetSpeakers().ForEach(x => x.volume = desiredVolume);
         }
-        private void SetupSpeaker(AudioSource speaker)
-        {
-            speaker.gameObject.EnsureComponent<AudioLowPassFilter>().cutoffFrequency = 1500;
-        }
         private void UpdateLowPassFilter()
         {
             bool shouldEnableLowPass = true;
@@ -108,7 +103,7 @@ namespace JukeboxLib
                     shouldEnableLowPass = false;
                 }
             }
-            LeftSpeakers.Concat(RightSpeakers).ForEach(x => x.GetComponent<AudioLowPassFilter>().enabled = shouldEnableLowPass);
+            GetSpeakers().ForEach(x => x.GetComponent<AudioLowPassFilter>().enabled = shouldEnableLowPass);
         }
         private void UpdateSongFinished()
         {
@@ -173,7 +168,9 @@ namespace JukeboxLib
         }
         private List<AudioSource> GetSpeakers()
         {
-            return RightSpeakers.Concat(LeftSpeakers).ToList();
+            List<AudioSource> result = RightSpeakers.Concat(LeftSpeakers).ToList();
+            result.ForEach(x => x.gameObject.EnsureComponent<AudioLowPassFilter>().cutoffFrequency = 1500);
+            return result;
         }
         private string GetSongNameFromFullPath(string fullpath)
         {
@@ -417,6 +414,16 @@ namespace JukeboxLib
             {
                 ToggleCustomMusic();
             }
+        }
+        public void AddSpeakerLeft(AudioSource source)
+        {
+            LeftSpeakers.Add(source);
+            GetSpeakers();
+        }
+        public void AddSpeakerRight(AudioSource source)
+        {
+            RightSpeakers.Add(source);
+            GetSpeakers();
         }
         #endregion
 

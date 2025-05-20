@@ -6,6 +6,7 @@ using System.Reflection;
 namespace JukeboxLib
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID)]
     public class MainPatcher : BaseUnityPlugin
     {
         internal static AssetBundle AssetBundle = null;
