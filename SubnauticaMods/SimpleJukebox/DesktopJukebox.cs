@@ -143,6 +143,7 @@ namespace SimpleJukebox
             {
                 MenuInterface.transform.LookAt(Player.main.transform);
             }
+            GetComponent<AudioReverbFilter>().reverbPreset = MainPatcher.DesktopJukeboxConfig.ReverbPreset.Value;
         }
 
         protected override void OnShuffleChanged(bool shuffling)

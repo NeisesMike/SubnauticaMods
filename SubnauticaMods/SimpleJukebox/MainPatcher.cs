@@ -9,13 +9,33 @@ namespace SimpleJukebox
     {
         public const string PLUGIN_GUID = "com.mikjaw.subnautica.desktopjukebox.mod";
         public const string PLUGIN_NAME = "Desktop Jukebox";
-        public const string PLUGIN_VERSION = "1.0.0";
+        public const string PLUGIN_VERSION = "1.0.1";
+        public static MainPatcher Instance { get; private set; }
+        internal static DesktopJukeboxConfig DesktopJukeboxConfig { get; private set; }
+        public void Awake()
+        {
+            SetupInstance();
+            DesktopJukeboxConfig = new DesktopJukeboxConfig();
+        }
         public IEnumerator Start()
         {
             AssetLoader.LoadRadioAsset();
             DesktopJukebox.RegisterJukebox();
             yield return UWE.CoroutineHost.StartCoroutine(DesktopJukebox.LoadMasterPlaylist());
             new HarmonyLib.Harmony(PLUGIN_GUID).PatchAll();
+        }
+        private void SetupInstance()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+                return;
+            }
+            if (Instance != this)
+            {
+                UnityEngine.Object.Destroy(this);
+                return;
+            }
         }
     }
 }
