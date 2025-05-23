@@ -44,6 +44,7 @@ namespace SimpleJukebox
             base.Awake();
             right = gameObject.AddComponent<AudioSource>();
             left = gameObject.AddComponent<AudioSource>();
+            gameObject.AddComponent<AudioReverbFilter>().reverbPreset = AudioReverbPreset.Stoneroom;
             SetPlaylist(MasterPlaylist);
             SetupButtons();
             CurrentSongName = noSongString;
