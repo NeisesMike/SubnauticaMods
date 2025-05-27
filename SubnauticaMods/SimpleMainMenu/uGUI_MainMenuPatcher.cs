@@ -39,6 +39,7 @@ namespace SimpleMainMenu
                 {
                     root.SetActive(false);
                     AdjustPrimaryOptionsPlacement(GetPrimaryOptions(__instance));
+                    GamepadInputModule.current.SetCurrentGrid(__instance.primaryOptions);
                     return false;
                 }
                 else
