@@ -2,7 +2,7 @@
 using System.Linq;
 using VehicleFramework.UpgradeTypes;
 using VehicleFramework.Assets;
-using VehicleFramework;
+using VehicleFramework.Extensions;
 
 namespace ThermalChargingModule
 {
@@ -19,7 +19,7 @@ namespace ThermalChargingModule
                     new Ingredient(TechType.Kyanite, 3)
                 };
 
-        public override Atlas.Sprite Icon => SpriteHelper.GetSprite("ThermalChargingModuleIcon.png");
+        public override UnityEngine.Sprite Icon => SpriteHelper.GetSprite("ThermalChargingModuleIcon.png");
         public override void OnAdded(AddActionParams param)
         {
             var vtc = param.vehicle.gameObject.EnsureComponent<VFThermalCharger>();
