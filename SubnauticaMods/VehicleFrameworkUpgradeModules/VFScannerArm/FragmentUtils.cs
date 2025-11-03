@@ -20,8 +20,8 @@ namespace VFScannerArm
         }
         public static void RegisterEncyEntry()
         {
-            Sprite template = SpriteHelper.GetSpriteRaw("ScannerArmTemplated.png");
-            Nautilus.Handlers.PDAHandler.AddEncyclopediaEntry(encykey, "Tech/Equipment", displayName, GetEncyDescription(), template.texture, SpriteHelper.GetSpriteRaw("ScannerArmPopUp.png"));
+            Sprite template = SpriteHelper.GetSprite("ScannerArmTemplated.png");
+            Nautilus.Handlers.PDAHandler.AddEncyclopediaEntry(encykey, "Tech/Equipment", displayName, GetEncyDescription(), template.texture, SpriteHelper.GetSprite("ScannerArmPopUp.png"));
         }
         public static void EnsureColliders(GameObject armPrefab)
         {

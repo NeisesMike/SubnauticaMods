@@ -46,7 +46,7 @@ namespace VFScannerArm
         [HarmonyPatch(nameof(PDAScanner.UpdateTarget))]
         public static void PDAScannerUpdateTargetPrefix(float distance, ref bool self)
         {
-            if(VehicleFramework.VehicleTypes.Drone.mountedDrone != null)
+            if(VehicleFramework.VehicleTypes.Drone.MountedDrone != null)
             {
                 self = false;
             }

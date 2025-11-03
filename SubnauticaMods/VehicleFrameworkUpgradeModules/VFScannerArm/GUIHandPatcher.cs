@@ -46,7 +46,7 @@ namespace VFScannerArm
             }
             PDAScanner.UpdateTarget(8f, false);
             PDAScanner.ScanTarget scanTarget = PDAScanner.scanTarget;
-            if (scanTarget.isValid && PDAScanner.CanScan() == PDAScanner.Result.Scan)
+            if (scanTarget.isValid && PDAScanner.CanScan(PDAScanner.scanTarget) == PDAScanner.Result.Scan)
             {
                 uGUI_ScannerIcon.main.Show();
             }

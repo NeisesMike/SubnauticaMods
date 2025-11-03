@@ -13,16 +13,16 @@ namespace VFScannerArm
     {
         public override string ClassId => "ScannerArmVF";
         public override string DisplayName => "Scanner Arm";
-        public override List<VehicleFramework.Assets.Ingredient> Recipe => new List<VehicleFramework.Assets.Ingredient>()
+        public override List<Ingredient> Recipe => new List<Ingredient>()
                 {
-                    new VehicleFramework.Assets.Ingredient(TechType.TitaniumIngot, 1),
-                    new VehicleFramework.Assets.Ingredient(TechType.PowerCell, 1)
+                    new Ingredient(TechType.TitaniumIngot, 1),
+                    new Ingredient(TechType.PowerCell, 1)
                 };
         public override string Description => "A vehicle-mounted arm version of the spectroscope scanner used to acquire technology blueprints and data on living organisms.";
-        public override Atlas.Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("VFScannerArmIcon.png");
+        public override Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("VFScannerArmIcon.png");
         public override TechType UnlockWith => TechType.Fragment;
         public override bool UnlockAtStart => false;
-        public override Sprite UnlockedSprite => VehicleFramework.Assets.SpriteHelper.GetSpriteRaw("ScannerArmPopUp.png");
+        public override Sprite UnlockedSprite => VehicleFramework.Assets.SpriteHelper.GetSprite("ScannerArmPopUp.png");
         public override IEnumerator GetArmPrefab(IOut<GameObject> arm)
         {
             string directoryPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);

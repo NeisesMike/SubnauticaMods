@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using VehicleFramework;
+using VehicleFramework.Interfaces;
 
 namespace VFScannerArm
 {
-	public class ScannerArm : MonoBehaviour, VehicleFramework.IPlayerListener
+	public class ScannerArm : MonoBehaviour, IPlayerListener
 	{
 		Transform GObjectsRoot => transform.Find("offset/model/Bone.002/Bone/Bone.001");
 		Transform ScreenOuter => GObjectsRoot.Find("ScreenOuter");
@@ -85,7 +86,7 @@ namespace VFScannerArm
 			tmprougui.alignment = TMPro.TextAlignmentOptions.Center;
 			tmprougui.enableAutoSizing = true;
 			if ((mv != null && gameObject == mv.GetComponent<VehicleFramework.VehicleComponents.VFArmsManager>()?.rightArm)
-				|| exo != null && !gameObject.GetComponent<VehicleFramework.VehicleComponents.VFArm>().IsLeft)
+				|| exo != null && !gameObject.GetComponent<VehicleFramework.MiscComponents.VFArm>().IsLeft)
 			{
 				Transform rightArmDisplay = ScreenOuter.Find("ScreenInner/Text (TMP)");
 				rightArmDisplay.transform.localScale = new Vector3(
@@ -157,7 +158,7 @@ namespace VFScannerArm
 		public void HandleProgressBar()
 		{
 			float progressLerp; // = Mathf.Lerp(fullOrangeOffset, fullBlueOffset, PDAScanner.scanTarget.gameObject == null ? lastProgressValue : PDAScanner.scanTarget.progress);
-			if (PDAScanner.CanScan() == PDAScanner.Result.Scan)
+			if (PDAScanner.CanScan(PDAScanner.scanTarget) == PDAScanner.Result.Scan)
 			{
 				progressLerp = Mathf.Lerp(fullOrangeOffset, fullBlueOffset, PDAScanner.scanTarget.progress);
 				lastProgressValue = PDAScanner.scanTarget.progress;
@@ -256,7 +257,7 @@ namespace VFScannerArm
 				UpdateScreen(ScannerTool.ScreenState.Default, 0f);
 				return;
 			}
-			if (PDAScanner.CanScan() != PDAScanner.Result.Scan)
+			if (PDAScanner.CanScan(PDAScanner.scanTarget) != PDAScanner.Result.Scan)
 			{
 				UpdateScreen(ScannerTool.ScreenState.Default, 0f);
 				return;
