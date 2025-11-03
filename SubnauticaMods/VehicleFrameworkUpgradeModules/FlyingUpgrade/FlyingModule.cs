@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using VehicleFramework;
+using VehicleFramework.Extensions;
 using VehicleFramework.UpgradeTypes;
 using VehicleFramework.Assets;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace FlightModule
                     new Ingredient(TechType.Aerogel, 2),
                 };
 
-        public override Atlas.Sprite Icon => SpriteHelper.GetSprite("FlightModuleIcon.png");
+        public override UnityEngine.Sprite Icon => SpriteHelper.GetSprite("FlightModuleIcon.png");
         public override void OnAdded(AddActionParams param)
         {
             UpdateFlyingModule(param.vehicle);
@@ -87,7 +88,7 @@ namespace FlightModule
         }
         private void DisableModFlight(ModVehicle mv)
         {
-            var engine = mv.Engine ?? (mv.VFEngine as VehicleFramework.Engines.ModVehicleEngine);
+            var engine = mv.VFEngine as VehicleFramework.Engines.ModVehicleEngine;
             if (engine != null)
             {
                 engine.CanRotateAboveWater = rotateAboveWaterDefault[mv.TechType];
@@ -98,7 +99,7 @@ namespace FlightModule
         }
         private void EnableModFlight(ModVehicle mv)
         {
-            var engine = mv.Engine ?? (mv.VFEngine as VehicleFramework.Engines.ModVehicleEngine);
+            var engine = mv.VFEngine as VehicleFramework.Engines.ModVehicleEngine;
             if (engine != null)
             {
                 RegisterDefaults(mv);
@@ -110,7 +111,7 @@ namespace FlightModule
         }
         private void RegisterDefaults(ModVehicle mv)
         {
-            var engine = mv.Engine ?? (mv.VFEngine as VehicleFramework.Engines.ModVehicleEngine);
+            var engine = mv.VFEngine as VehicleFramework.Engines.ModVehicleEngine;
             if (!moveAboveWaterDefault.ContainsKey(mv.TechType))
             {
                 moveAboveWaterDefault.Add(mv.TechType, engine.CanMoveAboveWater);

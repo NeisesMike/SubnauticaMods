@@ -3,7 +3,7 @@ using System.Linq;
 using HarmonyLib;
 using System.Reflection;
 using UnityEngine;
-using VehicleFramework;
+using VehicleFramework.Extensions;
 
 namespace FlightModule
 {
