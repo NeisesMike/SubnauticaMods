@@ -24,7 +24,7 @@ namespace IonDefenseCapacitor
                     new Ingredient(TechType.Aerogel, 1)
                 }; 
 
-        public override Atlas.Sprite Icon => SpriteHelper.GetSprite("IonDefenseCapacitorIcon.png");
+        public override UnityEngine.Sprite Icon => SpriteHelper.GetSprite("IonDefenseCapacitorIcon.png");
         public override void OnSelected(SelectableActionParams param)
         {
             FMODUWE.PlayOneShot("event:/tools/gravcannon/repulse", param.vehicle.transform.position, 1f);
