@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net472</TargetFramework>
+	  <LangVersion>11</LangVersion>
+	  <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<!-- Polyfills for modern BCL APIs when targeting net472 -->
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="PolySharp" Version="1.15.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Subnautica.Nautilus" Version="1.0.0-pre.43" />
+	</ItemGroup>
+
+	<!-- Prefer not to hardcode paths; make it configurable -->
+	<PropertyGroup>
+		<!-- One line, no trailing spaces -->
+		<SubnauticaDir Condition="'$(SubnauticaDir)'==''">C:\Program Files (x86)\Steam\steamapps\common\Subnautica</SubnauticaDir>
+
+		<!-- Defensive: trim any whitespace if someone overrides this via env/props -->
+		<SubnauticaDirTrimmed>$([System.String]::Copy('$(SubnauticaDir)').Trim())</SubnauticaDirTrimmed>
+
+		<BepInExPlugins>$(SubnauticaDirTrimmed)\BepInEx\plugins\$(MSBuildProjectName)</BepInExPlugins>
+
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
+	</PropertyGroup>
+
+	<Target Name="CopyToBepInEx" AfterTargets="Build" Condition="Exists('$(SubnauticaDirTrimmed)')">
+		<MakeDir Directories="$(BepInExPlugins)" />
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BepInExPlugins)" SkipUnchangedFiles="true" />
+	</Target>
+	
+</Project>
