@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using VehicleFramework.UpgradeTypes;
 using VehicleFramework.Assets;
-using VehicleFramework;
+using VehicleFramework.Extensions;
 
 namespace NanoWeaveBarrier
 {
@@ -21,7 +21,7 @@ namespace NanoWeaveBarrier
                     new Ingredient(TechType.EnameledGlass, 1)
                 };
 
-        public override Atlas.Sprite Icon => SpriteHelper.GetSprite("NanoWeaveBarrierIcon.png");
+        public override UnityEngine.Sprite Icon => SpriteHelper.GetSprite("NanoWeaveBarrierIcon.png");
         public override void OnAdded(AddActionParams param)
         {
             var damg = param.vehicle.gameObject.EnsureComponent<DamageModifier>();
