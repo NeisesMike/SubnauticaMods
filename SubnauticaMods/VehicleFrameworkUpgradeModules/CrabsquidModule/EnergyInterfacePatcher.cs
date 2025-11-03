@@ -2,7 +2,7 @@ using System.Collections;
 using System.Linq;
 using HarmonyLib;
 using UnityEngine;
-using VehicleFramework;
+using VehicleFramework.Extensions;
 
 namespace CrabsquidModule
 {
