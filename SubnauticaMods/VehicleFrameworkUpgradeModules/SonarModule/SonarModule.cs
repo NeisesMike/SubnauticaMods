@@ -21,7 +21,7 @@ namespace SonarModule
                     new Ingredient(TechType.Glass, 1)
                 };
 
-        public override Atlas.Sprite Icon => SpriteHelper.GetSprite("SonarModuleIcon.png");
+        public override UnityEngine.Sprite Icon => SpriteHelper.GetSprite("SonarModuleIcon.png");
 
         public override void OnAdded(AddActionParams param)
         {

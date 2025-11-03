@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 using UnityEngine;
-using VehicleFramework;
+using VehicleFramework.Extensions;
 using System.Linq;
 
 namespace SonarModule

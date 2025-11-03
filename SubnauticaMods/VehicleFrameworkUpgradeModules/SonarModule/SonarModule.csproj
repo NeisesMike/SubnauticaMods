@@ -36,11 +36,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\core\0Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass_publicized">
-      <HintPath>S:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\publicized_assemblies\Assembly-CSharp-firstpass_publicized.dll</HintPath>
+    <Reference Include="Assembly-CSharp-firstpass_publicized, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\publicized_assemblies\Assembly-CSharp-firstpass_publicized.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp_publicized">
-      <HintPath>S:\SteamLibrary\steamapps\common\Subnautica\Subnautica_Data\Managed\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
+    <Reference Include="Assembly-CSharp_publicized, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>S:\SteamLibrary\steamapps\common\Subnautica\BepInEx\core\BepInEx.dll</HintPath>
