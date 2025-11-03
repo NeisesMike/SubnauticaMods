@@ -5,7 +5,7 @@ using Nautilus.Handlers;
 
 namespace MagnetBoots
 {
-    [BepInPlugin("com.mikjaw.subnautica.magnetboots.mod", "MagnetBoots", "1.0.0")]
+    [BepInPlugin("com.mikjaw.subnautica.magnetboots.mod", "MagnetBoots", "2.0.0")]
     [BepInDependency(VehicleFramework.PluginInfo.PLUGIN_GUID, VehicleFramework.PluginInfo.PLUGIN_VERSION)]
     [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID)]
     public class MainPatcher : BaseUnityPlugin
