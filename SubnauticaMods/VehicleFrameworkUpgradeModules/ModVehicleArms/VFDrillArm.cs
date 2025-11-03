@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
-using VehicleFramework;
+using VehicleFramework.Assets;
 using VehicleFramework.UpgradeTypes;
 
 namespace VFDrillArm
@@ -10,14 +10,14 @@ namespace VFDrillArm
     {
         public override string ClassId => "DrillArmVF";
         public override string DisplayName => "Drill Arm";
-        public override List<VehicleFramework.Assets.Ingredient> Recipe => new List<VehicleFramework.Assets.Ingredient>()
+        public override List<Ingredient> Recipe => new List<Ingredient>()
                 {
-                    new VehicleFramework.Assets.Ingredient(TechType.Titanium, 5),
-                    new VehicleFramework.Assets.Ingredient(TechType.Lithium, 1),
-                    new VehicleFramework.Assets.Ingredient(TechType.Diamond, 4)
+                    new Ingredient(TechType.Titanium, 5),
+                    new Ingredient(TechType.Lithium, 1),
+                    new Ingredient(TechType.Diamond, 4)
                 };
         public override string Description => "A drill-arm attachment used for mining large ore veins";
-        public override Atlas.Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("VFDrillArmIcon.png");
+        public override UnityEngine.Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("VFDrillArmIcon.png");
         public override IEnumerator GetArmPrefab(IOut<GameObject> arm)
         {
             yield return UWE.CoroutineHost.StartCoroutine(PrawnHelper.EnsurePrawn());

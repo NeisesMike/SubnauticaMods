@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using HarmonyLib;
 using UnityEngine;
 using VehicleFramework;
+using VehicleFramework.Extensions;
 using VehicleFramework.VehicleComponents;
 
 namespace VFDrillArm

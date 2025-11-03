@@ -1,5 +1,5 @@
 ﻿using HarmonyLib;
-using VehicleFramework.VehicleComponents;
+using VehicleFramework.MiscComponents;
 using UnityEngine;
 
 namespace VFDrillArm
