@@ -3,7 +3,7 @@ using Nautilus.Handlers;
 
 namespace SolarChargingModule
 {
-    [BepInPlugin(pluginGUID, "SolarChargingModule", "1.4")]
+    [BepInPlugin(pluginGUID, "SolarChargingModule", "2.0")]
     [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID)]
     [BepInDependency(VehicleFramework.PluginInfo.PLUGIN_GUID, VehicleFramework.PluginInfo.PLUGIN_VERSION)]
     public class MainPatcher : BaseUnityPlugin

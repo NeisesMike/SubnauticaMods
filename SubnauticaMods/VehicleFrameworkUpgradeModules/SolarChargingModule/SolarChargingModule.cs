@@ -2,7 +2,7 @@
 using System.Linq;
 using VehicleFramework.UpgradeTypes;
 using VehicleFramework.Assets;
-using VehicleFramework;
+using VehicleFramework.Extensions;
 
 namespace SolarChargingModule
 {
@@ -18,7 +18,7 @@ namespace SolarChargingModule
                     new Ingredient(TechType.EnameledGlass, 2)
                 };
 
-        public override Atlas.Sprite Icon => SpriteHelper.GetSprite("SolarChargingModuleIcon.png");
+        public override UnityEngine.Sprite Icon => SpriteHelper.GetSprite("SolarChargingModuleIcon.png");
         public override void OnAdded(AddActionParams param)
         {
             VFSolarCharger solarCharger = param.vehicle.gameObject.EnsureComponent<VFSolarCharger>();
