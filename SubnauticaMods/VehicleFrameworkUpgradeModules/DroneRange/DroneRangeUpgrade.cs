@@ -2,7 +2,7 @@
 using System.Linq;
 using VehicleFramework.UpgradeTypes;
 using VehicleFramework.VehicleTypes;
-using VehicleFramework;
+using VehicleFramework.Extensions;
 
 namespace DroneRange
 {
@@ -10,13 +10,13 @@ namespace DroneRange
     {
         public override string ClassId => "DroneRangeModule";
         public override string DisplayName => "Drone Range Upgrade";
-        public override List<VehicleFramework.Assets.Ingredient> Recipe => new List<VehicleFramework.Assets.Ingredient>()
+        public override List<Ingredient> Recipe => new List<Ingredient>()
                 {
-                    new VehicleFramework.Assets.Ingredient(TechType.AdvancedWiringKit, 1),
-                    new VehicleFramework.Assets.Ingredient(TechType.ComputerChip, 1)
+                    new Ingredient(TechType.AdvancedWiringKit, 1),
+                    new Ingredient(TechType.ComputerChip, 1)
                 };
         public override string Description => "Boosts the effective operating range of drones by 200 meters. Stacks.";
-        public override Atlas.Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("DroneRangeIcon.png");
+        public override UnityEngine.Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("DroneRangeIcon.png");
         public override void OnAdded(AddActionParams param)
         {
             Drone drone = param.vehicle as Drone;

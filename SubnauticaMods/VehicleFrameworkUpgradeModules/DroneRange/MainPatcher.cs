@@ -3,7 +3,7 @@
 namespace DroneRange
 {
 
-    [BepInPlugin("com.mikjaw.subnautica.dronerange.mod", "DroneRange", "1.3")]
+    [BepInPlugin("com.mikjaw.subnautica.dronerange.mod", "DroneRange", "2.0")]
     [BepInDependency("com.snmodding.nautilus")]
     [BepInDependency(VehicleFramework.PluginInfo.PLUGIN_GUID, VehicleFramework.PluginInfo.PLUGIN_VERSION)]
     public class MainPatcher : BaseUnityPlugin
