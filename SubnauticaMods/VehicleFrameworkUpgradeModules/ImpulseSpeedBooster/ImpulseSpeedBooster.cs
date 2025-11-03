@@ -18,7 +18,7 @@ namespace ImpulseSpeedBooster
                     new Ingredient(TechType.ComputerChip, 1),
                     new Ingredient(TechType.Titanium, 2)
                 };
-        public override Atlas.Sprite Icon => SpriteHelper.GetSprite("ImpulseSpeedBoosterIcon.png");
+        public override UnityEngine.Sprite Icon => SpriteHelper.GetSprite("ImpulseSpeedBoosterIcon.png");
         public override void OnSelected(SelectableChargeableActionParams param)
         {
             FMODUWE.PlayOneShot("event:/sub/seamoth/pulse", param.vehicle.transform.position, param.slotCharge);
