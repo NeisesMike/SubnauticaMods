@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using HarmonyLib;
 using System.Reflection.Emit;
-using VehicleFramework;
+using VehicleFramework.Extensions;
 using System.Linq;
 
 namespace VoidDepth

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using VehicleFramework.UpgradeTypes;
 using VehicleFramework.Assets;
-using VehicleFramework.Localization;
 
 namespace VoidDepth
 {
@@ -9,8 +8,8 @@ namespace VoidDepth
     {
         public const string upgradeName = "VoidDepthUpgrade";
         public override string ClassId => upgradeName;
-        public override string DisplayName => Localizer<EnglishString>.GetString(EnglishString.ModuleDisplayName);
-        public override string Description => Localizer<EnglishString>.GetString(EnglishString.ModuleDescription);
+        public override string DisplayName => "Void Depth Module";
+        public override string Description => "This upgrade combines advanced alloys with the enigmatic properties of Ghost Weed to achieve extraordinary crush depth capabilities. Stacks.";
         public override List<Ingredient> Recipe => new List<Ingredient>()
         {
             new Ingredient(TechType.Kyanite, 2),
@@ -19,7 +18,7 @@ namespace VoidDepth
             new Ingredient(TechType.RedGreenTentacleSeed, 1),
             new Ingredient(TechType.PrecursorIonCrystal, 1),
         };
-        public override Atlas.Sprite Icon => SpriteHelper.GetSprite("VoidDepthIcon.png");
+        public override UnityEngine.Sprite Icon => SpriteHelper.GetSprite("VoidDepthIcon.png");
         public override void OnAdded(AddActionParams param)
         {
             param.vehicle.crushDamage.UpdateDepthClassification();
