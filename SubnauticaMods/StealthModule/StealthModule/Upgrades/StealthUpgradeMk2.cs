@@ -7,17 +7,17 @@ namespace StealthModule
     {
         public override string ClassId => "StealthModule2";
         public override string DisplayName => "Stealth Module Mk 2";
-        public override List<VehicleFramework.Assets.Ingredient> Recipe => new List<VehicleFramework.Assets.Ingredient>()
+        public override List<Ingredient> Recipe => new List<Ingredient>()
         {
-            new VehicleFramework.Assets.Ingredient(TechType.Silicone, 1),
-            new VehicleFramework.Assets.Ingredient(TechType.Lithium, 1),
-            new VehicleFramework.Assets.Ingredient(TechType.Gold, 1)
+            new Ingredient(TechType.Silicone, 1),
+            new Ingredient(TechType.Lithium, 1),
+            new Ingredient(TechType.Gold, 1)
         };
         public override string Description => "Creatures beyond 60 meters will not be aggressive or attack.";
-        public override Atlas.Sprite Icon => MainPatcher.stealthIcon;
+        public override UnityEngine.Sprite Icon => MainPatcher.stealthIcon;
         public override string TabName => MainPatcher.tabName;
         public override string TabDisplayName => MainPatcher.tabDisplayName;
-        public override Atlas.Sprite TabIcon => MainPatcher.stealthIcon;
+        public override UnityEngine.Sprite TabIcon => MainPatcher.stealthIcon;
         public override void OnAdded(AddActionParams param)
         {
             param.vehicle.gameObject.EnsureComponent<StealthModule>().UpdateQuality();

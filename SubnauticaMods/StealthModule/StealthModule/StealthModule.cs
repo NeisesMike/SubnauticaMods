@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using VehicleFramework;
+using VehicleFramework.Extensions;
 
 namespace StealthModule
 {

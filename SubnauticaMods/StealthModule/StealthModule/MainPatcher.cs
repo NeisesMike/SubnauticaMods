@@ -18,7 +18,7 @@ namespace StealthModule
         internal static MyConfig config { get; private set; }
         internal const string tabName = "StealthModules";
         internal const string tabDisplayName = "Stealth Modules";
-        internal static Atlas.Sprite stealthIcon = VehicleFramework.Assets.SpriteHelper.GetSprite("assets/SeamothStealthModuleIcon.png");
+        internal static UnityEngine.Sprite stealthIcon = VehicleFramework.Assets.SpriteHelper.GetSprite("assets/SeamothStealthModuleIcon.png");
         public void Start()
         {
             logger = base.Logger;
