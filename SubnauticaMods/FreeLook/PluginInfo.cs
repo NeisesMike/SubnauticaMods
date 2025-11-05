@@ -5,6 +5,6 @@ namespace FreeLook
     {
         public const string PLUGIN_GUID = "com.mikjaw.subnautica.freelook.mod";
         public const string PLUGIN_NAME = "FreeLook";
-        public const string PLUGIN_VERSION = "2.4.1";
+        public const string PLUGIN_VERSION = "2.4.3";
     }
 }

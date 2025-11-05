@@ -291,6 +291,7 @@ namespace FreeLook
         private void MoveCamera()
         {
             Vector2 myLookDelta = GameInput.GetLookDelta();
+            /*
             if (myLookDelta == Vector2.zero)
             {
                 myLookDelta.x -= GameInput.GetAnalogValueForButton(GameInput.Button.LookLeft);
@@ -298,6 +299,7 @@ namespace FreeLook
                 myLookDelta.y += GameInput.GetAnalogValueForButton(GameInput.Button.LookUp);
                 myLookDelta.y -= GameInput.GetAnalogValueForButton(GameInput.Button.LookDown);
             }
+            */
             MCC.rotationX += myLookDelta.x;
             MCC.rotationY += myLookDelta.y;
             MCC.rotationX = Mathf.Clamp(MCC.rotationX, -100, 100);
