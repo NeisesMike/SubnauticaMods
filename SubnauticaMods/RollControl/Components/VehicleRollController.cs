@@ -6,7 +6,7 @@ namespace RollControl
     public class VehicleRollController : MonoBehaviour
     {
         public Vehicle myVehicle;
-        private bool isRollEnabled = MainPatcher.config.IsVehicleRollDefaultEnabled;
+        private bool isRollEnabled = MainPatcher.RCConfig.IsVehicleRollDefaultEnabled;
 
         public bool IsPlayerInThisVehicle
         {
@@ -14,27 +14,8 @@ namespace RollControl
             {
                 if (MainPatcher.ThereIsVehicleFramework)
                 {
-                    var vehicleTypesDroneType = Type.GetType("VehicleFramework.VehicleTypes.Drone, VehicleFramework", false, false);
-                    if (vehicleTypesDroneType == null)
-                    {
-                        Logger.Log("vehicletypestype drone was null");
-                        return false;
-                    }
-                    System.Object mountedDrone = null;
-                    if (vehicleTypesDroneType != null)
-                    {
-                        var memberInfo = vehicleTypesDroneType.GetMember("mountedDrone")[0];
-                        if (memberInfo is System.Reflection.PropertyInfo propertyInfo)
-                        {
-                            mountedDrone = propertyInfo.GetValue(null);
-                        }
-                        else if (memberInfo is System.Reflection.FieldInfo fieldInfo)
-                        {
-                            mountedDrone = fieldInfo.GetValue(null);
-                        }
-                    }
                     return Player.main.currentMountedVehicle == myVehicle
-                        || (mountedDrone != null && mountedDrone == (object)myVehicle);
+                        || (VehicleFramework.VehicleTypes.Drone.MountedDrone != null && VehicleFramework.VehicleTypes.Drone.MountedDrone == myVehicle);
                 }
                 else
                 {
@@ -59,7 +40,7 @@ namespace RollControl
 
         public void Update()
         {
-            if (Input.GetKeyDown(MainPatcher.config.ToggleRollKey) &&
+            if (Input.GetKeyDown(MainPatcher.RCConfig.ToggleRollKey) &&
                 IsPlayerInThisVehicle &&   
                 AvatarInputHandler.main.IsEnabled() &&
                 (myVehicle as Exosuit) == null
@@ -81,13 +62,13 @@ namespace RollControl
 
         public void SubmarineRoll()
         {
-            if (Input.GetKey(MainPatcher.config.VehicleRollPortKey))
+            if (Input.GetKey(MainPatcher.RCConfig.VehicleRollPortKey))
             {
-                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)MainPatcher.config.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
+                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)MainPatcher.RCConfig.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
             }
-            if (Input.GetKey(MainPatcher.config.VehicleRollStarboardKey))
+            if (Input.GetKey(MainPatcher.RCConfig.VehicleRollStarboardKey))
             {
-                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)-MainPatcher.config.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
+                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)-MainPatcher.RCConfig.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
             }
         }
     }
