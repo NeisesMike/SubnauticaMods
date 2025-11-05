@@ -6,24 +6,38 @@ namespace AttitudeIndicator
 {
     internal static class AssetGetter
     {
-        internal static GameObject prefab = null;
+        private static GameObject _prefab = null;
+        internal static GameObject Prefab
+        {
+            get
+            {
+                if(_prefab == null)
+                {
+                    GetAssets();
+                }
+                return _prefab;
+            }
+        }
         internal static void GetAssets()
         {
             // load the asset bundle
             string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var myLoadedAssetBundle = AssetBundle.LoadFromFile(Path.Combine(modPath, "assets/attitudeindicator"));
-            if (myLoadedAssetBundle == null)
+            AssetBundle myLoadedAssetBundle;
+            try
             {
-                ErrorMessage.AddError("Failed to load AssetBundle!");
-                return;
+                myLoadedAssetBundle = AssetBundle.LoadFromFile(Path.Combine(modPath, "assets/attitudeindicator"));
             }
-            System.Object[] arr = myLoadedAssetBundle.LoadAllAssets();
-            foreach (System.Object obj in arr)
+            catch(System.Exception e)
             {
-                if (obj.ToString().Contains("attitudeindicator"))
-                {
-                    prefab = (GameObject)obj;
-                }
+                ErrorMessage.AddError("Failed to load Attitude Indicator asset bundle!");
+                throw new System.Exception("Failed to load Attitude Indicator asset bundle!\n" + e.Message);
+            }
+            _prefab = myLoadedAssetBundle.LoadAsset<GameObject>("attitudeindicator.prefab");
+            myLoadedAssetBundle.Unload(false);
+            if (_prefab == null)
+            {
+                ErrorMessage.AddError("Failed to load Attitude Indicator prefab!");
+                throw new System.Exception("Failed to load Attitude Indicator prefab!");
             }
         }
         internal static void SetupAttitudeIndicator(Transform parent)
@@ -32,7 +46,12 @@ namespace AttitudeIndicator
             instrumentParent.transform.SetParent(parent);
             instrumentParent.SetActive(false);
             instrumentParent.EnsureComponent<AttitudeIndicator>();
-            var instrument = UnityEngine.GameObject.Instantiate(AssetGetter.prefab);
+            var instrument = UnityEngine.GameObject.Instantiate(AssetGetter.Prefab);
+            if(instrument == null)
+            {
+                ErrorMessage.AddError("Failed to instantiate Attitude Indicator prefab!");
+                throw new System.Exception("Failed to instantiate Attitude Indicator prefab!");
+            }
             instrument.name = "InstrumentModel";
             instrument.transform.SetParent(instrumentParent.transform);
             instrument.transform.localEulerAngles = instrument.transform.localPosition = UnityEngine.Vector3.zero;
