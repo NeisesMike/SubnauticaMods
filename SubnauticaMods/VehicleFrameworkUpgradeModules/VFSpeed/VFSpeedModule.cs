@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEngine;
 using VehicleFramework;
+using VehicleFramework.Extensions;
 
 namespace VFSpeed
 {
@@ -87,7 +88,7 @@ namespace VFSpeed
         private void SpendModEnergy(float strength)
         {
             float cost = GetPowerExpenditure(strength);
-            mv.GetComponent<VehicleFramework.VehicleComponents.PowerManager>().TrySpendEnergy(cost * Time.fixedDeltaTime);
+            mv.GetComponent<VehicleFramework.VehicleRootComponents.PowerManager>().TrySpendEnergy(cost * Time.fixedDeltaTime);
         }
         private void SpendCyclopsEnergy(float strength)
         {

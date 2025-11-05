@@ -26,9 +26,9 @@ namespace MagnetBoots
         }
         private void UpdateMagnetBoots(Vehicle vehicle)
         {
-            var boots = vehicle.gameObject.EnsureComponent<VehicleFramework.VehicleComponents.MagnetBoots>();
+            var boots = vehicle.gameObject.EnsureComponent<VehicleFramework.VehicleRootComponents.MagnetBoots>();
             boots.enabled = GetNumberInstalled(vehicle) > 0;
-            VehicleFramework.VehicleComponents.MagnetBoots.ColliderPairsPerFrame = MainPatcher.MagnetConfig.pairsPerFrame;
+            VehicleFramework.VehicleRootComponents.MagnetBoots.ColliderPairsPerFrame = MainPatcher.MagnetConfig.pairsPerFrame;
         }
     }
 }

@@ -25,7 +25,7 @@ namespace VFScannerArm
             ScannerArm scannerArm = null;
             if (mv != null && mv.IsPlayerControlling())
             {
-                var armsMan = mv.GetComponent<VehicleFramework.VehicleComponents.VFArmsManager>();
+                var armsMan = mv.GetComponent<VehicleFramework.VehicleRootComponents.VFArmsManager>();
                 scannerArm = armsMan?.leftArm?.GetComponent<ScannerArm>();
                 if (scannerArm == null)
                 {
