@@ -87,7 +87,7 @@ namespace VFSpeed
         private void SpendModEnergy(float strength)
         {
             float cost = GetPowerExpenditure(strength);
-            mv.powerMan.TrySpendEnergy(cost * Time.fixedDeltaTime);
+            mv.GetComponent<VehicleFramework.VehicleComponents.PowerManager>().TrySpendEnergy(cost * Time.fixedDeltaTime);
         }
         private void SpendCyclopsEnergy(float strength)
         {
