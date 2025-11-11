@@ -115,12 +115,13 @@ namespace ThirdPerson
                 isDownHeld = GameInput.GetButtonHeld(GameInput.Button.MoveDown),
                 isUpHeld = GameInput.GetButtonHeld(GameInput.Button.MoveUp)
             };
+            Vector2 moveVector = GameInput.GetVector2(GameInput.Button.Move);
             MovementInputs move = new MovementInputs
             {
-                zoomIn = GameInput.GetAnalogValueForButton(GameInput.Button.MoveUp),
-                zoomOut = GameInput.GetAnalogValueForButton(GameInput.Button.MoveDown),
-                zoomInFine = GameInput.GetAnalogValueForButton(GameInput.Button.MoveRight),
-                zoomOutFine = GameInput.GetAnalogValueForButton(GameInput.Button.MoveLeft),
+                zoomIn = Mathf.Max(moveVector.y, 0),
+                zoomOut = Mathf.Min(moveVector.y, 0) * -1,
+                zoomInFine = Mathf.Max(moveVector.x, 0),
+                zoomOutFine = Mathf.Min(moveVector.x, 0) * -1,
             };
             return new ThirpyInputs
             {
@@ -286,11 +287,11 @@ namespace ThirdPerson
                     }
                 }
             }
-            if (GameInput.GetKeyDown(MainPatcher.Instance.EnableThirdPerson.Value.MainKey))
+            if (Input.GetKeyDown(MainPatcher.Instance.EnableThirdPerson.Value.MainKey))
             {
                 newMode = HandleThirpyInput();
             }
-            if (GameInput.GetKeyDown(MainPatcher.Instance.EnableConfigurationMode.Value.MainKey))
+            if (Input.GetKeyDown(MainPatcher.Instance.EnableConfigurationMode.Value.MainKey))
             {
                 newMode = HandleScenicInput();
             }
@@ -390,10 +391,11 @@ namespace ThirdPerson
             else
             {
                 AvatarInputHandler.main.gameObject.SetActive(false);
-                float zoomIn = GameInput.GetAnalogValueForButton(GameInput.Button.MoveForward);
-                float zoomInFine = GameInput.GetAnalogValueForButton(GameInput.Button.MoveRight);
-                float zoomOut = GameInput.GetAnalogValueForButton(GameInput.Button.MoveBackward);
-                float zoomOutFine = GameInput.GetAnalogValueForButton(GameInput.Button.MoveLeft);
+                Vector2 moveVector = GameInput.GetVector2(GameInput.Button.Move);
+                float zoomIn = Mathf.Max(moveVector.y, 0);
+                float zoomOut = Mathf.Min(moveVector.y, 0) * -1;
+                float zoomInFine = Mathf.Max(moveVector.x, 0);
+                float zoomOutFine = Mathf.Min(moveVector.x, 0) * -1;
                 float currentZoom = PerVehicleConfig.GetDistance();
                 currentZoom -= zoomIn * 0.25f;
                 currentZoom -= zoomInFine * 0.01f;
