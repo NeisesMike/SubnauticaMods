@@ -9,7 +9,7 @@ namespace SimpleJukebox
     {
         public const string PLUGIN_GUID = "com.mikjaw.subnautica.desktopjukebox.mod";
         public const string PLUGIN_NAME = "Desktop Jukebox";
-        public const string PLUGIN_VERSION = "1.0.1";
+        public const string PLUGIN_VERSION = "2.0.0";
         public static MainPatcher Instance { get; private set; }
         internal static DesktopJukeboxConfig DesktopJukeboxConfig { get; private set; }
         public void Awake()

@@ -52,7 +52,7 @@ namespace SimpleJukebox
         public static TechType RegisterJukebox()
         {
             Nautilus.Assets.PrefabInfo Info = Nautilus.Assets.PrefabInfo.WithTechType("DesktopJukebox", "Desktop Jukebox", "It can play your music.", unlockAtStart: true)
-                .WithIcon(new Atlas.Sprite(AssetLoader.crafterSprite));
+                .WithIcon(AssetLoader.crafterSprite);
             Nautilus.Assets.CustomPrefab prefab = new Nautilus.Assets.CustomPrefab(Info);
             Nautilus.Utility.ConstructableFlags constructableFlags =
                 Nautilus.Utility.ConstructableFlags.AllowedOnConstructable
@@ -83,7 +83,7 @@ namespace SimpleJukebox
             }
             prefab.SetGameObject(AssetLoader.radioAsset);
             prefab.SetPdaGroupCategory(TechGroup.InteriorModules, TechCategory.InteriorModule);
-            prefab.SetRecipe(new Nautilus.Crafting.RecipeData(new CraftData.Ingredient(TechType.Titanium, 1), new CraftData.Ingredient(TechType.CopperWire, 1)));
+            prefab.SetRecipe(new Nautilus.Crafting.RecipeData(new Ingredient(TechType.Titanium, 1), new Ingredient(TechType.CopperWire, 1)));
             prefab.Register();
             return Info.TechType;
         }
