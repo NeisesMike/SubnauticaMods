@@ -5,6 +5,6 @@ namespace PersistentReaper
     {
         public const string PLUGIN_GUID = "com.mikjaw.subnautica.persistentreapers.mod";
         public const string PLUGIN_NAME = "VehicleFramePersistentReaperswork";
-        public const string PLUGIN_VERSION = "2.1.0";
+        public const string PLUGIN_VERSION = "3.0.0";
     }
 }
