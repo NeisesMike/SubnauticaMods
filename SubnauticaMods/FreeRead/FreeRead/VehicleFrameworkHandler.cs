@@ -32,8 +32,8 @@ namespace FreeRead
             VFEngine engine = vehicle.GetComponent<ModVehicle>().VFEngine;
             if (engine == null) return;
             UnityEngine.Vector3 moveDirection = GameInput.GetMoveDirection();
-            engine.ApplyPlayerControls(moveDirection);
-            engine.DrainPower(moveDirection);
+            //engine.ApplyPlayerControls(moveDirection);
+            //engine.DrainPower(moveDirection);
         }
 
         [HarmonyPatch(nameof(ModVehicle.FixedUpdate))]

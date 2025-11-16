@@ -18,15 +18,15 @@ namespace FreeRead
             bool isAutoMovePressed = GameInput.GetButtonDown(GameInput.Button.AutoMove);
             bool isInputDisabled = !AvatarInputHandler.main.IsEnabled();
             bool isThisCurrentVehicle = GetComponent<Vehicle>() == Player.main.currentMountedVehicle;
-            if(isAutoMovePressed && isInputDisabled && isThisCurrentVehicle && isFreeReading)
+            if (isAutoMovePressed && isInputDisabled && isThisCurrentVehicle && isFreeReading)
             {
-                if (GameInput.GetAutoMove())
+                if (GameInput.AutoMove)
                 {
-                    GameInput.SetAutoMove(false);
+                    GameInput.AutoMove = false;
                 }
                 else
                 {
-                    GameInput.SetAutoMove(true);
+                    GameInput.AutoMove = true;
                 }
             }
         }

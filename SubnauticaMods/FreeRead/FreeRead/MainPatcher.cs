@@ -7,7 +7,7 @@ using BepInEx;
 
 namespace FreeRead
 {
-    [BepInPlugin(GUID, "FreeRead", "3.0.0")]
+    [BepInPlugin(GUID, "FreeRead", "4.0.0")]
     [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID)]
     public class MainPatcher : BaseUnityPlugin
     {
