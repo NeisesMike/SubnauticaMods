@@ -25,12 +25,12 @@ namespace RollControl
     [BepInDependency("com.snmodding.nautilus")]
     public class MainPatcher : BaseUnityPlugin
     {
-        internal static MyConfig config { get; private set; }
+        internal static MyConfig RCConfig { get; private set; }
         public static bool ThereIsVehicleFramework = false;
         public void Start()
         {
             RollControl.Logger.MyLog = base.Logger;
-            config = OptionsPanelHandler.RegisterModOptions<MyConfig>();
+            RCConfig = OptionsPanelHandler.RegisterModOptions<MyConfig>();
             var harmony = new Harmony("com.mikjaw.subnautica.rollcontrol.mod");
             harmony.PatchAll();
             var type = Type.GetType("VehicleFramework.MainPatcher, VehicleFramework", false, false);
