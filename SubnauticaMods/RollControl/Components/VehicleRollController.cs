@@ -14,8 +14,27 @@ namespace RollControl
             {
                 if (MainPatcher.ThereIsVehicleFramework)
                 {
+                    var vehicleTypesDroneType = Type.GetType("VehicleFramework.VehicleTypes.Drone, VehicleFramework", false, false);
+                    if (vehicleTypesDroneType == null)
+                    {
+                        Logger.Log("vehicletypestype drone was null");
+                        return false;
+                    }
+                    System.Object mountedDrone = null;
+                    if (vehicleTypesDroneType != null)
+                    {
+                        var memberInfo = vehicleTypesDroneType.GetMember("mountedDrone")[0];
+                        if (memberInfo is System.Reflection.PropertyInfo propertyInfo)
+                        {
+                            mountedDrone = propertyInfo.GetValue(null);
+                        }
+                        else if (memberInfo is System.Reflection.FieldInfo fieldInfo)
+                        {
+                            mountedDrone = fieldInfo.GetValue(null);
+                        }
+                    }
                     return Player.main.currentMountedVehicle == myVehicle
-                        || (VehicleFramework.VehicleTypes.Drone.MountedDrone != null && VehicleFramework.VehicleTypes.Drone.MountedDrone == myVehicle);
+                        || (mountedDrone != null && mountedDrone == (object)myVehicle);
                 }
                 else
                 {
