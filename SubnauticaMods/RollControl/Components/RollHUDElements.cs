@@ -36,6 +36,10 @@ namespace RollControl.Components
         }
         private void HandleVehicle()
         {
+            if(VehicleCon == null || subHUD == null)
+            {
+                subHUD.SetActive(false);
+            }
             if (VehicleCon != null && subHUD != null)
             {
                 subHUD.SetActive(VehicleCon.IsActuallyRolling);
