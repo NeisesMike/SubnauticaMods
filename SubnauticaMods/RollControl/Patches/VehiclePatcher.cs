@@ -22,7 +22,7 @@ namespace RollControl
 
         [HarmonyPrefix]
         [HarmonyPatch(nameof(Vehicle.EnterVehicle))]
-        public static bool EnterVehiclePrefix(Vehicle __instance)
+        public static bool EnterVehiclePrefix()
         {
             // ensure we enter vehicles correctly
             Player.main.GetComponent<ScubaRollController>().GetReadyToStopRolling();
@@ -31,7 +31,7 @@ namespace RollControl
 
         [HarmonyPostfix]
         [HarmonyPatch(nameof(Vehicle.FixedUpdate))]
-        public static void FixedUpdatePostfix(Vehicle __instance)
+        public static void FixedUpdatePostfix()
         {
             // ensure we're rotated correctly
             if (Player.main.GetMode() == Player.Mode.LockedPiloting)
