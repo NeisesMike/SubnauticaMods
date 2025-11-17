@@ -23,7 +23,12 @@ namespace RollControl
                     System.Object mountedDrone = null;
                     if (vehicleTypesDroneType != null)
                     {
-                        var memberInfo = vehicleTypesDroneType.GetMember("mountedDrone")[0];
+                        var memberInfo = vehicleTypesDroneType.GetMember("MountedDrone")?.FirstOrFallback(null);
+                        if(memberInfo == null)
+                        {
+                            Logger.Log("Roll Control had an issue with finding Drone.MountedDrone...");
+                            return false;
+                        }
                         if (memberInfo is System.Reflection.PropertyInfo propertyInfo)
                         {
                             mountedDrone = propertyInfo.GetValue(null);
