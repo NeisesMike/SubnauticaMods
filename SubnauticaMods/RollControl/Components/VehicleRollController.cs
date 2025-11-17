@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace RollControl
 {
-    public class VehicleRollController : MonoBehaviour
+    public partial class VehicleRollController : MonoBehaviour
     {
         public Vehicle myVehicle;
         private bool isRollEnabled = MainPatcher.RCConfig.IsVehicleRollDefaultEnabled;
@@ -24,7 +24,7 @@ namespace RollControl
                     if (vehicleTypesDroneType != null)
                     {
                         var memberInfo = vehicleTypesDroneType.GetMember("MountedDrone")?.FirstOrFallback(null);
-                        if(memberInfo == null)
+                        if (memberInfo == null)
                         {
                             Logger.Log("Roll Control had an issue with finding Drone.MountedDrone...");
                             return false;
@@ -64,8 +64,8 @@ namespace RollControl
 
         public void Update()
         {
-            if (Input.GetKeyDown(MainPatcher.RCConfig.ToggleRollKey) &&
-                IsPlayerInThisVehicle &&   
+            if (GameInput.GetButtonDown(MainPatcher.Instance.ToggleVehicleRollKey) &&
+                IsPlayerInThisVehicle &&
                 AvatarInputHandler.main.IsEnabled() &&
                 (myVehicle as Exosuit) == null
                 )
@@ -86,11 +86,11 @@ namespace RollControl
 
         public void SubmarineRoll()
         {
-            if (Input.GetKey(MainPatcher.RCConfig.VehicleRollPortKey))
+            if (GameInput.GetButtonHeld(MainPatcher.Instance.VehicleRollPortKey))
             {
                 myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)MainPatcher.RCConfig.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
             }
-            if (Input.GetKey(MainPatcher.RCConfig.VehicleRollStarboardKey))
+            if (GameInput.GetButtonHeld(MainPatcher.Instance.VehicleRollStarboardKey))
             {
                 myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)-MainPatcher.RCConfig.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
             }

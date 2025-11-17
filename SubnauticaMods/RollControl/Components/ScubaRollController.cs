@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace RollControl
 {
-    public class ScubaRollController : MonoBehaviour
+    public partial class ScubaRollController : MonoBehaviour
     {
         public bool isRollEnabled = MainPatcher.RCConfig.IsScubaRollDefaultEnabled;
         public Player player = null;
@@ -168,7 +168,7 @@ namespace RollControl
                     // remind the user that scuba roll is enabled, show them the toggle key
                     if (MainPatcher.RCConfig.IsScubaHinting)
                     {
-                        Logger.Output("Scuba Roll is ON. Toggle with " + MainPatcher.RCConfig.ToggleRollKey);
+                        Logger.Output($"Scuba Roll is ON. Toggle with {MainPatcher.Instance.ToggleScubaRollKey}");
                     }
                     SetupForScubaRollOnceAtStart();
                 }
@@ -217,7 +217,7 @@ namespace RollControl
         {
             if (IsAbleToToggleScubaRolling)
             {
-                if (Input.GetKeyDown(MainPatcher.RCConfig.ToggleRollKey))
+                if(GameInput.GetButtonDown(MainPatcher.Instance.ToggleScubaRollKey))
                 {
                     if (isRollEnabled)
                     {
@@ -333,7 +333,7 @@ namespace RollControl
         public void PhysicsMouseLook()
         {
             Vector2 offset = GameInput.GetLookDelta();
-            float scalar = 1;
+            float scalar;
             if(GameInput.IsPrimaryDeviceGamepad())
             {
                 scalar = MainPatcher.RCConfig.ScubaPadSensitivity;
@@ -348,13 +348,13 @@ namespace RollControl
         }
         public void SetupScubaRoll()
         {
-            bool portUp = Input.GetKeyUp(MainPatcher.RCConfig.ScubaRollPortKey);
-            bool portHeld = Input.GetKey(MainPatcher.RCConfig.ScubaRollPortKey);
-            bool portDown = Input.GetKeyDown(MainPatcher.RCConfig.ScubaRollPortKey);
+            bool portUp = GameInput.GetButtonUp(MainPatcher.Instance.ScubaRollPortKey);
+            bool portHeld = GameInput.GetButtonHeld(MainPatcher.Instance.ScubaRollPortKey);
+            bool portDown = GameInput.GetButtonDown(MainPatcher.Instance.ScubaRollPortKey);
 
-            bool starUp = Input.GetKeyUp(MainPatcher.RCConfig.ScubaRollStarboardKey);
-            bool starHeld = Input.GetKey(MainPatcher.RCConfig.ScubaRollStarboardKey);
-            bool starDown = Input.GetKeyDown(MainPatcher.RCConfig.ScubaRollStarboardKey);
+            bool starUp = GameInput.GetButtonUp(MainPatcher.Instance.ScubaRollStarboardKey);
+            bool starHeld = GameInput.GetButtonHeld(MainPatcher.Instance.ScubaRollStarboardKey);
+            bool starDown = GameInput.GetButtonDown(MainPatcher.Instance.ScubaRollStarboardKey);
 
             if ((portDown || portHeld) && !(starDown || starHeld))
             {
@@ -382,7 +382,7 @@ namespace RollControl
             }
         }
 
-        public void OnCollisionEnter(Collision col)
+        public void OnCollisionEnter(Collision _)
         {
             if (!IsActuallyScubaRolling || !AvatarInputHandler.main.IsEnabled())
             {
@@ -405,7 +405,7 @@ namespace RollControl
                 player.rigidBody.freezeRotation = true;
             }
         }
-        public void OnCollisionExit(Collision col)
+        public void OnCollisionExit(Collision _)
         {
             if (!IsActuallyScubaRolling || !AvatarInputHandler.main.IsEnabled())
             {
