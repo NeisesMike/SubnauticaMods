@@ -28,7 +28,7 @@ namespace FreeRead
         public static void VehicleUpdatePostfix(Vehicle __instance)
         {
             FreeReadManager frm = __instance.gameObject.EnsureComponent<FreeReadManager>();
-            if (Input.GetKeyDown(MainPatcher.FreeReadConfig.FreeReadKey))
+            if(GameInput.GetButtonDown(MainPatcher.Instance.ToggleFreeReadKey))
             {
                 frm.isFreeReading = !frm.isFreeReading;
                 if (frm.isFreeReading)
