@@ -1,8 +1,7 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Linq;
 
-namespace SelfRepairModuleUpgrade
+namespace SelfRepairModule
 {
     // num damage points is 10.
     // cyclops health is 1500

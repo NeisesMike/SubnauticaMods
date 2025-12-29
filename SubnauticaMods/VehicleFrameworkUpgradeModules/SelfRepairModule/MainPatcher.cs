@@ -1,4 +1,4 @@
-﻿namespace SelfRepairModuleUpgrade
+﻿namespace SelfRepairModule
 {
     [BepInEx.BepInPlugin(pluginGUID, "SelfRepairModule", "1.0")]
     [BepInEx.BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID)]
@@ -9,7 +9,7 @@
         public static MainPatcher Instance { get; private set; }
         public void Start()
         {
-            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new SelfRepairModule());
+            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new SelfRepairModuleUpgrade());
             Configuration.RegisterOptions();
         }
         public void Awake()

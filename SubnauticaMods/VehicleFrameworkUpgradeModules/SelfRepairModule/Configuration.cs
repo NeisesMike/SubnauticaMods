@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VehicleFramework.Admin;
+﻿using VehicleFramework.Admin;
 using BepInEx.Configuration;
 
-namespace SelfRepairModuleUpgrade
+namespace SelfRepairModule
 {
     internal static class Configuration
     {

@@ -4,9 +4,9 @@ using VehicleFramework.UpgradeTypes;
 using VehicleFramework.Extensions;
 using System.Linq;
 
-namespace SelfRepairModuleUpgrade
+namespace SelfRepairModule
 {
-    public class SelfRepairModule : ModVehicleUpgrade
+    public class SelfRepairModuleUpgrade : ModVehicleUpgrade
     {
         public override string ClassId => "SelfRepairModule";
         public override string DisplayName => "Self-Repair Module";

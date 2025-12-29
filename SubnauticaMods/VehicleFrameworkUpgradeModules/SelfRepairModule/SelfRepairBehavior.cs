@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace SelfRepairModuleUpgrade
+namespace SelfRepairModule
 {
     internal class SelfRepairBehavior : MonoBehaviour
     {
