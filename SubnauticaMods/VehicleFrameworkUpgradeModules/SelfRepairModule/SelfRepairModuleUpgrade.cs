@@ -26,11 +26,11 @@ namespace SelfRepairModule
         }
         public override void OnRemoved(AddActionParams param)
         {
-            param.vehicle.gameObject.EnsureComponent<SelfRepairBehavior>().enabled = 0 < GetNumberInstalled(param.vehicle);
+            param.vehicle.gameObject.EnsureComponent<SelfRepairBehavior>().SetEnabled(0 < GetNumberInstalled(param.vehicle));
         }
         public override void OnCyclops(AddActionParams param)
         {
-            param.cyclops.gameObject.EnsureComponent<CyclopsSelfRepairBehavior>().enabled = param.cyclops.GetCurrentUpgrades().Where(x => x.Contains(ClassId)).Any();
+            param.cyclops.gameObject.EnsureComponent<CyclopsSelfRepairBehavior>().SetEnabled(param.cyclops.GetCurrentUpgrades().Where(x => x.Contains(ClassId)).Any());
         }
     }
 }

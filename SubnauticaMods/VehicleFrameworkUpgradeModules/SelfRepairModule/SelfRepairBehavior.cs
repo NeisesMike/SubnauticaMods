@@ -2,68 +2,56 @@
 
 namespace SelfRepairModule
 {
-    internal class SelfRepairBehavior : MonoBehaviour
+    internal class SelfRepairBehavior : SelfRepairRoot
     {
         private Vehicle Vehicle = null;
-        private float RepairAmount
+        internal override float GetRepairAmount()
         {
-            get
+            if (Vehicle is VehicleFramework.ModVehicle)
             {
-                if(Vehicle is VehicleFramework.ModVehicle)
-                {
-                    string mvName = Vehicle.GetComponent<TechTag>().type.AsString();
-                    return VehicleFramework.Admin.ExternalVehicleConfig<float>.GetModVehicleConfig(mvName).GetValue(Configuration.amountOptionName);
-                }
-                else if (Vehicle is SeaMoth)
-                {
-                    return VehicleFramework.Admin.ExternalVehicleConfig<float>.GetSeamothConfig().GetValue(Configuration.amountOptionName);
-                }
-                else if (Vehicle is Exosuit)
-                {
-                    return VehicleFramework.Admin.ExternalVehicleConfig<float>.GetPrawnConfig().GetValue(Configuration.amountOptionName);
-                }
-                throw new System.Exception("Self Repair module added to an unknown Vehicle!");
+                string mvName = Vehicle.GetComponent<TechTag>().type.AsString();
+                return VehicleFramework.Admin.ExternalVehicleConfig<float>.GetModVehicleConfig(mvName).GetValue(Configuration.amountOptionName);
             }
-        }
-        private float RepairEnergyCost
-        {
-            get
+            else if (Vehicle is SeaMoth)
             {
-                if (Vehicle is VehicleFramework.ModVehicle)
-                {
-                    string mvName = Vehicle.GetComponent<TechTag>().type.AsString();
-                    return VehicleFramework.Admin.ExternalVehicleConfig<float>.GetModVehicleConfig(mvName).GetValue(Configuration.costOptionName);
-                }
-                else if (Vehicle is SeaMoth)
-                {
-                    return VehicleFramework.Admin.ExternalVehicleConfig<float>.GetSeamothConfig().GetValue(Configuration.costOptionName);
-                }
-                else if (Vehicle is Exosuit)
-                {
-                    return VehicleFramework.Admin.ExternalVehicleConfig<float>.GetPrawnConfig().GetValue(Configuration.costOptionName);
-                }
-                throw new System.Exception("Self Repair module added to an unknown Vehicle!");
+                return VehicleFramework.Admin.ExternalVehicleConfig<float>.GetSeamothConfig().GetValue(Configuration.amountOptionName);
             }
+            else if (Vehicle is Exosuit)
+            {
+                return VehicleFramework.Admin.ExternalVehicleConfig<float>.GetPrawnConfig().GetValue(Configuration.amountOptionName);
+            }
+            throw new System.Exception("Self Repair module added to an unknown Vehicle!");
         }
-        private void Awake()
+        internal override float GetRepairEnergyCost()
         {
+            if (Vehicle is VehicleFramework.ModVehicle)
+            {
+                string mvName = Vehicle.GetComponent<TechTag>().type.AsString();
+                return VehicleFramework.Admin.ExternalVehicleConfig<float>.GetModVehicleConfig(mvName).GetValue(Configuration.costOptionName);
+            }
+            else if (Vehicle is SeaMoth)
+            {
+                return VehicleFramework.Admin.ExternalVehicleConfig<float>.GetSeamothConfig().GetValue(Configuration.costOptionName);
+            }
+            else if (Vehicle is Exosuit)
+            {
+                return VehicleFramework.Admin.ExternalVehicleConfig<float>.GetPrawnConfig().GetValue(Configuration.costOptionName);
+            }
+            throw new System.Exception("Self Repair module added to an unknown Vehicle!");
+        }
+        internal override void Awake()
+        {
+            base.Awake();
             Vehicle = gameObject.GetComponent<Vehicle>();
             if (Vehicle == null)
             {
                 Component.DestroyImmediate(this);
             }
         }
-        private void Update()
-        {
-            if (IsReady())
-            {
-                ActivateRepair();
-            }
-        }
-        private bool IsReady()
+        internal override bool IsReady()
         {
             bool isWounded = Vehicle.liveMixin.GetHealthFraction() < 1;
-            bool hasPower = Vehicle.GetComponent<EnergyInterface>().hasCharge;
+            bool hasPower = Vehicle.GetComponent<EnergyInterface>().hasCharge || !GameModeUtils.RequiresPower();
             bool isEnabled = true;
             if(Vehicle is VehicleFramework.ModVehicle mv)
             {
@@ -71,34 +59,17 @@ namespace SelfRepairModule
             }
             return isWounded && hasPower && isEnabled;
         }
-        private float ConvertPowerToRepair(float power)
+        internal override void SpendEnergy(float energyCost)
         {
-            return Mathf.Min(RepairAmount, RepairAmount * (power / RepairEnergyCost));
+            Vehicle.GetComponent<EnergyInterface>().ConsumeEnergy(energyCost);
         }
-        private float ConvertRepairToPower(float repairValue)
+        internal override void DoRepair(float repairAmount)
         {
-            return Mathf.Min(RepairEnergyCost, RepairEnergyCost * (repairValue / RepairAmount));
+            Vehicle.liveMixin.AddHealth(repairAmount);
         }
-        private void ActivateRepair()
+        internal override float GetAffordableRepair(float potentialRepair)
         {
-            float potentialRepair = GetPotentialRepair() * Time.deltaTime;
-            float intendedRepair = GetAffordableRepair(potentialRepair);
-            float realizedRepair = Vehicle.liveMixin.AddHealth(intendedRepair);
-            SpendEnergy(realizedRepair);
-        }
-        private void SpendEnergy(float realizedRepair)
-        {
-            float realizedCost = ConvertRepairToPower(realizedRepair);
-            Vehicle.GetComponent<EnergyInterface>().ConsumeEnergy(realizedCost);
-        }
-        private float GetPotentialRepair()
-        {
-            float missingHealth = Vehicle.liveMixin.maxHealth - Vehicle.liveMixin.health;
-            return Mathf.Min(missingHealth, RepairAmount);
-        }
-        private float GetAffordableRepair(float potentialRepair)
-        {
-            Vehicle.GetEnergyValues(out float charge, out float capacity);
+            Vehicle.GetEnergyValues(out float charge, out float _);
             float repairBudget = ConvertPowerToRepair(charge);
             return Mathf.Min(repairBudget, potentialRepair);
         }
