@@ -18,12 +18,12 @@ namespace RollControl.Patches
         [HarmonyPatch(nameof(Builder.Begin))]
         public static bool BeginPrefix()
         {
-            if (Player.main.GetComponent<ScubaRollController>().IsActuallyScubaRolling)
+            if (Player.main.gameObject.EnsureComponent<ScubaRollController>().IsActuallyScubaRolling)
             {
                 state = BuilderToolState.blueprintBeforeRoll;
-                Player.main.GetComponent<ScubaRollController>().isRollEnabled = false;
-                Player.main.GetComponent<ScubaRollController>().ResetForEndRoll();
-                Player.main.GetComponent<ScubaRollController>().SetupEndingScubaRollOnceAtExit();
+                Player.main.gameObject.EnsureComponent<ScubaRollController>().isRollEnabled = false;
+                Player.main.gameObject.EnsureComponent<ScubaRollController>().ResetForEndRoll();
+                Player.main.gameObject.EnsureComponent<ScubaRollController>().SetupEndingScubaRollOnceAtExit();
             }
             else
             {

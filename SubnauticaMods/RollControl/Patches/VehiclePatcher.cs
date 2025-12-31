@@ -25,7 +25,7 @@ namespace RollControl
         public static bool EnterVehiclePrefix()
         {
             // ensure we enter vehicles correctly
-            Player.main.GetComponent<ScubaRollController>().GetReadyToStopRolling();
+            Player.main.gameObject.EnsureComponent<ScubaRollController>().GetReadyToStopRolling();
             return true;
         }
 

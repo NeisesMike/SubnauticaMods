@@ -8,8 +8,8 @@ namespace RollControl.Components
     {
         private GameObject playerHUD = null;
         private GameObject subHUD = null;
-        private ScubaRollController ScubaCon => Player.main.GetComponent<ScubaRollController>();
-        private VehicleRollController VehicleCon => Player.main.GetVehicle()?.GetComponent<VehicleRollController>();
+        private ScubaRollController ScubaCon => Player.main.gameObject.EnsureComponent<ScubaRollController>();
+        private VehicleRollController VehicleCon => Player.main.GetVehicle()?.gameObject.EnsureComponent<VehicleRollController>();
 
         public void Start()
         {
@@ -31,7 +31,7 @@ namespace RollControl.Components
         {
             if(ScubaCon != null && playerHUD != null)
             {
-                playerHUD.SetActive(Player.main.GetComponent<ScubaRollController>().IsActuallyScubaRolling);
+                playerHUD.SetActive(Player.main.gameObject.EnsureComponent<ScubaRollController>().IsActuallyScubaRolling);
             }
         }
         private void HandleVehicle()

@@ -11,8 +11,8 @@ namespace RollControl
         public static void AwakePostfix(Player __instance)
         {
             __instance.gameObject.EnsureComponent<ScubaRollController>();
-            __instance.GetComponent<ScubaRollController>().player = __instance;
-            __instance.GetComponent<ScubaRollController>().isRollEnabled = MainPatcher.RCConfig.IsScubaRollDefaultEnabled;
+            __instance.gameObject.EnsureComponent<ScubaRollController>().player = __instance;
+            __instance.gameObject.EnsureComponent<ScubaRollController>().isRollEnabled = MainPatcher.RCConfig.IsScubaRollDefaultEnabled;
             if(MainPatcher.RCConfig.IsScubaRollDefaultEnabled)
             {
                 __instance.StartCoroutine(DetermineWhetherWeStartBySwimming());
@@ -24,7 +24,7 @@ namespace RollControl
         [HarmonyPatch(nameof(Player.UpdateRotation))]
         public static bool Prefix(Player __instance)
         {
-            if (__instance.GetComponent<ScubaRollController>().IsActuallyScubaRolling)
+            if (__instance.gameObject.EnsureComponent<ScubaRollController>().IsActuallyScubaRolling)
             {
                 return false;
             }
@@ -43,9 +43,9 @@ namespace RollControl
             {
                 yield return null;
             }
-            if (Player.main.GetComponent<ScubaRollController>().AreWeSwimming)
+            if (Player.main.gameObject.EnsureComponent<ScubaRollController>().AreWeSwimming)
             {
-                Player.main.GetComponent<ScubaRollController>().ResetForStartRoll(null);
+                Player.main.gameObject.EnsureComponent<ScubaRollController>().ResetForStartRoll(null);
             }
         }
     }

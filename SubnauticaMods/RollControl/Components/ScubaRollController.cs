@@ -375,7 +375,7 @@ namespace RollControl
         }
         public static void MaybeSetLocalEuler(Transform camTrans, Vector3 input) // must be static -> used in transpiler
         {
-            ScubaRollController thisSRC = Player.main.GetComponent<ScubaRollController>();
+            ScubaRollController thisSRC = Player.main.gameObject.EnsureComponent<ScubaRollController>();
             if(thisSRC.swimstate == SwimState.RunFall || !thisSRC.isRollEnabled || Builder.isPlacing)
             {
                 camTrans.localEulerAngles = input;
