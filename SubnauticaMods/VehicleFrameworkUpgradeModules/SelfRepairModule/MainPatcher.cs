@@ -1,6 +1,6 @@
 ﻿namespace SelfRepairModule
 {
-    [BepInEx.BepInPlugin(pluginGUID, "SelfRepairModule", "1.0.0")]
+    [BepInEx.BepInPlugin(pluginGUID, "SelfRepairModule", "1.1.0")]
     [BepInEx.BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID)]
     [BepInEx.BepInDependency(VehicleFramework.PluginInfo.PLUGIN_GUID, "2.0.5")]
     public partial class MainPatcher : BepInEx.BaseUnityPlugin
