@@ -21,7 +21,7 @@ namespace RollControl
         }
     }
 
-    [BepInPlugin("com.mikjaw.subnautica.rollcontrol.mod", "RollControl", "5.4.1")]
+    [BepInPlugin("com.mikjaw.subnautica.rollcontrol.mod", "RollControl", "5.4.2")]
     [BepInDependency("com.snmodding.nautilus")]
     public partial class MainPatcher : BaseUnityPlugin
     {
@@ -58,47 +58,22 @@ namespace RollControl
             }
         }
 
-
-        internal GameInput.Button ToggleScubaRollKey = EnumHandler.AddEntry<GameInput.Button>("Toggle Scuba Roll")
+        internal GameInput.Button ToggleRollKey = EnumHandler.AddEntry<GameInput.Button>("Toggle Roll")
             .CreateInput()
             .SetBindable()
             .WithKeyboardBinding("<Keyboard>/m")
-            .AvoidConflicts(GameInput.Device.Keyboard)
-            .WithCategory("Roll Control (Scuba)");
+            .WithCategory("Roll Control");
 
-        internal GameInput.Button ScubaRollPortKey = EnumHandler.AddEntry<GameInput.Button>("Scuba Roll Left")
+        internal GameInput.Button RollPortKey = EnumHandler.AddEntry<GameInput.Button>("Roll Left")
             .CreateInput()
             .SetBindable()
             .WithKeyboardBinding("<Keyboard>/z")
-            .AvoidConflicts(GameInput.Device.Keyboard)
-            .WithCategory("Roll Control (Scuba)");
+            .WithCategory("Roll Control");
 
-        internal GameInput.Button ScubaRollStarboardKey = EnumHandler.AddEntry<GameInput.Button>("Scuba Roll Right")
+        internal GameInput.Button RollStarboardKey = EnumHandler.AddEntry<GameInput.Button>("Roll Right")
             .CreateInput()
             .SetBindable()
             .WithKeyboardBinding("<Keyboard>/c")
-            .AvoidConflicts(GameInput.Device.Keyboard)
-            .WithCategory("Roll Control (Scuba)");
-
-        internal GameInput.Button ToggleVehicleRollKey = EnumHandler.AddEntry<GameInput.Button>("Toggle Vehicle Roll")
-            .CreateInput()
-            .SetBindable()
-            .WithKeyboardBinding("<Keyboard>/m")
-            .AvoidConflicts(GameInput.Device.Keyboard)
-            .WithCategory("Roll Control (Vehicle)");
-
-        internal GameInput.Button VehicleRollPortKey = EnumHandler.AddEntry<GameInput.Button>("Vehicle Roll Left")
-            .CreateInput()
-            .SetBindable()
-            .WithKeyboardBinding("<Keyboard>/z")
-            .AvoidConflicts(GameInput.Device.Keyboard)
-            .WithCategory("Roll Control (Vehicle)");
-
-        internal GameInput.Button VehicleRollStarboardKey = EnumHandler.AddEntry<GameInput.Button>("Vehicle Roll Right")
-            .CreateInput()
-            .SetBindable()
-            .WithKeyboardBinding("<Keyboard>/c")
-            .AvoidConflicts(GameInput.Device.Keyboard)
-            .WithCategory("Roll Control (Vehicle)");
+            .WithCategory("Roll Control");
     }
 }

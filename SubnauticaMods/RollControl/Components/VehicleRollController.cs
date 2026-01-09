@@ -64,7 +64,7 @@ namespace RollControl
 
         public void Update()
         {
-            if (GameInput.GetButtonDown(MainPatcher.Instance.ToggleVehicleRollKey) &&
+            if (GameInput.GetButtonDown(MainPatcher.Instance.ToggleRollKey) &&
                 IsPlayerInThisVehicle &&
                 AvatarInputHandler.main.IsEnabled() &&
                 (myVehicle as Exosuit) == null
@@ -86,11 +86,11 @@ namespace RollControl
 
         public void SubmarineRoll()
         {
-            if (GameInput.GetButtonHeld(MainPatcher.Instance.VehicleRollPortKey))
+            if (GameInput.GetButtonHeld(MainPatcher.Instance.RollPortKey))
             {
                 myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)MainPatcher.RCConfig.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
             }
-            if (GameInput.GetButtonHeld(MainPatcher.Instance.VehicleRollStarboardKey))
+            if (GameInput.GetButtonHeld(MainPatcher.Instance.RollStarboardKey))
             {
                 myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)-MainPatcher.RCConfig.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
             }
