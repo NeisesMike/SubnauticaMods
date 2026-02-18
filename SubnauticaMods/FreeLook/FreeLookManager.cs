@@ -14,9 +14,9 @@ namespace FreeLook
         private bool IsFreelyPiloting => Vehicle != null && !Vehicle.docked && Vehicle.GetPilotingMode();
         private float Deadzone => ((float)FreeLookPatcher.config.deadzone) / 100f;
         private bool IsTriggerHeld => (Input.GetAxisRaw("ControllerAxis3") > Deadzone) || (Input.GetAxisRaw("ControllerAxis3") < -Deadzone);
-        private bool IsControlHeld => Input.GetKey(FreeLookPatcher.config.FreeLookKey) || IsTriggerHeld;
-        private bool IsControlDown => Input.GetKeyDown(FreeLookPatcher.config.FreeLookKey) || isTriggerNewlyDown;
-        private bool IsControlUp => Input.GetKeyUp(FreeLookPatcher.config.FreeLookKey) || isTriggerNewlyUp;
+        private bool IsControlHeld => GameInput.GetButtonHeld(FreeLookPatcher.Instance.FreeLookKey) || IsTriggerHeld;
+        private bool IsControlDown => GameInput.GetButtonDown(FreeLookPatcher.Instance.FreeLookKey) || isTriggerNewlyDown;
+        private bool IsControlUp => GameInput.GetButtonUp(FreeLookPatcher.Instance.FreeLookKey) || isTriggerNewlyUp;
 
         // these are used as ref parameters in a sigmoidal lerp called smooth-damp-angle
         private float xVelocity = 0.0f;
@@ -145,7 +145,8 @@ namespace FreeLook
             {
                 isNewlyInVehicle = false;
                 BasicText message = new BasicText(500, 0);
-                message.ShowMessage("Hold " + FreeLookPatcher.config.FreeLookKey.ToString() + " to Free Look.", 5);
+                string FreeLookButton = HandReticle.main.GetText("", false, FreeLookPatcher.Instance.FreeLookKey);
+                message.ShowMessage($"Hold {FreeLookButton} to Free Look.", 5);
             }
 
             TryFreeLooking();

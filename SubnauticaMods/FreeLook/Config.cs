@@ -10,9 +10,6 @@ namespace FreeLook
         [Toggle("Enable Hinting")]
         public bool isHintingEnabled = true;
 
-        [Keybind("FreeLook Key")]
-        public KeyCode FreeLookKey = KeyCode.LeftAlt;
-
         [Toggle("Toggle FreeLook", Tooltip = "Enable this to have FreeLook toggle instead of requiring you to hold the button to FreeLook.")]
         public bool isToggle = false;
 

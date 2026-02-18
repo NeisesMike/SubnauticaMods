@@ -10,6 +10,12 @@ namespace FreeLook
     public class FreeLookPatcher : BaseUnityPlugin
     {
         internal static MyConfig config { get; private set; }
+        internal static FreeLookPatcher Instance { get; private set; } = null;
+        private void Awake()
+        {
+            SetupInstance();
+        }
+
         public void Start()
         {
             config = OptionsPanelHandler.RegisterModOptions<MyConfig>();
@@ -30,6 +36,27 @@ namespace FreeLook
         {
             __result = true;
             return false;
+        }
+
+        internal GameInput.Button FreeLookKey = EnumHandler.AddEntry<GameInput.Button>("Engage FreeLook")
+            .CreateInput()
+            .SetBindable()
+            .WithKeyboardBinding("<Keyboard>/leftalt")
+            .AvoidConflicts(GameInput.Device.Keyboard)
+            .WithCategory("Free Look");
+
+        private void SetupInstance()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+                return;
+            }
+            if (Instance != this)
+            {
+                UnityEngine.Object.Destroy(this);
+                return;
+            }
         }
     }
 }
