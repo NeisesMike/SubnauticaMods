@@ -396,3 +396,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+SubnauticaMods/RollControl/RollControl.csproj

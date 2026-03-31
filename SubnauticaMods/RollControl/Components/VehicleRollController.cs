@@ -52,9 +52,8 @@ namespace RollControl
         {
             get
             {
-                bool isUnderwater = myVehicle.transform.position.y < Ocean.GetOceanLevel() && myVehicle.transform.position.y < myVehicle.worldForces.waterDepth && !myVehicle.precursorOutOfWater;
                 return isRollEnabled &&
-                isUnderwater &&
+                !MyVehicle.worldForces.IsAboveWater() &&
                 IsPlayerInThisVehicle &&
                 Player.main.mode == Player.Mode.LockedPiloting &&
                 AvatarInputHandler.main.IsEnabled() &&
