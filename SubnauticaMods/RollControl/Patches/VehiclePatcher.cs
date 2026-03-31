@@ -16,8 +16,7 @@ namespace RollControl
         public static void StartPostfix(Vehicle __instance)
         {
             var src = __instance.gameObject.EnsureComponent<VehicleRollController>();
-            src.myVehicle = __instance;
-            src.myVehicle.stabilizeRoll = !MainPatcher.RCConfig.IsVehicleRollDefaultEnabled;
+            src.MyVehicle.stabilizeRoll = !MainPatcher.RCConfig.IsVehicleRollDefaultEnabled;
         }
 
         [HarmonyPrefix]

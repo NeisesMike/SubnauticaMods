@@ -5,7 +5,7 @@ namespace RollControl
 {
     public partial class VehicleRollController : MonoBehaviour
     {
-        public Vehicle myVehicle;
+        public Vehicle MyVehicle => gameObject.GetComponent<Vehicle>() ?? throw new Exception("VehicleRollController was added to a non-vehicle component! Dying!");
         private bool isRollEnabled = MainPatcher.RCConfig.IsVehicleRollDefaultEnabled;
 
         public bool IsPlayerInThisVehicle
@@ -38,12 +38,12 @@ namespace RollControl
                             mountedDrone = fieldInfo.GetValue(null);
                         }
                     }
-                    return Player.main.currentMountedVehicle == myVehicle
-                        || (mountedDrone != null && mountedDrone == (object)myVehicle);
+                    return Player.main.currentMountedVehicle == MyVehicle
+                        || (mountedDrone != null && mountedDrone == (object)MyVehicle);
                 }
                 else
                 {
-                    return Player.main.currentMountedVehicle == myVehicle;
+                    return Player.main.currentMountedVehicle == MyVehicle;
                 }
             }
         }
@@ -58,7 +58,7 @@ namespace RollControl
                 IsPlayerInThisVehicle &&
                 Player.main.mode == Player.Mode.LockedPiloting &&
                 AvatarInputHandler.main.IsEnabled() &&
-                myVehicle as Exosuit == null;
+                MyVehicle as Exosuit == null;
             }
         }
 
@@ -67,11 +67,11 @@ namespace RollControl
             if (GameInput.GetButtonDown(MainPatcher.Instance.ToggleRollKey) &&
                 IsPlayerInThisVehicle &&
                 AvatarInputHandler.main.IsEnabled() &&
-                (myVehicle as Exosuit) == null
+                (MyVehicle as Exosuit) == null
                 )
             {
                 isRollEnabled = !isRollEnabled;
-                myVehicle.stabilizeRoll = !isRollEnabled;
+                MyVehicle.stabilizeRoll = !isRollEnabled;
             }
         }
 
@@ -88,11 +88,11 @@ namespace RollControl
         {
             if (GameInput.GetButtonHeld(MainPatcher.Instance.RollPortKey))
             {
-                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)MainPatcher.RCConfig.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
+                MyVehicle.useRigidbody.AddTorque(MyVehicle.transform.forward * (float)MainPatcher.RCConfig.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
             }
             if (GameInput.GetButtonHeld(MainPatcher.Instance.RollStarboardKey))
             {
-                myVehicle.useRigidbody.AddTorque(myVehicle.transform.forward * (float)-MainPatcher.RCConfig.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
+                MyVehicle.useRigidbody.AddTorque(MyVehicle.transform.forward * (float)-MainPatcher.RCConfig.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
             }
         }
     }
