@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using Nautilus.Handlers;
 
 namespace VoidDepth
 {
@@ -10,6 +11,7 @@ namespace VoidDepth
         internal static Config MyConfig { get; private set; }
         public void Start()
         {
+            LanguageHandler.RegisterLocalizationFolder();
             MyConfig = Nautilus.Handlers.OptionsPanelHandler.RegisterModOptions<Config>();
             VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new VoidDepth());
             var harmony = new HarmonyLib.Harmony(pluginGUID);

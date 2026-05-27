@@ -1,0 +1,32 @@
+﻿{
+    "SpeedModuleVF1": "Speed Module MK1",
+    "Tooltip_SpeedModuleVF1": "Slightly increases vehicle acceleration and top speed at a notable cost of power.",
+    "SpeedModuleVF2": "Speed Module MK2",
+    "Tooltip_SpeedModuleVF2": "Significantly increases vehicle acceleration and top speed at a great cost of power.",
+    "SpeedModuleVF3": "Speed Module MK3",
+    "Tooltip_SpeedModuleVF3": "Greatly increases vehicle acceleration and top speed at a dramatic cost of power.",
+
+    "SpeedModuleVF1Seamoth": "Seamoth Speed Module MK1",
+    "Tooltip_SpeedModuleVF1Seamoth": "An upgrade for the Seamoth. Slightly increases vehicle acceleration and top speed at a notable cost of power.",
+    "SpeedModuleVF2Seamoth": "Seamoth Speed Module MK2",
+    "Tooltip_SpeedModuleVF2Seamoth": "An upgrade for the Seamoth. Significantly increases vehicle acceleration and top speed at a great cost of power.",
+    "SpeedModuleVF3Seamoth": "Seamoth Speed Module MK3",
+    "Tooltip_SpeedModuleVF3Seamoth": "An upgrade for the Seamoth. Greatly increases vehicle acceleration and top speed at a dramatic cost of power.",
+
+    "SpeedModuleVF1Exosuit": "Exosuit Speed Module MK1",
+    "Tooltip_SpeedModuleVF1Exosuit": "An upgrade for the Exosuit. Slightly increases vehicle acceleration and top speed at a notable cost of power.",
+    "SpeedModuleVF2Exosuit": "Exosuit Speed Module MK2",
+    "Tooltip_SpeedModuleVF2Exosuit": "An upgrade for the Exosuit. Significantly increases vehicle acceleration and top speed at a great cost of power.",
+    "SpeedModuleVF3Exosuit": "Exosuit Speed Module MK3",
+    "Tooltip_SpeedModuleVF3Exosuit": "An upgrade for the Exosuit. Greatly increases vehicle acceleration and top speed at a dramatic cost of power.",
+
+    "SpeedModuleVF1Cyclops": "Cyclops Speed Module MK1",
+    "Tooltip_SpeedModuleVF1Cyclops": "An upgrade for the Cyclops. Slightly increases vehicle acceleration and top speed at a notable cost of power.",
+    "SpeedModuleVF2Cyclops": "Cyclops Speed Module MK2",
+    "Tooltip_SpeedModuleVF2Cyclops": "An upgrade for the Cyclops. Significantly increases vehicle acceleration and top speed at a great cost of power.",
+    "SpeedModuleVF3Cyclops": "Cyclops Speed Module MK3",
+    "Tooltip_SpeedModuleVF3Cyclops": "An upgrade for the Cyclops. Greatly increases vehicle acceleration and top speed at a dramatic cost of power.",
+
+    "Node_VFSpeedModules": "Speed Modules"
+}
+

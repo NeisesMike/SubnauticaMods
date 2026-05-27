@@ -12,6 +12,7 @@ namespace SolarChargingModule
         internal static Config MyConfig { get; private set; }
         public void Start()
         {
+            LanguageHandler.RegisterLocalizationFolder();
             MyConfig = OptionsPanelHandler.RegisterModOptions<Config>();
             VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new SolarChargingModule());
         }

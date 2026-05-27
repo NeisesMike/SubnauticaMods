@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using Nautilus.Handlers;
 
 namespace IonDefenseCapacitor
 {
@@ -9,6 +10,7 @@ namespace IonDefenseCapacitor
     {
         public void Start()
         {
+            LanguageHandler.RegisterLocalizationFolder();
             VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new IonDefenseCapacitor());
         }
     }

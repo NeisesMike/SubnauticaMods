@@ -1,0 +1,11 @@
+﻿{
+    "MagnetBootsModule": "Magnet Boots Module",
+    "Tooltip_MagnetBootsModule": "Gain the ability to magnetically attach the upgraded vehicle to vehicles and bases on its ventral side (below it).",
+
+    "MagnetBootsModuleSeamoth": "Seamoth Magnet Boots Module",
+    "Tooltip_MagnetBootsModuleSeamoth": "An upgrade for the Seamoth. Gain the ability to magnetically attach the upgraded vehicle to vehicles and bases on its ventral side (below it).",
+
+    "MagnetBootsModuleExosuit": "Exosuit Magnet Boots Module",
+    "Tooltip_MagnetBootsModuleExosuit": "An upgrade for the Exosuit. Gain the ability to magnetically attach the upgraded vehicle to vehicles and bases on its ventral side (below it)."
+}
+

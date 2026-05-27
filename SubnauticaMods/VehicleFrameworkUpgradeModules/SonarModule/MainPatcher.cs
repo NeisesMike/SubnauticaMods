@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using Nautilus.Handlers;
 
 namespace SonarModule
 {
@@ -12,6 +13,7 @@ namespace SonarModule
         internal static Config MyConfig { get; private set; }
         public void Start()
         {
+            LanguageHandler.RegisterLocalizationFolder();
             MyConfig = Nautilus.Handlers.OptionsPanelHandler.RegisterModOptions<Config>();
             VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new SonarModule());
             VehicleFramework.Admin.UpgradeCompat compat = new VehicleFramework.Admin.UpgradeCompat

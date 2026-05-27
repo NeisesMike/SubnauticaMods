@@ -13,6 +13,8 @@ namespace VFSpeed
         internal static SpeedOptions config { get; private set; }
         public void Start()
         {
+            LanguageHandler.RegisterLocalizationFolder();
+
             config = OptionsPanelHandler.RegisterModOptions<SpeedOptions>();
             var tt1 = VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new SpeedModuleMk1());
 

@@ -1,4 +1,6 @@
-﻿namespace SelfRepairModule
+﻿using Nautilus.Handlers;
+
+namespace SelfRepairModule
 {
     [BepInEx.BepInPlugin(pluginGUID, "SelfRepairModule", "1.1.0")]
     [BepInEx.BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID)]
@@ -10,6 +12,7 @@
         internal static NautilusConfig MyConfig { get; private set; }
         public void Start()
         {
+            LanguageHandler.RegisterLocalizationFolder();
             MyConfig = Nautilus.Handlers.OptionsPanelHandler.RegisterModOptions<NautilusConfig>();
             VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new SelfRepairModuleUpgrade());
             Configuration.RegisterOptions();

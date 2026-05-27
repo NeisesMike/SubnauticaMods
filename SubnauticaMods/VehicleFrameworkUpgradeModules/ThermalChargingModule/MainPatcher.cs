@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using Nautilus.Handlers;
 
 namespace ThermalChargingModule
 {
@@ -9,6 +10,7 @@ namespace ThermalChargingModule
     {
         public void Start()
         {
+            LanguageHandler.RegisterLocalizationFolder();
             VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new ThermalChargingModule());
         }
     }

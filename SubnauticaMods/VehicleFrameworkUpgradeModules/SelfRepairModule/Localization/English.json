@@ -1,0 +1,14 @@
+﻿{
+    "SelfRepairModule": "Self-Repair Module",
+    "Tooltip_SelfRepairModule": "This upgrade allows a vehicle to consume power in order to repair itself.",
+
+    "SelfRepairModuleSeamoth": "Seamoth Self-Repair Module",
+    "Tooltip_SelfRepairModuleSeamoth": "An upgrade for the Seamoth. This upgrade allows a vehicle to consume power in order to repair itself.",
+
+    "SelfRepairModuleExosuit": "Exosuit Self-Repair Module",
+    "Tooltip_SelfRepairModuleExosuit": "An upgrade for the Exosuit. This upgrade allows a vehicle to consume power in order to repair itself.",
+
+    "SelfRepairModuleCyclops": "Cyclops Self-Repair Module",
+    "Tooltip_SelfRepairModuleCyclops": "An upgrade for the Cyclops. This upgrade allows a vehicle to consume power in order to repair itself."
+}
+

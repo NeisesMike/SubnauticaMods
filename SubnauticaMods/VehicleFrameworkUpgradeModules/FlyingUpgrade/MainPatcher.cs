@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using Nautilus.Handlers;
 
 namespace FlightModule
 {
@@ -11,6 +12,7 @@ namespace FlightModule
         private const string PLUGIN_VERSION = "2.0";
         public void Start()
         {
+            LanguageHandler.RegisterLocalizationFolder();
             VehicleFramework.Admin.UpgradeCompat compat = new VehicleFramework.Admin.UpgradeCompat
             {
                 skipCyclops = false,

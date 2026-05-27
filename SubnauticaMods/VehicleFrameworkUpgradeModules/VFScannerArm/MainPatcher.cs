@@ -1,7 +1,8 @@
-﻿using BepInEx;
-using System.Collections;
-using UnityEngine;
+﻿using System.Collections;
+using BepInEx;
 using HarmonyLib;
+using Nautilus.Handlers;
+using UnityEngine;
 using VehicleFramework.Admin;
 
 namespace VFScannerArm
@@ -14,6 +15,7 @@ namespace VFScannerArm
         public static ScannerTool originalScannerTool = null;
         public void Start()
         {
+            LanguageHandler.RegisterLocalizationFolder();
             UWE.CoroutineHost.StartCoroutine(DoRegistrations());
             var harmony = new Harmony("com.mikjaw.subnautica.vfscannerarm.mod");
             harmony.PatchAll();

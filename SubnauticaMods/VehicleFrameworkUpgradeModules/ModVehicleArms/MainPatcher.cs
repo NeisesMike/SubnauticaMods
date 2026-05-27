@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using Nautilus.Handlers;
 
 namespace VFDrillArm
 {
@@ -11,6 +12,7 @@ namespace VFDrillArm
         internal static Config MyConfig { get; private set; }
         public void Start()
         {
+            LanguageHandler.RegisterLocalizationFolder();
             MyConfig = Nautilus.Handlers.OptionsPanelHandler.RegisterModOptions<Config>();
             VehicleFramework.Admin.UpgradeCompat compat = new VehicleFramework.Admin.UpgradeCompat
             {
