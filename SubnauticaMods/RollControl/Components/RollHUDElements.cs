@@ -9,7 +9,8 @@ namespace RollControl.Components
         private GameObject playerHUD = null;
         private GameObject subHUD = null;
         private ScubaRollController ScubaCon => Player.main.gameObject.EnsureComponent<ScubaRollController>();
-        private VehicleRollController VehicleCon => Player.main.GetVehicle()?.gameObject.EnsureComponent<VehicleRollController>();
+        private VehicleRollController VehicleCon => Player.main.GetVehicle()?.gameObject.EnsureComponent<VehicleRollController>()
+            ?? Player.main.GetComponentInParent<SeaTruckSegment>()?.gameObject.EnsureComponent<VehicleRollController>();
 
         public void Start()
         {

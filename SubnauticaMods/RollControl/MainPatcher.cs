@@ -25,13 +25,8 @@ namespace RollControl
     [BepInDependency("com.snmodding.nautilus")]
     public partial class MainPatcher : BaseUnityPlugin
     {
-        internal static MainPatcher Instance { get; private set; } = null;
         internal static MyConfig RCConfig { get; private set; }
         internal static bool ThereIsVehicleFramework = false;
-        internal void Awake()
-        {
-            SetupInstance();
-        }
         internal void Start()
         {
             RollControl.Logger.MyLog = base.Logger;
@@ -44,36 +39,5 @@ namespace RollControl
                 ThereIsVehicleFramework = true;
             }
         }
-        private void SetupInstance()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-                return;
-            }
-            if (Instance != this)
-            {
-                UnityEngine.Object.Destroy(this);
-                return;
-            }
-        }
-
-        internal GameInput.Button ToggleRollKey = EnumHandler.AddEntry<GameInput.Button>("Toggle Roll")
-            .CreateInput()
-            .SetBindable()
-            .WithKeyboardBinding("<Keyboard>/m")
-            .WithCategory("Roll Control");
-
-        internal GameInput.Button RollPortKey = EnumHandler.AddEntry<GameInput.Button>("Roll Left")
-            .CreateInput()
-            .SetBindable()
-            .WithKeyboardBinding("<Keyboard>/z")
-            .WithCategory("Roll Control");
-
-        internal GameInput.Button RollStarboardKey = EnumHandler.AddEntry<GameInput.Button>("Roll Right")
-            .CreateInput()
-            .SetBindable()
-            .WithKeyboardBinding("<Keyboard>/c")
-            .WithCategory("Roll Control");
     }
 }

@@ -168,7 +168,7 @@ namespace RollControl
                     // remind the user that scuba roll is enabled, show them the toggle key
                     if (MainPatcher.RCConfig.IsScubaHinting)
                     {
-                        Logger.Output($"Scuba Roll is ON. Toggle with {MainPatcher.Instance.ToggleRollKey}");
+                        Logger.Output("Scuba Roll is ON. Toggle with " + MainPatcher.RCConfig.ToggleRollKey);
                     }
                     SetupForScubaRollOnceAtStart();
                 }
@@ -217,7 +217,7 @@ namespace RollControl
         {
             if (IsAbleToToggleScubaRolling)
             {
-                if(GameInput.GetButtonDown(MainPatcher.Instance.ToggleRollKey))
+                if (Input.GetKeyDown(MainPatcher.RCConfig.ToggleRollKey))
                 {
                     if (isRollEnabled)
                     {
@@ -348,13 +348,13 @@ namespace RollControl
         }
         public void SetupScubaRoll()
         {
-            bool portUp = GameInput.GetButtonUp(MainPatcher.Instance.RollPortKey);
-            bool portHeld = GameInput.GetButtonHeld(MainPatcher.Instance.RollPortKey);
-            bool portDown = GameInput.GetButtonDown(MainPatcher.Instance.RollPortKey);
+            bool portUp = Input.GetKeyUp(MainPatcher.RCConfig.RollPortKey);
+            bool portHeld = Input.GetKey(MainPatcher.RCConfig.RollPortKey);
+            bool portDown = Input.GetKeyDown(MainPatcher.RCConfig.RollPortKey);
 
-            bool starUp = GameInput.GetButtonUp(MainPatcher.Instance.RollStarboardKey);
-            bool starHeld = GameInput.GetButtonHeld(MainPatcher.Instance.RollStarboardKey);
-            bool starDown = GameInput.GetButtonDown(MainPatcher.Instance.RollStarboardKey);
+            bool starUp = Input.GetKeyUp(MainPatcher.RCConfig.RollStarboardKey);
+            bool starHeld = Input.GetKey(MainPatcher.RCConfig.RollStarboardKey);
+            bool starDown = Input.GetKeyDown(MainPatcher.RCConfig.RollStarboardKey);
 
             if ((portDown || portHeld) && !(starDown || starHeld))
             {
