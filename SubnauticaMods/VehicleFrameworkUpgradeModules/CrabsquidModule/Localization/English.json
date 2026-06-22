@@ -1,0 +1,14 @@
+﻿{
+    "CrabsquidModule": "Crabsquid Protection Module",
+    "Tooltip_CrabsquidModule": "Equip to shrug off Crabsquid EMP at a small cost of energy.",
+
+    "CrabsquidModuleSeamoth": "Seamoth Crabsquid Protection Module",
+    "Tooltip_CrabsquidModuleSeamoth": "An upgrade for the Seamoth. Equip to shrug off Crabsquid EMP at a small cost of energy.",
+
+    "CrabsquidModuleExosuit": "Exosuit Crabsquid Protection Module",
+    "Tooltip_CrabsquidModuleExosuit": "An upgrade for the Exosuit. Equip to shrug off Crabsquid EMP at a small cost of energy.",
+
+    "CrabsquidModuleCyclops": "Cyclops Crabsquid Protection Module",
+    "Tooltip_CrabsquidModuleCyclops": "An upgrade for the Cyclops. Equip to shrug off Crabsquid EMP at a small cost of energy."
+}
+

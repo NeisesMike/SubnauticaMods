@@ -1,0 +1,14 @@
+﻿{
+    "ThermalChargingModule": "Thermal Charging Module",
+    "Tooltip_ThermalChargingModule": "Recharge your ship's batteries with thermal energy in hot locations; effectiveness increases with temperature. Stacks.",
+
+    "ThermalChargingModuleSeamoth": "Seamoth Thermal Charging Module",
+    "Tooltip_ThermalChargingModuleSeamoth": "An upgrade for the Seamoth. Recharge your ship's batteries with thermal energy in hot locations; effectiveness increases with temperature. Stacks.",
+
+    "ThermalChargingModuleExosuit": "Exosuit Thermal Charging Module",
+    "Tooltip_ThermalChargingModuleExosuit": "An upgrade for the Exosuit. Recharge your ship's batteries with thermal energy in hot locations; effectiveness increases with temperature. Stacks.",
+
+    "ThermalChargingModuleCyclops": "Cyclops Thermal Charging Module",
+    "Tooltip_ThermalChargingModuleCyclops": "An upgrade for the Cyclops. Recharge your ship's batteries with thermal energy in hot locations; effectiveness increases with temperature. Stacks."
+}
+

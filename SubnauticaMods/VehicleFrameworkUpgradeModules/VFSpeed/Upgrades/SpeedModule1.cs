@@ -18,7 +18,7 @@ namespace VFSpeed
         };
         public override UnityEngine.Sprite Icon => SpriteHelper.GetSprite("SpeedModuleIcon1.png");
         public override string TabName => Names.tabName;
-        public override string TabDisplayName => Names.tabDisplayName;
+        public override string TabDisplayName => Language.main.Get("Node_VFSpeedModules");
         public override UnityEngine.Sprite TabIcon => SpriteHelper.GetSprite("SpeedModuleIcon3.png");
         public override void OnAdded(AddActionParams param)
         {

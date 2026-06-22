@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using Nautilus.Handlers;
 
 namespace DroneRange
 {
@@ -10,6 +11,7 @@ namespace DroneRange
     {
         public void Start()
         {
+            LanguageHandler.RegisterLocalizationFolder();
             VehicleFramework.Admin.UpgradeCompat compat = new VehicleFramework.Admin.UpgradeCompat
             {
                 skipCyclops = true,

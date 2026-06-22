@@ -1,0 +1,11 @@
+﻿{
+    "IonDefenseCapacitor": "Ion Defense Capacitor",
+    "Tooltip_IonDefenseCapacitor": "Temporarily envelops the sub in an ion-charged shield, nullifying all damage for a short duration.",
+
+    "IonDefenseCapacitorSeamoth": "Seamoth Ion Defense Capacitor",
+    "Tooltip_IonDefenseCapacitorSeamoth": "An upgrade for the Seamoth. Temporarily envelops the sub in an ion-charged shield, nullifying all damage for a short duration.",
+
+    "IonDefenseCapacitorExosuit": "Exosuit Ion Defense Capacitor",
+    "Tooltip_IonDefenseCapacitorExosuit": "An upgrade for the Exosuit. Temporarily envelops the sub in an ion-charged shield, nullifying all damage for a short duration."
+}
+

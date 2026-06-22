@@ -1,0 +1,11 @@
+﻿{
+    "ImpulseSpeedBooster": "Impulse Speed Booster",
+    "Tooltip_ImpulseSpeedBooster": "Charge to unleash a swift propulsion burst, catapulting the sub forward with increased velocity.",
+
+    "ImpulseSpeedBoosterSeamoth": "Seamoth Impulse Speed Booster",
+    "Tooltip_ImpulseSpeedBoosterSeamoth": "An upgrade for the Seamoth. Charge to unleash a swift propulsion burst, catapulting the sub forward with increased velocity.",
+
+    "ImpulseSpeedBoosterExosuit": "Exosuit Impulse Speed Booster",
+    "Tooltip_ImpulseSpeedBoosterExosuit": "An upgrade for the Exosuit. Charge to unleash a swift propulsion burst, catapulting the sub forward with increased velocity."
+}
+

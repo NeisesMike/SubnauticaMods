@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using Nautilus.Handlers;
 
 namespace NanoWeaveBarrier
 {
@@ -9,6 +10,7 @@ namespace NanoWeaveBarrier
     {
         public void Start()
         {
+            LanguageHandler.RegisterLocalizationFolder();
             VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new NanoWeaveBarrier());
         }
     }

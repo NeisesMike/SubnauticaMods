@@ -1,0 +1,14 @@
+﻿{
+    "SolarChargingModule": "Solar Charging Module",
+    "Tooltip_SolarChargingModule": "Recharge your ship's batteries with solar energy during daylight; effectiveness increases with sun elevation and proximity to the surface.",
+
+    "SolarChargingModuleSeamoth": "Seamoth Solar Charging Module",
+    "Tooltip_SolarChargingModuleSeamoth": "An upgrade for the Seamoth. Recharge your ship's batteries with solar energy during daylight; effectiveness increases with sun elevation and proximity to the surface.",
+
+    "SolarChargingModuleExosuit": "Exosuit Solar Charging Module",
+    "Tooltip_SolarChargingModuleExosuit": "An upgrade for the Exosuit. Recharge your ship's batteries with solar energy during daylight; effectiveness increases with sun elevation and proximity to the surface.",
+
+    "SolarChargingModuleCyclops": "Cyclops Solar Charging Module",
+    "Tooltip_SolarChargingModuleCyclops": "An upgrade for the Cyclops. Recharge your ship's batteries with solar energy during daylight; effectiveness increases with sun elevation and proximity to the surface."
+}
+

@@ -1,0 +1,11 @@
+﻿{
+    "FlightModule": "Flight Module",
+    "Tooltip_FlightModule": "Allows the upgraded vehicle to take flight.",
+
+    "FlightModuleSeamoth": "Seamoth Flight Module",
+    "Tooltip_FlightModuleSeamoth": "An upgrade for the Seamoth. Allows the upgraded vehicle to take flight.",
+
+    "FlightModuleCyclops": "Cyclops Flight Module",
+    "Tooltip_FlightModuleCyclops": "An upgrade for the Cyclops. Allows the upgraded vehicle to take flight."
+}
+

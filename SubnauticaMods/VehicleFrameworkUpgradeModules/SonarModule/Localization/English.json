@@ -1,0 +1,14 @@
+﻿{
+    "SonarModule": "Sonar Module",
+    "Tooltip_SonarModule": "A dedicated system for detecting and displaying topographical data on the HUD.",
+
+    "SonarModuleSeamoth": "Seamoth Sonar Module",
+    "Tooltip_SonarModuleSeamoth": "An upgrade for the Seamoth. A dedicated system for detecting and displaying topographical data on the HUD.",
+
+    "SonarModuleExosuit": "Exosuit Sonar Module",
+    "Tooltip_SonarModuleExosuit": "An upgrade for the Exosuit. A dedicated system for detecting and displaying topographical data on the HUD.",
+
+    "SonarModuleCyclops": "Cyclops Sonar Module",
+    "Tooltip_SonarModuleCyclops": "An upgrade for the Cyclops. A dedicated system for detecting and displaying topographical data on the HUD."
+}
+

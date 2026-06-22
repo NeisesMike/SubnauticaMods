@@ -13,6 +13,7 @@ namespace MagnetBoots
         internal static MagnetBootsConfig MagnetConfig { get; private set; }
         public void Start()
         {
+            LanguageHandler.RegisterLocalizationFolder();
             VehicleFramework.Admin.UpgradeCompat compat = new VehicleFramework.Admin.UpgradeCompat()
             {
                 skipCyclops = true,

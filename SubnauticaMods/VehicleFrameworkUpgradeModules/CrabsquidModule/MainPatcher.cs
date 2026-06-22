@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using Nautilus.Handlers;
 
 namespace CrabsquidModule
 {
@@ -10,6 +11,7 @@ namespace CrabsquidModule
     {
         public void Start()
         {
+            LanguageHandler.RegisterLocalizationFolder();
             VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new CrabsquidModule());
             var harmony = new Harmony("com.mikjaw.subnautica.crabsquidmodule.mod");
             harmony.PatchAll();
