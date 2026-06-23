@@ -14,8 +14,29 @@ namespace SelfRepairModule
         {
             LanguageHandler.RegisterLocalizationFolder();
             MyConfig = Nautilus.Handlers.OptionsPanelHandler.RegisterModOptions<NautilusConfig>();
-            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new SelfRepairModuleUpgrade());
+            MyConfig = OptionsPanelHandler.RegisterModOptions<NautilusConfig>();
+            SelfRepairModuleUpgrade module = new SelfRepairModuleUpgrade();
+            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(module);
             Configuration.RegisterOptions();
+            if (MyConfig.vanillaFabricator)
+            {
+                CraftTreeHandler.AddCraftingNode(
+                    CraftTree.Type.SeamothUpgrades,
+                    module.TechTypes.forSeamoth,
+                    new string[] { "SeamothModules" }
+                );
+                CraftTreeHandler.AddCraftingNode(
+                    CraftTree.Type.SeamothUpgrades,
+                    module.TechTypes.forExosuit,
+                    new string[] { "ExosuitModules" }
+                );
+                CraftTreeHandler.AddTabNode(CraftTree.Type.CyclopsFabricator, "CyclopsMenu", Language.main.Get("Node_CyclopsMenu"), SpriteManager.Get(TechType.Cyclops));
+                CraftTreeHandler.AddCraftingNode(
+                    CraftTree.Type.CyclopsFabricator,
+                    module.TechTypes.forCyclops,
+                    new string[] { "CyclopsMenu" }
+                );
+            }
         }
         public void Awake()
         {

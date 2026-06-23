@@ -9,6 +9,8 @@
     "Tooltip_SonarModuleExosuit": "An upgrade for the Exosuit. A dedicated system for detecting and displaying topographical data on the HUD.",
 
     "SonarModuleCyclops": "Cyclops Sonar Module",
-    "Tooltip_SonarModuleCyclops": "An upgrade for the Cyclops. A dedicated system for detecting and displaying topographical data on the HUD."
+    "Tooltip_SonarModuleCyclops": "An upgrade for the Cyclops. A dedicated system for detecting and displaying topographical data on the HUD.",
+
+    "Node_CyclopsMenu": "More Cyclops Upgrades"
 }
 

@@ -27,6 +27,7 @@
     "SpeedModuleVF3Cyclops": "Cyclops Speed Module MK3",
     "Tooltip_SpeedModuleVF3Cyclops": "An upgrade for the Cyclops. Greatly increases vehicle acceleration and top speed at a dramatic cost of power.",
 
-    "Node_VFSpeedModules": "Speed Modules"
+    "Node_VFSpeedModules": "Speed Modules",
+    "Node_CyclopsMenu": "More Cyclops Upgrades"
 }
 

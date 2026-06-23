@@ -9,6 +9,8 @@
     "Tooltip_SelfRepairModuleExosuit": "An upgrade for the Exosuit. This upgrade allows a vehicle to consume power in order to repair itself.",
 
     "SelfRepairModuleCyclops": "Cyclops Self-Repair Module",
-    "Tooltip_SelfRepairModuleCyclops": "An upgrade for the Cyclops. This upgrade allows a vehicle to consume power in order to repair itself."
+    "Tooltip_SelfRepairModuleCyclops": "An upgrade for the Cyclops. This upgrade allows a vehicle to consume power in order to repair itself.",
+
+    "Node_CyclopsMenu": "More Cyclops Upgrades"
 }
 

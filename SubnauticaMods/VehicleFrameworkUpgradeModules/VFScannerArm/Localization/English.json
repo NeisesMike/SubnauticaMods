@@ -3,6 +3,9 @@
     "Tooltip_ScannerArmVF": "A vehicle-mounted arm version of the spectroscope scanner used to acquire technology blueprints and data on living organisms.",
 
     "ScannerArmVFExosuit": "Exosuit Scanner Arm",
-    "Tooltip_ScannerArmVFExosuit": "An arm for the Exosuit. A vehicle-mounted arm version of the spectroscope scanner used to acquire technology blueprints and data on living organisms."
+    "Tooltip_ScannerArmVFExosuit": "An arm for the Exosuit. A vehicle-mounted arm version of the spectroscope scanner used to acquire technology blueprints and data on living organisms.",
+
+    "ScannerArmFragment": "Scanner Arm",
+    "Tooltip_ScannerArmFragment": "A Scannable fragment of the Scanner Arm."
 }
 

@@ -1,4 +1,4 @@
-﻿{
+{
     "CrabsquidModule": "Crabsquid Protection Module",
     "Tooltip_CrabsquidModule": "Equip to shrug off Crabsquid EMP at a small cost of energy.",
 
@@ -9,6 +9,8 @@
     "Tooltip_CrabsquidModuleExosuit": "An upgrade for the Exosuit. Equip to shrug off Crabsquid EMP at a small cost of energy.",
 
     "CrabsquidModuleCyclops": "Cyclops Crabsquid Protection Module",
-    "Tooltip_CrabsquidModuleCyclops": "An upgrade for the Cyclops. Equip to shrug off Crabsquid EMP at a small cost of energy."
+    "Tooltip_CrabsquidModuleCyclops": "An upgrade for the Cyclops. Equip to shrug off Crabsquid EMP at a small cost of energy.",
+
+    "Node_CyclopsMenu": "More Cyclops Upgrades"
 }
 
