@@ -14,6 +14,9 @@ namespace SolarChargingModule
         public int power = 10;
         const int defaultPower = 10;
 
+        [Toggle("Can be crafted in vanilla fabricator", Tooltip = "Allow the module to be crafted in the vehicle upgrades console and the cyclops fabricator for the cyclops upgrade. Restart required.")]
+        public bool vanillaFabricator = false;
+
         public float GetRepeatRate()
         {
             return (float)repeatRate / (float)defaultRepeatRate;

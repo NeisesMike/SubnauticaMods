@@ -15,7 +15,8 @@ namespace SonarModule
         {
             LanguageHandler.RegisterLocalizationFolder();
             MyConfig = Nautilus.Handlers.OptionsPanelHandler.RegisterModOptions<Config>();
-            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new SonarModule());
+            SonarModule module = new SonarModule();
+            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(module);
             VehicleFramework.Admin.UpgradeCompat compat = new VehicleFramework.Admin.UpgradeCompat
             {
                 skipCyclops = false,
@@ -23,9 +24,29 @@ namespace SonarModule
                 skipSeamoth = true,
                 skipExosuit = true
             };
-            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new CyclopsSonarModule(), compat);
+            CyclopsSonarModule Cyclopsmodule = new CyclopsSonarModule();
+            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(Cyclopsmodule, compat);
             var harmony = new HarmonyLib.Harmony(pluginGUID);
             harmony.PatchAll();
+            if (MyConfig.vanillaFabricator)
+            {
+                CraftTreeHandler.AddCraftingNode(
+                    CraftTree.Type.SeamothUpgrades,
+                    module.TechTypes.forSeamoth,
+                    new string[] { "SeamothModules" }
+                );
+                CraftTreeHandler.AddCraftingNode(
+                    CraftTree.Type.SeamothUpgrades,
+                    module.TechTypes.forExosuit,
+                    new string[] { "ExosuitModules" }
+                );
+                CraftTreeHandler.AddTabNode(CraftTree.Type.CyclopsFabricator, "CyclopsMenu", Language.main.Get("Node_CyclopsMenu"), SpriteManager.Get(TechType.Cyclops));
+                CraftTreeHandler.AddCraftingNode(
+                    CraftTree.Type.CyclopsFabricator,
+                    Cyclopsmodule.TechTypes.forCyclops,
+                    new string[] { "CyclopsMenu" }
+                );
+            }
         }
     }
 }
