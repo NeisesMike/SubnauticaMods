@@ -9,13 +9,13 @@ namespace DroneRange
     public class DroneRangeUpgrade : ModVehicleUpgrade
     {
         public override string ClassId => "DroneRangeModule";
-        public override string DisplayName => "Drone Range Upgrade";
+        public override string DisplayName => Language.main.Get("DroneRangeModule");
         public override List<Ingredient> Recipe => new List<Ingredient>()
                 {
                     new Ingredient(TechType.AdvancedWiringKit, 1),
                     new Ingredient(TechType.ComputerChip, 1)
                 };
-        public override string Description => "Boosts the effective operating range of drones by 200 meters. Stacks.";
+        public override string Description => Language.main.Get("Tooltip_DroneRangeModule");
         public override UnityEngine.Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("DroneRangeIcon.png");
         public override void OnAdded(AddActionParams param)
         {

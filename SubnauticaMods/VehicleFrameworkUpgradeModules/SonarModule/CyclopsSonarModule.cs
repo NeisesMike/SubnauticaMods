@@ -8,8 +8,8 @@ namespace SonarModule
     {
         public const string SonarClassIDCore = "VFSonarModule";
         public override string ClassId => SonarClassIDCore;
-        public override string DisplayName => "Sonar Module";
-        public override string Description => "A dedicated system for detecting and displaying topographical data on the HUD.";
+        public override string DisplayName => Language.main.Get("SonarModule");
+        public override string Description => Language.main.Get("Tooltip_SonarModule");
         public override List<Ingredient> Recipe => new List<Ingredient>()
                 {
                     new Ingredient(TechType.ComputerChip, 1),

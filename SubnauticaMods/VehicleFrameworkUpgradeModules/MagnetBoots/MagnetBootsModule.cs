@@ -6,7 +6,7 @@ namespace MagnetBoots
     public class MagnetBootsModule : ModVehicleUpgrade
     {
         public override string ClassId => "MagnetBootsModule";
-        public override string DisplayName => "Magnet Boots Module";
+        public override string DisplayName => Language.main.Get("MagnetBootsModule");
         public override List<Ingredient> Recipe => new List<Ingredient>()
                 {
                     new Ingredient(TechType.Magnetite, 1),
@@ -14,7 +14,7 @@ namespace MagnetBoots
                     new Ingredient(TechType.PrecursorIonCrystal, 1),
                     new Ingredient(TechType.Polyaniline, 1)
                 };
-        public override string Description => "Gain the ability to magnetically attach the upgraded vehicle to vehicles and bases on its ventral side (below it).";
+        public override string Description => Language.main.Get("Tooltip_MagnetBootsModule");
         public override UnityEngine.Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("MagnetBootsIcon.png");
         public override void OnAdded(AddActionParams param)
         {

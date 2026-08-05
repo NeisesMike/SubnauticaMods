@@ -89,6 +89,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VFDrillArm.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="English.json" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy  $(TargetPath) "C:\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\plugins\VehicleFrameworkUpgrades\$(ProjectName)\" /y

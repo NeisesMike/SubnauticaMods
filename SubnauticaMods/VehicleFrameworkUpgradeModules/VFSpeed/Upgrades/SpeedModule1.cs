@@ -8,8 +8,8 @@ namespace VFSpeed
     {
         public const string upgradeName = Names.speedName + "1";
         public override string ClassId => upgradeName;
-        public override string DisplayName => Names.speedDisplayName + " 1";
-        public override string Description => "Slightly increases vehicle acceleration and top speed at a notable cost of power.";
+        public override string DisplayName => Language.main.Get("SpeedModuleVF1");
+        public override string Description => Language.main.Get("Tooltip_SpeedModuleVF1");
         public override List<Ingredient> Recipe => new List<Ingredient>()
         {
             new Ingredient(TechType.Battery, 1),

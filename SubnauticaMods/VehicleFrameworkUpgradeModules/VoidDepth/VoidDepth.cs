@@ -8,8 +8,8 @@ namespace VoidDepth
     {
         public const string upgradeName = "VoidDepthUpgrade";
         public override string ClassId => upgradeName;
-        public override string DisplayName => "Void Depth Module";
-        public override string Description => "This upgrade combines advanced alloys with the enigmatic properties of Ghost Weed to achieve extraordinary crush depth capabilities. Stacks.";
+        public override string DisplayName => Language.main.Get("VoidDepthUpgrade");
+        public override string Description => Language.main.Get("Tooltip_VoidDepthUpgrade");
         public override List<Ingredient> Recipe => new List<Ingredient>()
         {
             new Ingredient(TechType.Kyanite, 2),

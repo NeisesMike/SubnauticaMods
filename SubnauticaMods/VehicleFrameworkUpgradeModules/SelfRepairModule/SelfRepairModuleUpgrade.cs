@@ -9,8 +9,8 @@ namespace SelfRepairModule
     public class SelfRepairModuleUpgrade : ModVehicleUpgrade
     {
         public override string ClassId => "SelfRepairModule";
-        public override string DisplayName => "Self-Repair Module";
-        public override string Description => "This upgrade allows a vehicle to consume power in order to repair itself.";
+        public override string DisplayName => Language.main.Get("SelfRepairModule");
+        public override string Description => Language.main.Get("Tooltip_SelfRepairModule");
         public override List<Ingredient> Recipe => new List<Ingredient>()
                 {
                     new Ingredient(TechType.Welder, 1),

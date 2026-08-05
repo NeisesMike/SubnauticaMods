@@ -10,8 +10,8 @@ namespace ThermalChargingModule
     {
         public const string TCMClassID = "ThermalChargingModule";
         public override string ClassId => TCMClassID;
-        public override string DisplayName => "Thermal Charging Module";
-        public override string Description => "Recharge your ship's batteries with thermal energy in hot locations; effectiveness increases with temperature. Stacks.";
+        public override string DisplayName => Language.main.Get("ThermalChargingModule");
+        public override string Description => Language.main.Get("Tooltip_ThermalChargingModule");
         public override List<Ingredient> Recipe => new List<Ingredient>()
                 {
                     new Ingredient(TechType.WiringKit, 1),

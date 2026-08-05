@@ -9,8 +9,8 @@ namespace SolarChargingModule
     public class SolarChargingModule : ModVehicleUpgrade
     {
         public override string ClassId => "SolarChargingModule";
-        public override string DisplayName => "Solar Charging Module";
-        public override string Description => "Recharge your ship's batteries with solar energy during daylight; effectiveness increases with sun elevation and proximity to the surface.";
+        public override string DisplayName => Language.main.Get("SolarChargingModule");
+        public override string Description => Language.main.Get("Tooltip_SolarChargingModule");
         public override List<Ingredient> Recipe => new List<Ingredient>()
                 {
                     new Ingredient(TechType.AdvancedWiringKit, 2),

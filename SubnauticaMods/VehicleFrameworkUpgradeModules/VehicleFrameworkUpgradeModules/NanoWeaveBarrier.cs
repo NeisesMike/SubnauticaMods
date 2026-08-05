@@ -10,8 +10,8 @@ namespace NanoWeaveBarrier
     public class NanoWeaveBarrier : ModVehicleUpgrade
     {
         public override string ClassId => "NanoWeaveBarrier";
-        public override string DisplayName => "Nano-Weave Barrier";
-        public override string Description => "Employs nanotechnology to weave an ultra-durable mesh, reinforcing the sub's exterior against environmental hazards.";
+        public override string DisplayName => Language.main.Get("NanoWeaveBarrier");
+        public override string Description => Language.main.Get("Tooltip_NanoWeaveBarrier");
         public override List<Ingredient> Recipe => new List<Ingredient>()
                 {
                     new Ingredient(TechType.AramidFibers, 2),

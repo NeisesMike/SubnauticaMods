@@ -9,14 +9,14 @@ namespace VFDrillArm
     public class VFDrillArm : ModVehicleArm
     {
         public override string ClassId => "DrillArmVF";
-        public override string DisplayName => "Drill Arm";
+        public override string DisplayName => Language.main.Get("DrillArmVF");
         public override List<Ingredient> Recipe => new List<Ingredient>()
                 {
                     new Ingredient(TechType.Titanium, 5),
                     new Ingredient(TechType.Lithium, 1),
                     new Ingredient(TechType.Diamond, 4)
                 };
-        public override string Description => "A drill-arm attachment used for mining large ore veins";
+        public override string Description => Language.main.Get("Tooltip_DrillArmVF");
         public override UnityEngine.Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("VFDrillArmIcon.png");
         public override IEnumerator GetArmPrefab(IOut<GameObject> arm)
         {

@@ -14,8 +14,8 @@ namespace FlightModule
         private Dictionary<TechType, float> dragAboveWaterDefault = new Dictionary<TechType, float>();
         private Dictionary<TechType, float> gravityAboveWaterDefault = new Dictionary<TechType, float>();
         public override string ClassId => "FlightModule";
-        public override string DisplayName => "Flight Module";
-        public override string Description => "Allows the upgraded vehicle to take flight";
+        public override string DisplayName => Language.main.Get("FlightModule");
+        public override string Description => Language.main.Get("Tooltip_FlightModule");
         public override List<Ingredient> Recipe => new List<Ingredient>()
                 {
                     new Ingredient(TechType.PrecursorIonCrystal, 1),

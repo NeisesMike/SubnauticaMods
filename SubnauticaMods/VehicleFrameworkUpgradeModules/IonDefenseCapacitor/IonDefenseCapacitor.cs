@@ -11,8 +11,8 @@ namespace IonDefenseCapacitor
     {
         public static float invincibilityDuration = 3f;
         public override string ClassId => "IonDefenseCapacitor";
-        public override string DisplayName => "Ion Defense Capacitor";
-        public override string Description => "Temporarily envelops the sub in an ion-charged shield, nullifying all damage for a short duration.";
+        public override string DisplayName => Language.main.Get("IonDefenseCapacitor");
+        public override string Description => Language.main.Get("Tooltip_IonDefenseCapacitor");
         public override float Cooldown => 45f;
         public override float EnergyCost => 50f;
         public override List<Ingredient> Recipe => new List<Ingredient>()

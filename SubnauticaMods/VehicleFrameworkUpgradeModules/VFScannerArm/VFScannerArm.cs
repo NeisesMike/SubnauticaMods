@@ -12,13 +12,13 @@ namespace VFScannerArm
     public class VFScannerArm : ModVehicleArm
     {
         public override string ClassId => "ScannerArmVF";
-        public override string DisplayName => "Scanner Arm";
+        public override string DisplayName => Language.main.Get("ScannerArmVF");
         public override List<Ingredient> Recipe => new List<Ingredient>()
                 {
                     new Ingredient(TechType.TitaniumIngot, 1),
                     new Ingredient(TechType.PowerCell, 1)
                 };
-        public override string Description => "A vehicle-mounted arm version of the spectroscope scanner used to acquire technology blueprints and data on living organisms.";
+        public override string Description => Language.main.Get("Tooltip_ScannerArmVF");
         public override Sprite Icon => VehicleFramework.Assets.SpriteHelper.GetSprite("VFScannerArmIcon.png");
         public override TechType UnlockWith => TechType.Fragment;
         public override bool UnlockAtStart => false;

@@ -8,8 +8,8 @@ namespace ImpulseSpeedBooster
     public class ImpulseSpeedBooster : SelectableChargeableUpgrade
     {
         public override string ClassId => "ImpulseSpeedBooster";
-        public override string DisplayName => "Impulse Speed Booster";
-        public override string Description => "Charge to unleash a swift propulsion burst, catapulting the sub forward with increased velocity.";
+        public override string DisplayName => Language.main.Get("ImpulseSpeedBooster");
+        public override string Description => Language.main.Get("Tooltip_ImpulseSpeedBooster");
         public override List<Ingredient> Recipe => new List<Ingredient>()
                 {
                     new Ingredient(TechType.PowerCell, 2),
