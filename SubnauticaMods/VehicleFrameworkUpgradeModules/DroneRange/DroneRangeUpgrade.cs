@@ -22,7 +22,7 @@ namespace DroneRange
             Drone drone = param.vehicle as Drone;
             if (drone != null)
             {
-                drone.addedConnectionDistance = 200 * drone.GetCurrentUpgrades().Where(x => x.Contains(ClassId)).Count();
+                drone.addedConnectionDistance = MainPatcher.MyConfig.rangeBonus * drone.GetCurrentUpgrades().Where(x => x.Contains(ClassId)).Count();
             }
             else
             {
@@ -34,7 +34,7 @@ namespace DroneRange
             Drone drone = param.vehicle as Drone;
             if (drone != null)
             {
-                drone.addedConnectionDistance = 200 * drone.GetCurrentUpgrades().Where(x => x.Contains(ClassId)).Count();
+                drone.addedConnectionDistance = MainPatcher.MyConfig.rangeBonus * drone.GetCurrentUpgrades().Where(x => x.Contains(ClassId)).Count();
             }
         }
     }
