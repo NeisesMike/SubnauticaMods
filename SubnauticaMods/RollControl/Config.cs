@@ -7,8 +7,8 @@ namespace RollControl
     [Menu("RollControl Options")]
     public class MyConfig : ConfigFile
     {
-        [Keybind("Toggle Roll Key"), Tooltip("Roll is toggled individually for scuba mode and for each vehicle you have.")]
 #if BZ
+        [Keybind("Toggle Roll Key"), Tooltip("Roll is toggled individually for scuba mode and for each vehicle you have.")]
         public KeyCode ToggleRollKey = KeyCode.RightAlt;
         [Keybind("Roll Counter-Clockwise")]
         public KeyCode RollPortKey = KeyCode.Z;

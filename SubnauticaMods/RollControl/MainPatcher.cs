@@ -47,6 +47,7 @@ namespace RollControl
         internal static MainPatcher Instance { get; private set; } = null;
         internal void Awake()
         {
+            Nautilus.Handlers.LanguageHandler.RegisterLocalizationFolder();
             SetupInstance();
         }
         private void SetupInstance()
@@ -62,20 +63,23 @@ namespace RollControl
                 return;
             }
         }
+        const string toggleRollKeyButtonName = "ToggleRoll";
+        const string rollPortKeyButtonName = "PortRoll";
+        const string rollStarboardKeyButtonName = "StarboardRoll";
 
-        internal GameInput.Button ToggleRollKey = EnumHandler.AddEntry<GameInput.Button>("Toggle Roll")
+        internal GameInput.Button ToggleRollKey = EnumHandler.AddEntry<GameInput.Button>(toggleRollKeyButtonName)
             .CreateInput()
             .SetBindable()
             .WithKeyboardBinding("<Keyboard>/m")
             .WithCategory("Roll Control");
 
-        internal GameInput.Button RollPortKey = EnumHandler.AddEntry<GameInput.Button>("Roll Left")
+        internal GameInput.Button RollPortKey = EnumHandler.AddEntry<GameInput.Button>(rollPortKeyButtonName)
             .CreateInput()
             .SetBindable()
             .WithKeyboardBinding("<Keyboard>/z")
             .WithCategory("Roll Control");
 
-        internal GameInput.Button RollStarboardKey = EnumHandler.AddEntry<GameInput.Button>("Roll Right")
+        internal GameInput.Button RollStarboardKey = EnumHandler.AddEntry<GameInput.Button>(rollStarboardKeyButtonName)
             .CreateInput()
             .SetBindable()
             .WithKeyboardBinding("<Keyboard>/c")
