@@ -81,12 +81,14 @@ namespace RollControl
         private bool isSpeedingUpCCW = false;
         private float fuel = 0;
         private float rollMagnitude = 0;
+        private Vector2 pendingLookDelta = Vector2.zero;
 
         private static readonly float MAX_FUEL = 100f;
         private static readonly float MIN_FUEL = 0f;
         private static readonly float SLOW_FUEL_STEP = 10f;
         private static readonly float ACCEL_FUEL_STEP = 25f;
-        private static readonly float SCALING_FACTOR = 4f;
+        private static readonly float SCALING_FACTOR = 2f;
+        private static readonly float MOUSE_LOOK_GAIN = 2f;
 
         public void ResetRotsForStartRoll()
         {
@@ -155,6 +157,12 @@ namespace RollControl
             swimstate = DetermineSwimState();
             CheckForUserToggleInput();
             HandleSwimStateChange(lastSwimState);
+            if (IsActuallyScubaRolling && AvatarInputHandler.main.IsEnabled())
+            {
+                pendingLookDelta += GameInput.GetLookDelta();
+                ApplyMouseLook(pendingLookDelta);
+            }
+            pendingLookDelta = Vector2.zero;
         }
         private void HandleSwimStateChange(SwimState lastSwimState)
         {
@@ -275,7 +283,6 @@ namespace RollControl
             if (IsActuallyScubaRolling && AvatarInputHandler.main.IsEnabled())
             {
                 CamControl.transform.localRotation = Quaternion.identity;
-                PhysicsMouseLook();
                 SetupScubaRoll();
                 ExecuteScubaRoll();
             }
@@ -342,11 +349,11 @@ namespace RollControl
             isSpeedingUpCW = false;
             isSpeedingUpCCW = false;
         }
-        public void PhysicsMouseLook()
+        private void ApplyMouseLook(Vector2 offset)
         {
-            Vector2 offset = GameInput.GetLookDelta();
+            bool isGamepad = GameInput.IsPrimaryDeviceGamepad();
             float scalar;
-            if(GameInput.IsPrimaryDeviceGamepad())
+            if(isGamepad)
             {
                 scalar = MainPatcher.RCConfig.ScubaPadSensitivity;
             }
@@ -354,9 +361,15 @@ namespace RollControl
             {
                 scalar = MainPatcher.RCConfig.ScubaMouseSensitivity;
             }
-            player.rigidBody.AddTorque(scalar / 100f * SCALING_FACTOR * player.transform.up * offset.x, ForceMode.VelocityChange);
-            player.rigidBody.AddTorque(scalar / 100f * SCALING_FACTOR * player.transform.right * -offset.y, ForceMode.VelocityChange);
-
+            float gain = isGamepad ? 1f : MOUSE_LOOK_GAIN;
+            float rotationScale = gain * scalar / 100f * SCALING_FACTOR * Mathf.Rad2Deg * Time.deltaTime;
+            float yaw = offset.x * rotationScale;
+            float pitch = -offset.y * rotationScale;
+            Quaternion targetRotation =
+                Quaternion.AngleAxis(yaw, player.transform.up) *
+                Quaternion.AngleAxis(pitch, player.transform.right) *
+                player.rigidBody.rotation;
+            player.rigidBody.MoveRotation(targetRotation);
         }
         public void SetupScubaRoll()
         {

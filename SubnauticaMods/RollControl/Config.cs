@@ -19,10 +19,10 @@ namespace RollControl
         public double SubmarineRollSpeed = 30f;
         [Slider("Scuba Roll Speed", Min = 0f, Max = 100f, Step = 1f, DefaultValue = 75f)]
         public double ScubaRollSpeed = 75f;
-        [Slider("Scuba Mouse Sensitivity", Min = 0f, Max = 200f, Step = 1f, DefaultValue = 30f, Tooltip = "How fast the camera rotates as you move the mouse")]
-        public float ScubaMouseSensitivity = 30f;
-        [Slider("Scuba Controller Sensitivity", Min = 0f, Max = 200f, Step = 1f, DefaultValue = 30f, Tooltip = "How fast the camera rotates as you tilt the analog stick")]
-        public float ScubaPadSensitivity = 15f;
+        [Slider("Scuba Mouse Sensitivity", Min = 1f, Max = 100, Step = 1f, DefaultValue = 50f, Tooltip = "How fast the camera rotates as you move the mouse")]
+        public float ScubaMouseSensitivity = 50f;
+        [Slider("Scuba Controller Sensitivity", Min = 1f, Max = 100, Step = 1f, DefaultValue = 50f, Tooltip = "How fast the camera rotates as you tilt the analog stick")]
+        public float ScubaPadSensitivity = 50f;
         [Toggle("Enable Vehicle Roll by Default")]
         public bool IsVehicleRollDefaultEnabled = false;
         [Toggle("Enable Scuba Roll by Default")]
