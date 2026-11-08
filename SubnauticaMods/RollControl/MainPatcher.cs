@@ -28,7 +28,7 @@ namespace RollControl
     {
         private const string Plugin_GUID = "com.mikjaw.subnautica.rollcontrol.mod";
         private const string Plugin_NAME = "RollControl";
-        private const string Plugin_VERSION = "5.4.5";
+        private const string Plugin_VERSION = "5.4.6";
         internal static MyConfig RCConfig { get; private set; }
         internal static bool ThereIsVehicleFramework = false;
         internal void Start()
@@ -71,18 +71,21 @@ namespace RollControl
             .CreateInput()
             .SetBindable()
             .WithKeyboardBinding("<Keyboard>/m")
+            .AvoidConflicts()
             .WithCategory("Roll Control");
 
         internal GameInput.Button RollPortKey = EnumHandler.AddEntry<GameInput.Button>(rollPortKeyButtonName)
             .CreateInput()
             .SetBindable()
             .WithKeyboardBinding("<Keyboard>/z")
+            .AvoidConflicts()
             .WithCategory("Roll Control");
 
         internal GameInput.Button RollStarboardKey = EnumHandler.AddEntry<GameInput.Button>(rollStarboardKeyButtonName)
             .CreateInput()
             .SetBindable()
             .WithKeyboardBinding("<Keyboard>/c")
+            .AvoidConflicts()
             .WithCategory("Roll Control");
     }
 #endif
