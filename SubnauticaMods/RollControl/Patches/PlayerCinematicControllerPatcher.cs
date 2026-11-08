@@ -6,7 +6,6 @@ namespace RollControl
     [HarmonyPatch(typeof(PlayerCinematicController))]
     public class PlayerCinematicControllerPatcher
     {
-        public static GameObject cinematicPlayerRotationDummy = null;
         public static Transform endTransform = null;
         [HarmonyPrefix]
         [HarmonyPatch(nameof(PlayerCinematicController.StartCinematicMode))]
@@ -24,11 +23,16 @@ namespace RollControl
         [HarmonyPatch(nameof(PlayerCinematicController.OnPlayerCinematicModeEnd))]
         public static void OnPlayerCinematicModeEndPostfix(PlayerCinematicController __instance)
         {
+            if(__instance.endTransform != null)
+            {
+                endTransform = null;
+                return;
+            }
             if (endTransform)
             {
                 __instance.transform.rotation = endTransform.rotation;
-                endTransform = null;
             }
+            endTransform = null;
         }
     }
 }
