@@ -168,7 +168,11 @@ namespace RollControl
                     // remind the user that scuba roll is enabled, show them the toggle key
                     if (MainPatcher.RCConfig.IsScubaHinting)
                     {
+#if BZ
                         Logger.Output("Scuba Roll is ON. Toggle with " + MainPatcher.RCConfig.ToggleRollKey);
+#elif SN1
+                        Logger.Output($"Scuba Roll is ON. Toggle with {MainPatcher.Instance.ToggleRollKey}");
+#endif
                     }
                     SetupForScubaRollOnceAtStart();
                 }
@@ -217,7 +221,11 @@ namespace RollControl
         {
             if (IsAbleToToggleScubaRolling)
             {
+#if BZ
                 if (Input.GetKeyDown(MainPatcher.RCConfig.ToggleRollKey))
+#elif SN1
+                if (GameInput.GetButtonDown(MainPatcher.Instance.ToggleRollKey))
+#endif
                 {
                     if (isRollEnabled)
                     {
@@ -348,6 +356,7 @@ namespace RollControl
         }
         public void SetupScubaRoll()
         {
+#if BZ
             bool portUp = Input.GetKeyUp(MainPatcher.RCConfig.RollPortKey);
             bool portHeld = Input.GetKey(MainPatcher.RCConfig.RollPortKey);
             bool portDown = Input.GetKeyDown(MainPatcher.RCConfig.RollPortKey);
@@ -355,7 +364,15 @@ namespace RollControl
             bool starUp = Input.GetKeyUp(MainPatcher.RCConfig.RollStarboardKey);
             bool starHeld = Input.GetKey(MainPatcher.RCConfig.RollStarboardKey);
             bool starDown = Input.GetKeyDown(MainPatcher.RCConfig.RollStarboardKey);
+#elif SN1
+            bool portUp = GameInput.GetButtonUp(MainPatcher.Instance.RollPortKey);
+            bool portHeld = GameInput.GetButtonHeld(MainPatcher.Instance.RollPortKey);
+            bool portDown = GameInput.GetButtonDown(MainPatcher.Instance.RollPortKey);
 
+            bool starUp = GameInput.GetButtonUp(MainPatcher.Instance.RollStarboardKey);
+            bool starHeld = GameInput.GetButtonHeld(MainPatcher.Instance.RollStarboardKey);
+            bool starDown = GameInput.GetButtonDown(MainPatcher.Instance.RollStarboardKey);
+#endif
             if ((portDown || portHeld) && !(starDown || starHeld))
             {
                 StartScubaRoll(true);

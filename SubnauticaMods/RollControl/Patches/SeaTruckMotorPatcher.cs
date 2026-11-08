@@ -1,5 +1,5 @@
 ﻿using HarmonyLib;
-
+#if BZ
 namespace RollControl
 {
     [HarmonyPatch(typeof(SeaTruckMotor))]
@@ -21,3 +21,4 @@ namespace RollControl
         }
     }
 }
+#endif

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using HarmonyLib;
-
+#if BZ
 namespace RollControl
 {
     [HarmonyPatch(typeof(SeaTruckSegment))]
@@ -17,3 +17,4 @@ namespace RollControl
         }
     }
 }
+#endif

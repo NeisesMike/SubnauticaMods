@@ -1,20 +1,26 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30204.135
+# Visual Studio Version 18
+VisualStudioVersion = 18.10.12306.391 oobstable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RollControl", "RollControl.csproj", "{EF47573A-B3F8-4DFC-9DE1-8855CABDF3A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		BZ|Any CPU = BZ|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		SN1|Any CPU = SN1|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EF47573A-B3F8-4DFC-9DE1-8855CABDF3A6}.BZ|Any CPU.ActiveCfg = BZ|Any CPU
+		{EF47573A-B3F8-4DFC-9DE1-8855CABDF3A6}.BZ|Any CPU.Build.0 = BZ|Any CPU
 		{EF47573A-B3F8-4DFC-9DE1-8855CABDF3A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EF47573A-B3F8-4DFC-9DE1-8855CABDF3A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF47573A-B3F8-4DFC-9DE1-8855CABDF3A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF47573A-B3F8-4DFC-9DE1-8855CABDF3A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF47573A-B3F8-4DFC-9DE1-8855CABDF3A6}.SN1|Any CPU.ActiveCfg = SN1|Any CPU
+		{EF47573A-B3F8-4DFC-9DE1-8855CABDF3A6}.SN1|Any CPU.Build.0 = SN1|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

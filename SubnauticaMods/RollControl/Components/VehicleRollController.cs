@@ -6,7 +6,9 @@ namespace RollControl
     public partial class VehicleRollController : MonoBehaviour
     {
         public Vehicle MyVehicle => gameObject.GetComponent<Vehicle>();
+#if BZ
         public SeaTruckMotor MySeaTruck => gameObject.GetComponent<SeaTruckMotor>();
+#endif
         internal bool isRollEnabled = MainPatcher.RCConfig.IsVehicleRollDefaultEnabled;
 
         public bool IsPlayerInThisVehicle
@@ -39,10 +41,12 @@ namespace RollControl
                             mountedDrone = fieldInfo.GetValue(null);
                         }
                     }
+#if BZ
                     if (MySeaTruck.IsPiloted())
                     {
                         return true;
                     }
+#endif
                     if (MyVehicle != null && MyVehicle == Player.main.currentMountedVehicle)
                     {
                         return true;
@@ -55,10 +59,12 @@ namespace RollControl
                 }
                 else
                 {
+#if BZ
                     if (MySeaTruck.IsPiloted())
                     {
                         return true;
                     }
+#endif
                     if (MyVehicle != null && MyVehicle == Player.main.currentMountedVehicle)
                     {
                         return true;
@@ -76,11 +82,13 @@ namespace RollControl
                 {
                     return MyVehicle.worldForces.IsAboveWater();
                 }
+#if BZ
                 else if(MySeaTruck != null)
                 {
                     return MySeaTruck.transform.position.y >= 0f;
 
                 }
+#endif
                 else
                 {
                     throw new Exception("VehicleRollController was added to a non-vehicle component! Dying!");
@@ -107,7 +115,11 @@ namespace RollControl
             {
                 return;
             }
+#if BZ
             if (Input.GetKeyDown(MainPatcher.RCConfig.ToggleRollKey) &&
+#elif SN1
+            if (GameInput.GetButtonDown(MainPatcher.Instance.ToggleRollKey) &&
+#endif
                 IsPlayerInThisVehicle &&
                 AvatarInputHandler.main.IsEnabled())
             {
@@ -129,11 +141,13 @@ namespace RollControl
                 {
                     SubmarineRoll(MyVehicle.useRigidbody);
                 }
+#if BZ
                 else if (MySeaTruck != null)
                 {
                     SubmarineRoll(MySeaTruck.useRigidbody);
 
                 }
+#endif
                 else
                 {
                     throw new Exception("VehicleRollController was added to a non-vehicle component! Dying!");
@@ -143,11 +157,19 @@ namespace RollControl
 
         public void SubmarineRoll(Rigidbody target)
         {
+#if BZ
             if (Input.GetKey(MainPatcher.RCConfig.RollPortKey))
+#elif SN1
+            if (GameInput.GetButtonHeld(MainPatcher.Instance.RollPortKey))
+#endif
             {
                 target.AddTorque(target.transform.forward * (float)MainPatcher.RCConfig.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
             }
+#if BZ
             if (Input.GetKey(MainPatcher.RCConfig.RollStarboardKey))
+#elif SN1
+            if (GameInput.GetButtonHeld(MainPatcher.Instance.RollStarboardKey))
+#endif
             {
                 target.AddTorque(target.transform.forward * (float)-MainPatcher.RCConfig.SubmarineRollSpeed / 100f * 4f, ForceMode.VelocityChange);
             }

@@ -1,9 +1,10 @@
-﻿using System;
-using Nautilus.Handlers;
-using HarmonyLib;
-using Nautilus.Utility;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Logging;
+using HarmonyLib;
+using Nautilus.Handlers;
+using Nautilus.Utility;
+using System;
+using static VFXParticlesPool;
 
 namespace RollControl
 {
@@ -21,17 +22,20 @@ namespace RollControl
         }
     }
 
-    [BepInPlugin("com.mikjaw.subnautica.rollcontrol.mod", "RollControl", "5.4.4")]
-    [BepInDependency("com.snmodding.nautilus")]
+    [BepInPlugin(Plugin_GUID, Plugin_NAME, Plugin_VERSION)]
+    [BepInDependency(Nautilus.PluginInfo.PLUGIN_GUID)]
     public partial class MainPatcher : BaseUnityPlugin
     {
+        private const string Plugin_GUID = "com.mikjaw.subnautica.rollcontrol.mod";
+        private const string Plugin_NAME = "RollControl";
+        private const string Plugin_VERSION = "5.4.5";
         internal static MyConfig RCConfig { get; private set; }
         internal static bool ThereIsVehicleFramework = false;
         internal void Start()
         {
             RollControl.Logger.MyLog = base.Logger;
             RCConfig = OptionsPanelHandler.RegisterModOptions<MyConfig>();
-            var harmony = new Harmony("com.mikjaw.subnautica.rollcontrol.mod");
+            var harmony = new Harmony(Plugin_GUID);
             harmony.PatchAll();
             var type = Type.GetType("VehicleFramework.MainPatcher, VehicleFramework", false, false);
             if (type != null)
@@ -39,5 +43,43 @@ namespace RollControl
                 ThereIsVehicleFramework = true;
             }
         }
+#if SN1
+        internal static MainPatcher Instance { get; private set; } = null;
+        internal void Awake()
+        {
+            SetupInstance();
+        }
+        private void SetupInstance()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+                return;
+            }
+            if (Instance != this)
+            {
+                UnityEngine.Object.Destroy(this);
+                return;
+            }
+        }
+
+        internal GameInput.Button ToggleRollKey = EnumHandler.AddEntry<GameInput.Button>("Toggle Roll")
+            .CreateInput()
+            .SetBindable()
+            .WithKeyboardBinding("<Keyboard>/m")
+            .WithCategory("Roll Control");
+
+        internal GameInput.Button RollPortKey = EnumHandler.AddEntry<GameInput.Button>("Roll Left")
+            .CreateInput()
+            .SetBindable()
+            .WithKeyboardBinding("<Keyboard>/z")
+            .WithCategory("Roll Control");
+
+        internal GameInput.Button RollStarboardKey = EnumHandler.AddEntry<GameInput.Button>("Roll Right")
+            .CreateInput()
+            .SetBindable()
+            .WithKeyboardBinding("<Keyboard>/c")
+            .WithCategory("Roll Control");
     }
+#endif
 }
