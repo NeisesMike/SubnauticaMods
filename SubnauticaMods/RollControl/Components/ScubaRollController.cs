@@ -5,7 +5,7 @@ namespace RollControl
 {
     public partial class ScubaRollController : MonoBehaviour
     {
-        public bool isRollEnabled = MainPatcher.RCConfig.IsScubaRollDefaultEnabled;
+        public bool isRollEnabled = false;
         public Player player = null;
 
         private MainCameraControl _CamControl = MainCameraControl.main;
@@ -227,19 +227,23 @@ namespace RollControl
                 if (GameInput.GetButtonDown(MainPatcher.Instance.ToggleRollKey))
 #endif
                 {
-                    if (isRollEnabled)
-                    {
-                        isRollEnabled = false;
-                        ResetForEndRoll();
-                        SetupEndingScubaRollOnceAtExit();
-                    }
-                    else
-                    {
-                        ResetForStartRoll(null);
-                        isRollEnabled = true;
-                        SetupForScubaRollOnceAtStart();
-                    }
+                    ToggleScubaRoll();
                 }
+            }
+        }
+        internal void ToggleScubaRoll()
+        {
+            if (isRollEnabled)
+            {
+                isRollEnabled = false;
+                ResetForEndRoll();
+                SetupEndingScubaRollOnceAtExit();
+            }
+            else
+            {
+                ResetForStartRoll(null);
+                isRollEnabled = true;
+                SetupForScubaRollOnceAtStart();
             }
         }
         private IEnumerator PauseCameraOneFrame()

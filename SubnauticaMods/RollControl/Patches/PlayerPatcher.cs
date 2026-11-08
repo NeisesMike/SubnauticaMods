@@ -12,7 +12,6 @@ namespace RollControl
         {
             __instance.gameObject.EnsureComponent<ScubaRollController>();
             __instance.gameObject.EnsureComponent<ScubaRollController>().player = __instance;
-            __instance.gameObject.EnsureComponent<ScubaRollController>().isRollEnabled = MainPatcher.RCConfig.IsScubaRollDefaultEnabled;
             if(MainPatcher.RCConfig.IsScubaRollDefaultEnabled)
             {
                 __instance.StartCoroutine(DetermineWhetherWeStartBySwimming());
@@ -45,7 +44,7 @@ namespace RollControl
             }
             if (Player.main.gameObject.EnsureComponent<ScubaRollController>().AreWeSwimming)
             {
-                Player.main.gameObject.EnsureComponent<ScubaRollController>().ResetForStartRoll(null);
+                Player.main.gameObject.EnsureComponent<ScubaRollController>().ToggleScubaRoll();
             }
         }
     }
