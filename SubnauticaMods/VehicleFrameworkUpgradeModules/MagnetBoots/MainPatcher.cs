@@ -2,6 +2,7 @@
 using Nautilus.Options.Attributes;
 using Nautilus.Json;
 using Nautilus.Handlers;
+using System.Reflection;
 
 namespace MagnetBoots
 {
@@ -21,8 +22,22 @@ namespace MagnetBoots
                 skipModVehicle = false,
                 skipSeamoth = false
             };
-            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new MagnetBootsModule(), compat);
+            MagnetBootsModule MagnetModule = new MagnetBootsModule();
+            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(MagnetModule, compat);
             MagnetConfig = OptionsPanelHandler.RegisterModOptions<MagnetBootsConfig>();
+            if (MagnetConfig.vanillaFabricator)
+            {
+                CraftTreeHandler.AddCraftingNode(
+                    CraftTree.Type.SeamothUpgrades,
+                    MagnetModule.TechTypes.forSeamoth,
+                    new string[] { "SeamothModules" }
+                );
+                CraftTreeHandler.AddCraftingNode(
+                    CraftTree.Type.SeamothUpgrades,
+                    MagnetModule.TechTypes.forExosuit,
+                    new string[] { "ExosuitModules" }
+                );
+            }
         }
     }
 
@@ -31,5 +46,8 @@ namespace MagnetBoots
     {
         [Slider("Collider Pairs Per Frame (performance)", Tooltip = "When magnet boots are used, they ask for collisions between the vehicle and its host to be ignored. This can be very expensive because some vehicles and hosts have a large number of colliders. Raising this number will make the magnet-vehicle touchable sooner. Lowering this number will reduce stutter on magnet events. Set to zero for no limit.", DefaultValue = 20, Step = 1, Min = 0, Max = 100)]
         public int pairsPerFrame = 20;
+
+        [Toggle("Can be crafted in vanilla fabricator", Tooltip = "Allow the module to be crafted in the vehicle upgrades console. Restart required.")]
+        public bool vanillaFabricator = false;
     }
 }

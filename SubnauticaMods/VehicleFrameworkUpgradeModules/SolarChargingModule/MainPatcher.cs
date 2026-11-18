@@ -14,7 +14,27 @@ namespace SolarChargingModule
         {
             LanguageHandler.RegisterLocalizationFolder();
             MyConfig = OptionsPanelHandler.RegisterModOptions<Config>();
-            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(new SolarChargingModule());
+            SolarChargingModule module = new SolarChargingModule();
+            VehicleFramework.Admin.UpgradeRegistrar.RegisterUpgrade(module);
+            if (MyConfig.vanillaFabricator)
+            {
+                CraftTreeHandler.AddCraftingNode(
+                    CraftTree.Type.SeamothUpgrades,
+                    module.TechTypes.forSeamoth,
+                    new string[] { "SeamothModules" }
+                );
+                CraftTreeHandler.AddCraftingNode(
+                    CraftTree.Type.SeamothUpgrades,
+                    module.TechTypes.forExosuit,
+                    new string[] { "ExosuitModules" }
+                );
+                CraftTreeHandler.AddTabNode(CraftTree.Type.CyclopsFabricator, "CyclopsMenu", Language.main.Get("Node_CyclopsMenu"), SpriteManager.Get(TechType.Cyclops));
+                CraftTreeHandler.AddCraftingNode(
+                    CraftTree.Type.CyclopsFabricator,
+                    module.TechTypes.forCyclops,
+                    new string[] { "CyclopsMenu" }
+                );
+            }
         }
     }
 }

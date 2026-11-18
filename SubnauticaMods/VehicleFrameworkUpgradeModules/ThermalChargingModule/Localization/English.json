@@ -9,6 +9,8 @@
     "Tooltip_ThermalChargingModuleExosuit": "An upgrade for the Exosuit. Recharge your ship's batteries with thermal energy in hot locations; effectiveness increases with temperature. Stacks.",
 
     "ThermalChargingModuleCyclops": "Cyclops Thermal Charging Module",
-    "Tooltip_ThermalChargingModuleCyclops": "An upgrade for the Cyclops. Recharge your ship's batteries with thermal energy in hot locations; effectiveness increases with temperature. Stacks."
+    "Tooltip_ThermalChargingModuleCyclops": "An upgrade for the Cyclops. Recharge your ship's batteries with thermal energy in hot locations; effectiveness increases with temperature. Stacks.",
+
+    "Node_CyclopsMenu": "More Cyclops Upgrades"
 }
 

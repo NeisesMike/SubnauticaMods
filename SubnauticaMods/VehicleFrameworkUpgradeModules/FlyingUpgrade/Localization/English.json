@@ -6,6 +6,8 @@
     "Tooltip_FlightModuleSeamoth": "An upgrade for the Seamoth. Allows the upgraded vehicle to take flight.",
 
     "FlightModuleCyclops": "Cyclops Flight Module",
-    "Tooltip_FlightModuleCyclops": "An upgrade for the Cyclops. Allows the upgraded vehicle to take flight."
+    "Tooltip_FlightModuleCyclops": "An upgrade for the Cyclops. Allows the upgraded vehicle to take flight.",
+
+    "Node_CyclopsMenu": "More Cyclops Upgrades"
 }
 

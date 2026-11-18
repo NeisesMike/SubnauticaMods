@@ -14,5 +14,8 @@ namespace SonarModule
 
         [Slider("Power Consumption", Tooltip = "How much power the sonar will consume per ping. Default is 1.", Step = 0.01f, Min = 0f, Max = 5f)]
         public float powerConsumption = 1f;
+
+        [Toggle("Can be crafted in vanilla fabricator", Tooltip = "Allow the module to be crafted in the vehicle upgrades console and the cyclops fabricator for the cyclops upgrade. Restart required.")]
+        public bool vanillaFabricator = false;
     }
 }
